@@ -11,12 +11,12 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "pbs.twimg.com", // Add this line to allow images from twitter
+        hostname: "pbs.twimg.com",
         port: "",
       },
       {
         protocol: "https",
-        hostname: "images.unsplash.com", // 👈 Unsplash
+        hostname: "images.unsplash.com",
         port: "",
         pathname: "/**",
       },

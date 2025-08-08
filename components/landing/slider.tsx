@@ -1,231 +1,131 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import Image from "next/image";
 
-const creatorTools = [
-  {
-    icon: "/images/icons/chat.png",
-    title: "Video Scripts",
-    description:
-      "Create professional video scripts, storyboards and scenarios for your next production.",
-    bgImage: "/images/backgrounds/video-scripts-bg.jpg",
-    color: "from-purple-600 to-pink-600",
-  },
-  {
-    icon: "/images/icons/photo.png",
-    title: "Concept Art",
-    description:
-      "Generate stunning concept art and illustrations for your creative projects.",
-    bgImage: "/images/backgrounds/concept-art-bg.jpg",
-    color: "from-blue-600 to-violet-600",
-  },
-  {
-    icon: "/images/icons/music-note.png",
-    title: "Music Composition",
-    description:
-      "Create original music and melodies for your projects with AI-powered composition.",
-    bgImage: "/images/backgrounds/music-bg.jpg",
-    color: "from-green-500 to-teal-600",
-  },
-  {
-    icon: "/images/icons/web-programming.png",
-    title: "Social Media Content",
-    description:
-      "Generate engaging social media posts, captions, and content calendars for your brand.",
-    bgImage: "/images/backgrounds/social-media-bg.jpg",
-    color: "from-orange-500 to-red-600",
-  },
-  {
-    icon: "/images/icons/audio.png",
-    title: "Voiceovers",
-    description:
-      "Create professional-quality voiceovers and narration for your videos and content.",
-    bgImage: "/images/backgrounds/voiceover-bg.jpg",
-    color: "from-indigo-600 to-blue-500",
-  },
-  {
-    icon: "/images/icons/video-camera.png",
-    title: "Video Creation",
-    description:
-      "Generate engaging video content from your scripts and creative ideas.",
-    bgImage: "/images/backgrounds/video-creation-bg.jpg",
-    color: "from-pink-500 to-rose-600",
-  },
-];
-
-const Slider = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [autoplay, setAutoplay] = useState(true);
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout | undefined;
-    if (autoplay) {
-      interval = setInterval(() => {
-        setActiveIndex((current) => (current + 1) % creatorTools.length);
-      }, 5000);
+const HowItWorks = () => {
+  const steps = [
+    {
+      number: "01",
+      title: "Describe Your Vision",
+      description: "Tell us what you want to create. Whether it's a video script, artwork, music, or content - just describe your idea in natural language.",
+      icon: "💭",
+      color: "from-blue-500 to-cyan-500"
+    },
+    {
+      number: "02",
+      title: "Choose Your Style",
+      description: "Select from our curated styles and templates. From cinematic to minimalist, we have options for every creative direction.",
+      icon: "🎨",
+      color: "from-purple-500 to-pink-500"
+    },
+    {
+      number: "03",
+      title: "AI Magic Happens",
+      description: "Our advanced AI analyzes your input and generates professional-quality content in seconds. No technical skills required.",
+      icon: "✨",
+      color: "from-green-500 to-emerald-500"
+    },
+    {
+      number: "04",
+      title: "Download & Share",
+      description: "Get your creation instantly. Download in high quality and share with your audience. Ready to make an impact.",
+      icon: "🚀",
+      color: "from-orange-500 to-red-500"
     }
-    return () => clearInterval(interval);
-  }, [autoplay]);
-
-  const handleDotClick = (index: number) => {
-    setActiveIndex(index);
-    setAutoplay(false);
-    // Restart autoplay after 10 seconds of inactivity
-    setTimeout(() => setAutoplay(true), 10000);
-  };
-
-  // Calculate the visible tools (current, prev, next)
-  const getPrevIndex = (index: number) =>
-    index === 0 ? creatorTools.length - 1 : index - 1;
-  const getNextIndex = (index: number) =>
-    index === creatorTools.length - 1 ? 0 : index + 1;
+  ];
 
   return (
-    <section
-      id="features"
-      className="relative overflow-hidden py-16 md:py-24 lg:py-32 bg-slate-900"
-    >
-      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:30px_30px]"></div>
+    <section id="how-it-works" className="py-20 bg-gradient-to-b from-slate-900 to-slate-800 relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-1/4 right-10 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 left-10 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl"></div>
+      </div>
 
-      {/* Background elements */}
-      <div className="absolute top-20 left-0 w-72 h-72 bg-purple-900/30 rounded-full filter blur-3xl"></div>
-      <div className="absolute bottom-20 right-0 w-80 h-80 bg-pink-800/30 rounded-full filter blur-3xl"></div>
+      <div className="relative z-10 max-w-7xl mx-auto px-6">
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            How It Works
+          </h2>
+          <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+            Creating professional content has never been easier. Our AI-powered platform 
+            transforms your ideas into stunning creations in just four simple steps.
+          </p>
+        </motion.div>
 
-      <div className="container relative mx-auto px-4">
-        <div className="mx-auto flex max-w-3xl flex-col items-center space-y-8 text-center mb-16">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="font-bold text-4xl sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400"
-          >
-            Creator Tools
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="max-w-2xl text-lg sm:text-xl text-gray-300"
-          >
-            Neuvisia offers specialized tools for each creative profession.
-            Whether you&apos;re a video creator, digital artist, musician, or
-            content creator, our AI-powered platform provides professional-grade
-            tools designed specifically for your creative needs.
-          </motion.p>
-        </div>
-
-        {/* 3D Card Slider */}
-        <div className="relative h-[500px] w-full max-w-6xl mx-auto">
-          {creatorTools.map((tool, index) => {
-            // Determine if this card is active, previous, or next
-            const isActive = index === activeIndex;
-            const isPrev = index === getPrevIndex(activeIndex);
-            const isNext = index === getNextIndex(activeIndex);
-            const isVisible = isActive || isPrev || isNext;
-
-            if (!isVisible) return null;
-
-            let position: "center" | "left" | "right";
-            if (isActive) position = "center";
-            else if (isPrev) position = "left";
-            else position = "right";
-
-            return (
-              <motion.div
-                key={index}
-                initial={false}
-                animate={{
-                  x:
-                    position === "center"
-                      ? 0
-                      : position === "left"
-                      ? "-55%"
-                      : "55%",
-                  scale: position === "center" ? 1 : 0.8,
-                  opacity: position === "center" ? 1 : 0.6,
-                  zIndex: position === "center" ? 30 : 10,
-                  rotateY:
-                    position === "center" ? 0 : position === "left" ? 15 : -15,
-                }}
-                transition={{ duration: 0.6, ease: "easeInOut" }}
-                className="absolute top-0 left-0 right-0 mx-auto w-full max-w-2xl h-[500px] cursor-pointer perspective-1000"
-                onClick={() => {
-                  if (!isActive) {
-                    setActiveIndex(index);
-                    setAutoplay(false);
-                    setTimeout(() => setAutoplay(true), 10000);
-                  }
-                }}
-              >
-                <div className="relative w-full h-full transform-style-3d rounded-2xl shadow-lg overflow-hidden">
-                  {/* Background image with overlay */}
-                  <div className="absolute inset-0 z-0 bg-gradient-to-br from-slate-900 to-black opacity-60"></div>
-
-                  {/* Glowing border */}
-                  <div
-                    className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${tool.color} opacity-0 group-hover:opacity-100 blur transition-opacity animate-pulse`}
-                  ></div>
-
-                  {/* Content */}
-                  <div className="absolute inset-0 z-10 p-8 flex flex-col items-center justify-center text-center">
-                    <div className="mb-6 relative w-24 h-24 flex items-center justify-center">
-                      <div
-                        className={`absolute inset-0 rounded-full bg-gradient-to-r ${tool.color} opacity-20 blur-xl`}
-                      ></div>
-                      <div className="relative bg-gray-900/80 p-4 rounded-full backdrop-blur-sm">
-                        <Image
-                          src={tool.icon}
-                          alt={`${tool.title} icon`}
-                          width={50}
-                          height={50}
-                          className="object-contain"
-                        />
-                      </div>
-                    </div>
-
-                    <h3 className="text-3xl font-bold mb-4 text-white">
-                      {tool.title}
-                    </h3>
-
-                    <p className="text-gray-300 mb-6 max-w-md">
-                      {tool.description}
-                    </p>
-
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.98 }}
-                      className={`px-6 py-3 rounded-full bg-gradient-to-r ${tool.color} text-white font-semibold shadow-lg`}
-                    >
-                      Explore Tool
-                    </motion.button>
-                  </div>
+        {/* Steps Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {steps.map((step, index) => (
+            <motion.div
+              key={step.number}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              viewport={{ once: true }}
+              className="relative group"
+            >
+              {/* Step Card */}
+              <div className="relative p-8 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl hover:bg-white/10 hover:border-purple-500/50 transition-all duration-300 transform hover:-translate-y-2">
+                {/* Step Number */}
+                <div className={`absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-r ${step.color} rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg`}>
+                  {step.number}
                 </div>
-              </motion.div>
-            );
-          })}
-        </div>
 
-        {/* Navigation dots */}
-        <div className="flex justify-center mt-12 space-x-4">
-          {creatorTools.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => handleDotClick(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === activeIndex
-                  ? "bg-white w-8"
-                  : "bg-gray-500 opacity-50 hover:opacity-75"
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
+                {/* Icon */}
+                <div className="text-5xl mb-6 mt-4">{step.icon}</div>
+
+                {/* Content */}
+                <h3 className="text-xl font-semibold text-white mb-4">{step.title}</h3>
+                <p className="text-slate-400 leading-relaxed">{step.description}</p>
+
+                {/* Hover Effect */}
+                <div className={`absolute inset-0 bg-gradient-to-r ${step.color} rounded-2xl opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
+              </div>
+
+              {/* Connecting Line */}
+              {index < steps.length - 1 && (
+                <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-slate-600 to-transparent transform -translate-y-1/2"></div>
+              )}
+            </motion.div>
           ))}
         </div>
+
+        {/* CTA Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          viewport={{ once: true }}
+          className="text-center mt-16"
+        >
+          <div className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 border border-purple-500/20 rounded-2xl p-8 backdrop-blur-sm">
+            <h3 className="text-2xl font-bold text-white mb-4">
+              Ready to Create Something Amazing?
+            </h3>
+            <p className="text-slate-300 mb-6 max-w-2xl mx-auto">
+              Join thousands of creators who are already using Neuvisia to bring their ideas to life. 
+              Start your creative journey today.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-purple-500/25">
+                Start Creating Free
+              </button>
+              <button className="px-8 py-4 border-2 border-slate-600 text-slate-300 font-semibold rounded-xl hover:border-purple-500 hover:text-purple-400 transition-all duration-300">
+                Watch Demo
+              </button>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
 };
 
-export default Slider;
+export default HowItWorks;

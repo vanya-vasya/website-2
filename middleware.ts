@@ -1,19 +1,26 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-const isProtectedRoute = createRouteMatcher([
-  '/dashboard(.*)',
-]);
-
-export default clerkMiddleware((auth, req) => {
-  try {
-    if (isProtectedRoute(req)) {
-      auth().protect();
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  
+  // Check if the path is a protected route
+  const isProtectedRoute = pathname.startsWith('/dashboard');
+  
+  if (isProtectedRoute) {
+    // Check for Clerk session token
+    const token = request.cookies.get('__session')?.value;
+    
+    if (!token) {
+      // Redirect to sign-in if no session token
+      const signInUrl = new URL('/sign-in', request.url);
+      signInUrl.searchParams.set('redirect_url', pathname);
+      return NextResponse.redirect(signInUrl);
     }
-  } catch (error) {
-    console.error('Middleware error:', error);
-    // Continue without protection if there's an error
   }
-});
+  
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: [

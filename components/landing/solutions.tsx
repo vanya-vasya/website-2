@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import Link from "next/link";
 
 const Solutions = () => {
@@ -51,13 +50,7 @@ const Solutions = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
+        <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Built for Every Creator
           </h2>
@@ -65,17 +58,13 @@ const Solutions = () => {
             Whether you're a video creator, digital artist, musician, or content creator, 
             we have specialized tools designed specifically for your creative needs.
           </p>
-        </motion.div>
+        </div>
 
         {/* Solutions Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
           {solutions.map((solution, index) => (
-            <motion.div
+            <div
               key={solution.title}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              viewport={{ once: true }}
               className="group relative"
             >
               <div className={`relative p-8 bg-gradient-to-br ${solution.bgColor} backdrop-blur-sm border border-white/10 rounded-2xl hover:bg-white/10 hover:border-purple-500/50 transition-all duration-300 transform hover:-translate-y-2`}>
@@ -121,18 +110,12 @@ const Solutions = () => {
                 {/* Hover Effect */}
                 <div className={`absolute inset-0 bg-gradient-to-r ${solution.color} rounded-2xl opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
         {/* Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          viewport={{ once: true }}
-          className="text-center"
-        >
+        <div className="text-center">
           <div className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 border border-purple-500/20 rounded-2xl p-8 backdrop-blur-sm">
             <h3 className="text-2xl font-bold text-white mb-4">
               Ready to Transform Your Creative Process?
@@ -156,7 +139,7 @@ const Solutions = () => {
               </Link>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

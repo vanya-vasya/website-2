@@ -1,7 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
-
 const HowItWorks = () => {
   const steps = [
     {
@@ -44,13 +42,7 @@ const HowItWorks = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
+        <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             How It Works
           </h2>
@@ -58,17 +50,13 @@ const HowItWorks = () => {
             Creating professional content has never been easier. Our AI-powered platform 
             transforms your ideas into stunning creations in just four simple steps.
           </p>
-        </motion.div>
+        </div>
 
         {/* Steps Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {steps.map((step, index) => (
-            <motion.div
+            <div
               key={step.number}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              viewport={{ once: true }}
               className="relative group"
             >
               {/* Step Card */}
@@ -93,18 +81,12 @@ const HowItWorks = () => {
               {index < steps.length - 1 && (
                 <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-slate-600 to-transparent transform -translate-y-1/2"></div>
               )}
-            </motion.div>
+            </div>
           ))}
         </div>
 
         {/* CTA Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          viewport={{ once: true }}
-          className="text-center mt-16"
-        >
+        <div className="text-center mt-16">
           <div className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 border border-purple-500/20 rounded-2xl p-8 backdrop-blur-sm">
             <h3 className="text-2xl font-bold text-white mb-4">
               Ready to Create Something Amazing?
@@ -122,7 +104,7 @@ const HowItWorks = () => {
               </button>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

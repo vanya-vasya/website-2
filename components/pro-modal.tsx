@@ -198,7 +198,7 @@ export const ProModal = () => {
               amount={watch("generations") * generationPrice}
               currency={watch("currency")}
               orderId={`gen_${userId}_${Date.now()}`}
-              description={`Neuvisia Generations Purchase (${watch("generations")} Tokens)`}
+              description={`Zinvero Generations Purchase (${watch("generations")} Tokens)`}
               customerEmail={user?.emailAddresses[0].emailAddress || ""}
               onSuccess={handlePaymentSuccess}
               onError={handlePaymentError}

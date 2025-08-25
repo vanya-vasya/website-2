@@ -100,8 +100,8 @@ export function MobileNav({
           <SheetHeader className="p-5 border-b border-gray-200">
             <div className="flex justify-between items-center">
               <Image
-                src="/logos/nerbixa-logo.png"
-                alt="nerbixa Logo"
+                src="/logos/zinvero-logo.png"
+                alt="Zinvero Logo"
                 width={150}
                 height={50}
               />

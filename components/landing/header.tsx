@@ -26,7 +26,7 @@ const Header = () => {
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-3 lg:px-6 gap-1">
         <div className="flex">
           <Link href="/" className="-m-1.5 p-1.5">
-            <Image width={"98"} height={"39"} src="/logos/zinvero-logo.png" alt="Zinvero Logo"/>
+            <Image width={"98"} height={"39"} src="/logos/nerbixa-logo.png" alt="Nerbixa Logo"/>
           </Link>
         </div>
         <div className="flex gap-x-12 ml-12">

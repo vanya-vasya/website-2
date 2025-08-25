@@ -73,7 +73,7 @@ export function MainNav({
           href="/dashboard"
           className="hidden items-center space-x-2 md:flex"
         >
-          <Image src="/logos/zinvero-logo.png" alt="Zinvero Logo" width={150} height={50} />
+          <Image src="/logos/nerbixa-logo.png" alt="Nerbixa Logo" width={150} height={50} />
         </Link>
 
         <NavigationMenu>

@@ -34,7 +34,7 @@ const ChatInterface = () => {
           />
         </div>
         <div className="flex-1">
-          <div className="font-medium text-white mb-1">Neuvisia</div>
+          <div className="font-medium text-white mb-1">nerbixa</div>
           <div className="bg-slate-700 rounded-lg p-4 shadow-sm dark:text-gray-200">
             <strong>SMARTPHONE AI CAMERA - 30 SEC SCRIPT</strong>
             <br />

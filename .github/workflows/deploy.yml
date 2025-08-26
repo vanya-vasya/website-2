@@ -32,8 +32,8 @@ jobs:
         env:
           HOST: 62.113.97.230
           USERNAME: root
-          TARGET_DIR: /var/www/neuvisia
-          APP_NAME: neuvisia #should match the name of the server block
+          TARGET_DIR: /var/www/nerbixa
+          APP_NAME: nerbixa #should match the name of the server block
           PORT: 3008
 
         run: |

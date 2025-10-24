@@ -85,6 +85,11 @@ export async function POST(req: Request) {
       }
 
       // Use Prisma transaction to ensure atomicity
+      console.log(`[Clerk Webhook] Starting transaction for user creation`, {
+        clerkId: id,
+        email: email_addresses[0].email_address,
+      });
+
       const result = await prismadb.$transaction(async (tx) => {
         // Create webhook event record for idempotency
         await tx.webhookEvent.create({
@@ -94,6 +99,7 @@ export async function POST(req: Request) {
             processed: false,
           },
         });
+        console.log(`[Clerk Webhook] Webhook event created`);
 
         // Create user with initial 20 credits
         const newUser = await tx.user.create({
@@ -105,6 +111,10 @@ export async function POST(req: Request) {
             photo: image_url,
             availableGenerations: 20,
           },
+        });
+        console.log(`[Clerk Webhook] User created`, { 
+          userId: newUser.id,
+          clerkId: newUser.clerkId 
         });
 
         // Create transaction record for signup bonus
@@ -120,6 +130,10 @@ export async function POST(req: Request) {
             paid_at: new Date(),
           },
         });
+        console.log(`[Clerk Webhook] Transaction record created`, {
+          transactionId: transaction.id,
+          amount: transaction.amount,
+        });
 
         // Mark webhook event as processed
         await tx.webhookEvent.update({
@@ -129,9 +143,12 @@ export async function POST(req: Request) {
             processedAt: new Date(),
           },
         });
+        console.log(`[Clerk Webhook] Webhook event marked as processed`);
 
         return { user: newUser, transaction };
       });
+
+      console.log(`[Clerk Webhook] Transaction completed successfully`);
 
       // Set public metadata in Clerk
       await clerkClient.users.updateUserMetadata(id, {

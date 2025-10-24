@@ -7,13 +7,25 @@ import prismadb from "@/lib/prismadb";
 // CREATE
 export async function createUser(user: any) {
   try {
+    console.log('[createUser] Starting user creation', { 
+      clerkId: user.clerkId,
+      email: user.email 
+    });
+    
     const newUser = await prismadb.user.create({
       data: user,
     });
 
+    console.log('[createUser] User created successfully', { 
+      id: newUser.id,
+      clerkId: newUser.clerkId 
+    });
+
     return newUser;
   } catch (error) {
-    console.error(error);
+    console.error('[createUser] Error creating user:', error);
+    console.error('[createUser] User data:', user);
+    throw error;
   }
 }
 
@@ -36,6 +48,8 @@ export async function getUserById(userId: string){
 // UPDATE
 export async function updateUser(clerkId: string, user: any){
   try {
+    console.log('[updateUser] Updating user', { clerkId });
+    
     const updatedUser = await prismadb.user.update({
       where: { clerkId },
       data: user,
@@ -43,9 +57,15 @@ export async function updateUser(clerkId: string, user: any){
 
     if (!updatedUser) throw new Error("User update failed");
 
+    console.log('[updateUser] User updated successfully', { 
+      id: updatedUser.id,
+      clerkId: updatedUser.clerkId 
+    });
+
     return updatedUser;
   } catch (error) {
-    console.error(error);
+    console.error('[updateUser] Error updating user:', error);
+    throw error;
   }
 }
 

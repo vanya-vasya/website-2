@@ -1,8 +1,51 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-// NOTE: Keep imports minimal; we do not auto-create users here to avoid backend logic changes.
 import prismadb from "@/lib/prismadb";
+
+// CREATE OR GET - Upsert user (create if not exists, return if exists)
+export async function createOrGetUser(clerkUser: {
+  clerkId: string;
+  email: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  photo: string;
+}) {
+  try {
+    console.log('[CREATE_OR_GET_USER] Starting for clerkId:', clerkUser.clerkId);
+    
+    // Try to find existing user
+    const existingUser = await prismadb.user.findUnique({
+      where: { clerkId: clerkUser.clerkId },
+    });
+
+    if (existingUser) {
+      console.log('[CREATE_OR_GET_USER] User exists:', existingUser.id);
+      return existingUser;
+    }
+
+    // User doesn't exist, create new
+    console.log('[CREATE_OR_GET_USER] Creating new user');
+    const newUser = await prismadb.user.create({
+      data: {
+        clerkId: clerkUser.clerkId,
+        email: clerkUser.email,
+        firstName: clerkUser.firstName,
+        lastName: clerkUser.lastName,
+        photo: clerkUser.photo,
+        availableGenerations: 20, // Initial free tokens
+        usedGenerations: 0,
+      },
+    });
+
+    console.log('[CREATE_OR_GET_USER] Created user:', newUser.id);
+    return newUser;
+    
+  } catch (error) {
+    console.error('[CREATE_OR_GET_USER] Error:', error);
+    throw error;
+  }
+}
 
 // CREATE
 export async function createUser(user: any) {

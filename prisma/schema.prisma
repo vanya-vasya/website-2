@@ -24,21 +24,25 @@ model User {
 
 model Transaction {
   id                  String    @id @default(cuid())
-  tracking_id         String
-  userId              String?
+  tracking_id         String    @unique // NetworkX transaction ID (for idempotency)
+  userId              String // Clerk user ID (foreign key to User.clerkId)
   status              String?
-  amount              Int?
-  currency            String?
-  description         String?
-  type                String?
-  payment_method_type String?
-  message             String?
-  paid_at             DateTime?
-  receipt_url         String?
+  amount              Int? // Amount in cents/minor currency units
+  currency            String? // Currency code (USD, GBP, EUR, etc.)
+  description         String? // Payment description with token count
+  type                String? // payment, refund, credit, etc.
+  payment_method_type String? // card, bank_transfer, etc.
+  message             String? // Success/error message
+  paid_at             DateTime? // Payment timestamp
+  receipt_url         String? // URL to PDF receipt
   createdAt           DateTime  @default(now())
-  reason              String?
-  webhookEventId      String?   @unique
-  user                User      @relation(fields: [tracking_id], references: [clerkId])
+  reason              String? // Failure/cancellation reason
+  webhookEventId      String?   @unique // For webhook idempotency (legacy)
+  user                User      @relation(fields: [userId], references: [clerkId])
+
+  @@index([userId])
+  @@index([status])
+  @@index([paid_at])
 }
 
 model WebhookEvent {

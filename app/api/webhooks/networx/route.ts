@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import prismadb from '@/lib/prismadb';
+import { transporter } from '@/config/nodemailer';
+import { generatePdfReceipt } from '@/lib/receiptGeneration';
 
 /**
  * Networx Payment Webhook Handler
@@ -18,6 +20,9 @@ import prismadb from '@/lib/prismadb';
  * - Never store transaction data in User table
  * - Always check idempotency before processing
  * - Only update User table for balance changes on successful payments
+ * - Generate and email PDF receipts for successful payments
+ * - Use tracking_id for idempotency checks (primary)
+ * - Use webhookEventId as fallback idempotency check
  */
 
 // Функция для верификации подписи webhook согласно документации Networx
@@ -122,20 +127,39 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ Webhook signature verified');
 
-    // Идемпотентность: Проверка на дубликаты через webhookEventId
+    // Идемпотентность: Проверка на дубликаты через tracking_id (PRIMARY) и webhookEventId (FALLBACK)
     if (transaction_id) {
-      const existingTransaction = await prismadb.transaction.findUnique({
+      // Check using tracking_id first (more reliable for idempotency)
+      const existingByTrackingId = await prismadb.transaction.findUnique({
+        where: {
+          tracking_id: transaction_id
+        }
+      });
+
+      if (existingByTrackingId) {
+        console.log('⚠️  Duplicate webhook detected (via tracking_id) - transaction already processed:', transaction_id);
+        return NextResponse.json({ 
+          status: 'ok',
+          message: 'Transaction already processed',
+          idempotent: true,
+          method: 'tracking_id'
+        }, { status: 200 });
+      }
+
+      // Fallback: Check using webhookEventId
+      const existingByWebhookId = await prismadb.transaction.findUnique({
         where: {
           webhookEventId: transaction_id
         }
       });
 
-      if (existingTransaction) {
-        console.log('⚠️  Duplicate webhook detected - transaction already processed:', transaction_id);
+      if (existingByWebhookId) {
+        console.log('⚠️  Duplicate webhook detected (via webhookEventId) - transaction already processed:', transaction_id);
         return NextResponse.json({ 
           status: 'ok',
           message: 'Transaction already processed',
-          idempotent: true
+          idempotent: true,
+          method: 'webhookEventId'
         }, { status: 200 });
       }
     }
@@ -246,6 +270,67 @@ export async function POST(request: NextRequest) {
             console.log('   New available generations:', updatedUser.availableGenerations);
             console.log('   Reset used generations:', updatedUser.usedGenerations);
           });
+
+          // Generate and send receipt email
+          try {
+            console.log('📧 Generating PDF receipt and sending email...');
+            
+            const receiptId = transaction_id?.slice(-12) || Date.now().toString().slice(-12);
+            const receiptDate = new Date().toLocaleDateString('en-US', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            });
+            
+            const pdfBuffer = await generatePdfReceipt(
+              receiptId,
+              customer_email || user.email,
+              receiptDate,
+              tokensToAdd,
+              description || `Payment for ${tokensToAdd} tokens`,
+              amount ? parseInt(amount) : 0,
+              currency || 'USD'
+            );
+
+            await transporter.sendMail({
+              from: process.env.OUTBOX_EMAIL,
+              to: customer_email || user.email,
+              subject: `Receipt #${receiptId} - Nerbixa Token Purchase`,
+              text: `Hi there,
+
+We're excited to welcome you to Nerbixa — thanks so much for your recent order on nerbixa.com!
+
+You'll find your transaction receipt attached to this message. Be sure to keep it in case you need it later.
+
+Transaction Details:
+- Receipt ID: ${receiptId}
+- Tokens Purchased: ${tokensToAdd}
+- Amount: ${((amount ? parseInt(amount) : 0) / 100).toFixed(2)} ${currency || 'USD'}
+- Date: ${receiptDate}
+
+If you run into any issues, have questions about your token usage, or need guidance, our support team is just an email away at support@nerbixa.com. We're always ready to help.
+
+We're honored to be part of your creative journey.
+
+With appreciation,
+The Nerbixa Team
+nerbixa.com
+support@nerbixa.com`,
+              attachments: [
+                {
+                  filename: `receipt-${receiptId}.pdf`,
+                  content: pdfBuffer,
+                  contentType: 'application/pdf',
+                },
+              ],
+            });
+            
+            console.log('✅ Receipt email sent to:', customer_email || user.email);
+          } catch (emailError) {
+            console.error('⚠️  Failed to send receipt email:', emailError);
+            console.error('   Email error details:', emailError instanceof Error ? emailError.message : 'Unknown error');
+            // Don't fail the webhook if email fails - payment is already processed
+          }
 
           const processingTime = Date.now() - startTime;
           console.log('═══════════════════════════════════════════════════════');

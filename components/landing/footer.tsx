@@ -64,8 +64,8 @@ const Footer = () => {
   let year = date.getFullYear();
 
   return (
-    <footer className="main-footer max-w-[1350px] mx-auto bg-white">
-      <div className="main-footer__top">
+    <footer className="main-footer w-full bg-white">
+      <div className="main-footer__top max-w-[1350px] mx-auto">
         <div className="px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             <div className="pr-4 pl-4">
@@ -199,7 +199,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      <div className="main-footer__bottom">
+      <div className="main-footer__bottom max-w-[1350px] mx-auto">
         <div className="flex justify-between items-center px-4 mx-4">
           <div className="">
             <p 

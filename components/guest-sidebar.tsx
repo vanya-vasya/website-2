@@ -28,7 +28,7 @@ const routes = [
     label: 'Image Generation',
     icon: ImageIcon,
     color: "text-pink-700",
-    href: '/dashboard/image',
+    href: '/dashboard/image-generation',
   },
   {
     label: 'Video Generation',
@@ -40,7 +40,7 @@ const routes = [
     label: 'Music Generation',
     icon: Music,
     color: "text-emerald-500",
-    href: '/dashboardmusic',
+    href: '/dashboard/music',
   },
   {
     label: 'Code Generation',

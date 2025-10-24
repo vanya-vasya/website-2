@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     
     // Force correct API URL for hosted payment page - override any incorrect environment variable
     const apiUrl = 'https://checkout.networxpay.com';  // Correct API URL for hosted payment page
-    const returnUrl = process.env.NETWORX_RETURN_URL || 'https://nerbixa.com/payment/callback';
+    const returnUrl = process.env.NETWORX_RETURN_URL || 'https://nerbixa.com/dashboard';
     const notificationUrl = process.env.NETWORX_WEBHOOK_URL || 'https://nerbixa.com/api/webhooks/networx';
     const useTestMode = process.env.NETWORX_TEST_MODE === 'true'; // Enable test transactions
     
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
           email: customerEmail || 'test@example.com' // Always include customer email
         },
         settings: {
-          return_url: `${returnUrl}?order_id=${orderId}`, // Pass orderId in return URL
+          return_url: `${returnUrl}?payment=success&order_id=${orderId}`, // Pass payment status and orderId in return URL
           notification_url: notificationUrl // URL для получения webhook уведомлений
         }
       }

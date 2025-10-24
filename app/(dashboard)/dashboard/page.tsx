@@ -10,9 +10,10 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
+import { toast } from "react-hot-toast";
 
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -44,11 +45,34 @@ const item = {
 
 export default function HomePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const sliderRef = useRef<HTMLDivElement>(null);
   const [activeFilters, setActiveFilters] = useState<Profession[]>([]);
   const [filteredTools, setFilteredTools] = useState(tools);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+
+  // Handle payment success notification
+  useEffect(() => {
+    const paymentStatus = searchParams.get('payment');
+    const orderId = searchParams.get('order_id');
+    
+    if (paymentStatus === 'success' && orderId) {
+      toast.success('Payment successful! Your credits have been added to your account.', {
+        duration: 5000,
+        icon: '🎉',
+      });
+      
+      // Clean up URL parameters without reloading
+      const url = new URL(window.location.href);
+      url.searchParams.delete('payment');
+      url.searchParams.delete('order_id');
+      url.searchParams.delete('token');
+      url.searchParams.delete('status');
+      url.searchParams.delete('uid');
+      window.history.replaceState({}, '', url.pathname);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (activeFilters.length === 0) {

@@ -82,8 +82,11 @@ export const NetworkPaymentWidget: React.FC<NetworkPaymentWidgetProps> = ({
         toast.success('Redirecting to payment page...');
         
         // Immediate redirect after token creation (non-blocking)
+        const paymentUrl = data.payment_url;
         setTimeout(() => {
-          window.location.assign(data.payment_url);
+          if (paymentUrl) {
+            window.location.assign(paymentUrl);
+          }
         }, 500);
       } else {
         const errorMsg = data.error || 'Failed to create payment token';

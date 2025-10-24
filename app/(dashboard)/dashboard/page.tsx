@@ -57,7 +57,24 @@ export default function HomePage() {
     const paymentStatus = searchParams.get('payment');
     const orderId = searchParams.get('order_id');
     
+    console.log('═════════════════════════════════════════════════════════');
+    console.log('📍 Dashboard Page Loaded');
+    console.log('Current URL:', window.location.href);
+    console.log('Query Parameters:', {
+      payment: paymentStatus,
+      order_id: orderId,
+      token: searchParams.get('token'),
+      status: searchParams.get('status'),
+      uid: searchParams.get('uid')
+    });
+    console.log('═════════════════════════════════════════════════════════');
+    
     if (paymentStatus === 'success' && orderId) {
+      console.log('✅ SUCCESS: Payment success detected!');
+      console.log('   - Payment Status:', paymentStatus);
+      console.log('   - Order ID:', orderId);
+      console.log('   - Showing success notification...');
+      
       toast.success('Payment successful! Your credits have been added to your account.', {
         duration: 5000,
         icon: '🎉',
@@ -65,12 +82,29 @@ export default function HomePage() {
       
       // Clean up URL parameters without reloading
       const url = new URL(window.location.href);
+      const originalUrl = url.toString();
+      
       url.searchParams.delete('payment');
       url.searchParams.delete('order_id');
       url.searchParams.delete('token');
       url.searchParams.delete('status');
       url.searchParams.delete('uid');
-      window.history.replaceState({}, '', url.pathname);
+      
+      const cleanedUrl = url.pathname;
+      
+      console.log('🧹 Cleaning up URL...');
+      console.log('   - Original:', originalUrl);
+      console.log('   - Cleaned:', cleanedUrl);
+      
+      window.history.replaceState({}, '', cleanedUrl);
+      
+      console.log('✅ URL cleaned successfully');
+    } else if (paymentStatus && paymentStatus !== 'success') {
+      console.log('⚠️  WARNING: Non-success payment status detected:', paymentStatus);
+      console.log('   - This should NOT show success notification');
+      console.log('   - Order ID:', orderId);
+    } else if (!paymentStatus) {
+      console.log('ℹ️  INFO: No payment status in URL (normal page load)');
     }
   }, [searchParams]);
 

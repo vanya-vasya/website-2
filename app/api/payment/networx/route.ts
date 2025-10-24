@@ -72,16 +72,39 @@ export async function POST(request: NextRequest) {
     const notificationUrl = process.env.NETWORX_WEBHOOK_URL || 'https://nerbixa.com/api/webhooks/networx';
     const useTestMode = process.env.NETWORX_TEST_MODE === 'true'; // Enable test transactions
     
+    console.log('═════════════════════════════════════════════════════════');
+    console.log('🔧 Payment API Configuration');
+    console.log('Environment:', process.env.NODE_ENV);
     console.log('Environment variables:', {
       shopId: shopId.substring(0, 5) + '***', // Mask for security
       secretKey: '***' + secretKey.substring(secretKey.length - 4), // Mask for security
       apiUrl,
       useTestMode,
       returnUrl,
-      notificationUrl
+      notificationUrl,
+      hasEnvReturnUrl: !!process.env.NETWORX_RETURN_URL,
+      envReturnUrlValue: process.env.NETWORX_RETURN_URL ? process.env.NETWORX_RETURN_URL.substring(0, 30) + '...' : 'NOT SET (using default)'
     });
+    console.log('═════════════════════════════════════════════════════════');
     
     console.log('API Version: 2, Authentication: HTTP Basic, Using Hosted Payment Page');
+
+    // Build the complete return URL
+    const fullReturnUrl = `${returnUrl}?payment=success&order_id=${orderId}`;
+    
+    console.log('');
+    console.log('🎯 PAYMENT RETURN URL CONFIGURATION:');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('Base Return URL:', returnUrl);
+    console.log('Full Return URL:', fullReturnUrl);
+    console.log('Order ID:', orderId);
+    console.log('User ID:', userId);
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('');
+    console.log('⚠️  IMPORTANT: After payment, user should be redirected to:');
+    console.log('   ', fullReturnUrl);
+    console.log('   NOT to /payment/success or any other page!');
+    console.log('');
 
     // Request structure for hosted payment page according to working NetworkX Pay example
     const requestData = {
@@ -98,7 +121,7 @@ export async function POST(request: NextRequest) {
           email: customerEmail || 'test@example.com' // Always include customer email
         },
         settings: {
-          return_url: `${returnUrl}?payment=success&order_id=${orderId}`, // Pass payment status and orderId in return URL
+          return_url: fullReturnUrl, // Use the computed full return URL
           notification_url: notificationUrl // URL для получения webhook уведомлений
         }
       }

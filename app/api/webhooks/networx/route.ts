@@ -2,6 +2,24 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import prismadb from '@/lib/prismadb';
 
+/**
+ * Networx Payment Webhook Handler
+ * 
+ * DATA SEPARATION POLICY:
+ * ========================
+ * 1. Transaction table: Stores ALL transaction data (payments, refunds, etc.)
+ * 2. User table: Stores ONLY user profile and token balance (availableGenerations, usedGenerations)
+ * 3. Users are created ONLY via Clerk webhook (user.created event)
+ * 4. Payment webhook ONLY updates existing users' balance
+ * 5. All transaction writes go exclusively to Transaction table with idempotency (webhookEventId)
+ * 
+ * IMPORTANT RULES:
+ * - Never create users in payment webhook
+ * - Never store transaction data in User table
+ * - Always check idempotency before processing
+ * - Only update User table for balance changes on successful payments
+ */
+
 // Функция для верификации подписи webhook согласно документации Networx
 function verifyWebhookSignature(data: Record<string, any>, signature: string, secretKey: string): boolean {
   // Удаляем подпись из данных для верификации
@@ -104,11 +122,11 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ Webhook signature verified');
 
-    // Проверка на дубликаты (идемпотентность)
+    // Идемпотентность: Проверка на дубликаты через webhookEventId
     if (transaction_id) {
-      const existingTransaction = await prismadb.transaction.findFirst({
+      const existingTransaction = await prismadb.transaction.findUnique({
         where: {
-          tracking_id: transaction_id
+          webhookEventId: transaction_id
         }
       });
 
@@ -116,7 +134,8 @@ export async function POST(request: NextRequest) {
         console.log('⚠️  Duplicate webhook detected - transaction already processed:', transaction_id);
         return NextResponse.json({ 
           status: 'ok',
-          message: 'Transaction already processed' 
+          message: 'Transaction already processed',
+          idempotent: true
         }, { status: 200 });
       }
     }
@@ -135,7 +154,9 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        // Проверяем существование пользователя
+        // CRITICAL: Проверяем существование пользователя
+        // Мы НЕ создаем пользователей в webhook платежей
+        // Пользователи должны быть созданы только через Clerk webhook
         const user = await prismadb.user.findUnique({
           where: {
             clerkId: tracking_id,
@@ -151,8 +172,12 @@ export async function POST(request: NextRequest) {
 
         if (!user) {
           console.error('❌ User not found:', tracking_id);
+          console.error('⚠️  Payment received for non-existent user. User must be created via Clerk webhook first.');
           return NextResponse.json(
-            { error: 'User not found' },
+            { 
+              error: 'User not found',
+              message: 'User must be created before processing payments' 
+            },
             { status: 404 }
           );
         }
@@ -175,13 +200,15 @@ export async function POST(request: NextRequest) {
         console.log('🎟️  Tokens to add:', tokensToAdd);
 
         // Выполняем операции в транзакции базы данных
+        // ВАЖНО: Все данные о транзакциях идут ТОЛЬКО в таблицу Transaction
+        // В таблице User обновляется ТОЛЬКО баланс токенов (availableGenerations, usedGenerations)
         try {
           await prismadb.$transaction(async (tx) => {
-            // 1. Создаем запись о транзакции
+            // 1. Создаем запись о транзакции в таблице Transaction
             const newTransaction = await tx.transaction.create({
               data: {
                 tracking_id: transaction_id || tracking_id,
-                userId: tracking_id,
+                userId: tracking_id, // Clerk user ID для связи
                 status: 'successful',
                 amount: amount ? parseInt(amount) : null,
                 currency: currency || 'USD',
@@ -191,26 +218,33 @@ export async function POST(request: NextRequest) {
                 message: message || 'Payment successful',
                 paid_at: paid_at ? new Date(paid_at) : new Date(),
                 receipt_url: null,
-                webhookEventId: transaction_id,
+                webhookEventId: transaction_id, // Для идемпотентности
               },
             });
 
-            console.log('✅ Transaction record created:', newTransaction.id);
+            console.log('✅ Transaction record created in Transaction table:', newTransaction.id);
+            console.log('   Transaction ID:', transaction_id);
+            console.log('   Amount:', amount, currency);
+            console.log('   Tokens:', tokensToAdd);
 
-            // 2. Обновляем баланс пользователя
+            // 2. Обновляем ТОЛЬКО баланс пользователя (НЕ создаем нового пользователя)
+            // User table содержит ТОЛЬКО профиль и баланс, НЕ данные транзакций
             const updatedUser = await tx.user.update({
               where: {
                 clerkId: tracking_id,
               },
               data: {
+                // Формула: новый баланс = текущий доступный - использованный + купленные токены
                 availableGenerations: user.availableGenerations - user.usedGenerations + tokensToAdd,
-                usedGenerations: 0,
+                usedGenerations: 0, // Сброс использованных после пополнения
               },
             });
 
-            console.log('✅ User balance updated');
-            console.log('New available generations:', updatedUser.availableGenerations);
-            console.log('Reset used generations:', updatedUser.usedGenerations);
+            console.log('✅ User balance updated in User table');
+            console.log('   Previous balance:', user.availableGenerations);
+            console.log('   Used generations:', user.usedGenerations);
+            console.log('   New available generations:', updatedUser.availableGenerations);
+            console.log('   Reset used generations:', updatedUser.usedGenerations);
           });
 
           const processingTime = Date.now() - startTime;
@@ -233,7 +267,7 @@ export async function POST(request: NextRequest) {
         console.log(`❌ Payment failed for order ${order_id}`);
         console.log('Error message:', error_message);
         
-        // Сохраняем запись о неудачной транзакции
+        // Записываем ТОЛЬКО в таблицу Transaction, НЕ обновляем User
         if (transaction_id) {
           await prismadb.transaction.create({
             data: {
@@ -250,13 +284,14 @@ export async function POST(request: NextRequest) {
               webhookEventId: transaction_id,
             },
           });
-          console.log('✅ Failed transaction record created');
+          console.log('✅ Failed transaction record created in Transaction table');
         }
         break;
 
       case 'pending':
         console.log(`⏳ Payment pending for order ${order_id}`);
         
+        // Записываем ТОЛЬКО в таблицу Transaction, НЕ обновляем User
         if (transaction_id) {
           await prismadb.transaction.create({
             data: {
@@ -272,13 +307,14 @@ export async function POST(request: NextRequest) {
               webhookEventId: transaction_id,
             },
           });
-          console.log('✅ Pending transaction record created');
+          console.log('✅ Pending transaction record created in Transaction table');
         }
         break;
 
       case 'canceled':
         console.log(`🚫 Payment canceled for order ${order_id}`);
         
+        // Записываем ТОЛЬКО в таблицу Transaction, НЕ обновляем User
         if (transaction_id) {
           await prismadb.transaction.create({
             data: {
@@ -294,7 +330,7 @@ export async function POST(request: NextRequest) {
               webhookEventId: transaction_id,
             },
           });
-          console.log('✅ Canceled transaction record created');
+          console.log('✅ Canceled transaction record created in Transaction table');
         }
         break;
 
@@ -306,8 +342,9 @@ export async function POST(request: NextRequest) {
           const tokensToRefund = description ? extractTokensFromDescription(description) : null;
           
           if (tokensToRefund) {
+            // Обрабатываем возврат в транзакции
             await prismadb.$transaction(async (tx) => {
-              // Создаем запись о возврате
+              // 1. Создаем запись о возврате в Transaction table
               await tx.transaction.create({
                 data: {
                   tracking_id: transaction_id,
@@ -322,8 +359,9 @@ export async function POST(request: NextRequest) {
                   webhookEventId: transaction_id,
                 },
               });
+              console.log('✅ Refund transaction record created in Transaction table');
 
-              // Вычитаем токены из баланса пользователя
+              // 2. Вычитаем токены из баланса пользователя (ТОЛЬКО обновление баланса)
               const user = await tx.user.findUnique({
                 where: { clerkId: tracking_id },
                 select: { availableGenerations: true }
@@ -333,10 +371,13 @@ export async function POST(request: NextRequest) {
                 await tx.user.update({
                   where: { clerkId: tracking_id },
                   data: {
+                    // Вычитаем возвращенные токены, но не уходим в минус
                     availableGenerations: Math.max(0, user.availableGenerations - tokensToRefund),
                   },
                 });
-                console.log('✅ User balance adjusted for refund');
+                console.log('✅ User balance adjusted for refund in User table');
+                console.log('   Tokens refunded:', tokensToRefund);
+                console.log('   New balance:', Math.max(0, user.availableGenerations - tokensToRefund));
               }
             });
           }

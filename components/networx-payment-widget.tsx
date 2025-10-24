@@ -45,8 +45,9 @@ export const NetworkPaymentWidget: React.FC<NetworkPaymentWidgetProps> = ({
   const [paymentToken, setPaymentToken] = useState<string | null>(null);
   const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
   const [email, setEmail] = useState(customerEmail || '');
+  const [error, setError] = useState<string | null>(null);
 
-  // Function to create payment token
+  // Function to create payment token and auto-redirect
   const createPaymentToken = async () => {
     if (!email) {
       toast.error('Please enter email to continue');
@@ -54,6 +55,7 @@ export const NetworkPaymentWidget: React.FC<NetworkPaymentWidgetProps> = ({
     }
 
     setIsLoading(true);
+    setError(null);
 
     try {
       const response = await fetch('/api/payment/networx', {
@@ -77,17 +79,26 @@ export const NetworkPaymentWidget: React.FC<NetworkPaymentWidgetProps> = ({
         setPaymentToken(data.token);
         setPaymentUrl(data.payment_url);
         
-        toast.success('Payment token created successfully');
+        toast.success('Redirecting to payment page...');
+        
+        // Immediate redirect after token creation (non-blocking)
+        setTimeout(() => {
+          window.location.assign(data.payment_url);
+        }, 500);
       } else {
+        const errorMsg = data.error || 'Failed to create payment token';
         console.error('Payment token creation failed:', data);
-        toast.error(data.error || 'Failed to create payment token');
+        setError(errorMsg);
+        toast.error(errorMsg);
         onError?.(data);
+        setIsLoading(false);
       }
     } catch (error) {
+      const errorMsg = 'Server connection error. Please try again.';
       console.error('Payment token creation error:', error);
-      toast.error('Server connection error');
+      setError(errorMsg);
+      toast.error(errorMsg);
       onError?.(error);
-    } finally {
       setIsLoading(false);
     }
   };
@@ -147,84 +158,63 @@ export const NetworkPaymentWidget: React.FC<NetworkPaymentWidgetProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {!paymentToken ? (
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-gray-700">Email for notifications</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="your-email@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={isLoading}
-                required
-                className="bg-white border-gray-300 text-gray-900"
-              />
+        <div className="space-y-4">
+          {error && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-800">
+                ❌ {error}
+              </p>
             </div>
+          )}
 
-            <div className="space-y-2">
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-gray-700">Email for notifications</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="your-email@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={isLoading}
+              required
+              className="bg-white border-gray-300 text-gray-900"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-sm text-gray-600">
+              <strong>Order:</strong> {orderId}
+            </p>
+            {description && (
               <p className="text-sm text-gray-600">
-                <strong>Order:</strong> {orderId}
+                <strong>Description:</strong> {description}
               </p>
-              {description && (
-                <p className="text-sm text-gray-600">
-                  <strong>Description:</strong> {description}
-                </p>
-              )}
-            </div>
-
-            <Button
-              onClick={createPaymentToken}
-              disabled={isLoading || !email}
-              className="w-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 hover:from-cyan-500 hover:via-blue-600 hover:to-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-            >
-              {isLoading ? (
-                <>
-                  <Loader />
-                  Creating token...
-                </>
-              ) : (
-                'Create Payment Token'
-              )}
-            </Button>
+            )}
           </div>
-        ) : (
-          <div className="space-y-4">
-            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-              <p className="text-sm text-green-800">
-                ✅ Payment token created successfully
-              </p>
-              <p className="text-xs text-green-600 mt-1">
-                Token: {paymentToken}
-              </p>
-            </div>
 
-            <div className="space-y-2">
-              <Button
-                onClick={openPaymentWidget}
-                className="w-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 hover:from-cyan-500 hover:via-blue-600 hover:to-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-                disabled={!paymentUrl}
-              >
-                Proceed to Payment
-              </Button>
+          <Button
+            onClick={createPaymentToken}
+            disabled={isLoading || !email}
+            className="w-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 hover:from-cyan-500 hover:via-blue-600 hover:to-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+          >
+            {isLoading ? (
+              <>
+                <Loader />
+                Creating token and redirecting...
+              </>
+            ) : (
+              'Create Payment Token'
+            )}
+          </Button>
 
-              <Button
-                onClick={checkPaymentStatus}
-                variant="outline"
-                className="w-full border-gray-300 text-gray-700 hover:bg-gray-50"
-              >
-                Check Payment Status
-              </Button>
-            </div>
-
+          {!isLoading && (
             <div className="text-xs text-gray-600">
-              <p>• You will be redirected to the secure payment page</p>
+              <p>• Click to create token and redirect to secure payment page</p>
               <p>• Complete your payment with credit/debit card</p>
-              <p>• You will return here after payment completion</p>
+              <p>• You will be redirected back after payment completion</p>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </CardContent>
     </Card>
   );

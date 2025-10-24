@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, ArrowLeft, Receipt } from 'lucide-react';
@@ -129,7 +128,7 @@ const PaymentSuccessPage = () => {
     });
   }, [transactionData, balanceVerified, error, searchParams]);
 
-  // Countdown and redirect to dashboard
+  // Countdown and redirect to dashboard after balance verification
   useEffect(() => {
     if (!balanceVerified) return;
 
@@ -137,7 +136,8 @@ const PaymentSuccessPage = () => {
       setRedirectCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(countdownInterval);
-          router.push('/dashboard');
+          // Redirect to dashboard with success parameter
+          router.push('/dashboard?payment_success=true');
           return 0;
         }
         return prev - 1;
@@ -167,12 +167,10 @@ const PaymentSuccessPage = () => {
             <CardDescription>{error}</CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <Link href="/dashboard">
-              <Button>
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Вернуться в панель управления
-              </Button>
-            </Link>
+            <Button onClick={() => router.push('/dashboard')}>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Перейти к панели управления
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -288,16 +286,18 @@ const PaymentSuccessPage = () => {
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               {balanceVerified 
-                ? `Перейти к панели (${redirectCountdown}s)` 
-                : 'Вернуться в панель управления'}
+                ? `Continue to Dashboard (${redirectCountdown}s)` 
+                : 'Continue to Dashboard'}
             </Button>
             
-            <Link href="/dashboard/billing/payment-history" className="w-full">
-              <Button variant="outline" className="w-full">
-                <Receipt className="w-4 h-4 mr-2" />
-                Посмотреть историю платежей
-              </Button>
-            </Link>
+            <Button 
+              variant="outline" 
+              className="w-full"
+              onClick={() => router.push('/dashboard/billing/payment-history')}
+            >
+              <Receipt className="w-4 h-4 mr-2" />
+              View Payment History
+            </Button>
           </div>
         </CardContent>
       </Card>

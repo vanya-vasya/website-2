@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     
     // Force correct API URL for hosted payment page - override any incorrect environment variable
     const apiUrl = 'https://checkout.networxpay.com';  // Correct API URL for hosted payment page
-    const returnUrl = process.env.NETWORX_RETURN_URL || 'https://nerbixa.com/dashboard';
+    const returnUrl = process.env.NETWORX_RETURN_URL || 'https://nerbixa.com/payment/success';
     const notificationUrl = process.env.NETWORX_WEBHOOK_URL || 'https://nerbixa.com/api/webhooks/networx';
     const useTestMode = process.env.NETWORX_TEST_MODE === 'true'; // Enable test transactions
     
@@ -89,8 +89,8 @@ export async function POST(request: NextRequest) {
     
     console.log('API Version: 2, Authentication: HTTP Basic, Using Hosted Payment Page');
 
-    // Build the complete return URL
-    const fullReturnUrl = `${returnUrl}?payment=success&order_id=${orderId}`;
+    // Build the complete return URL with order_id parameter
+    const fullReturnUrl = `${returnUrl}?order_id=${orderId}`;
     
     console.log('');
     console.log('🎯 PAYMENT RETURN URL CONFIGURATION:');
@@ -101,9 +101,7 @@ export async function POST(request: NextRequest) {
     console.log('User ID:', userId);
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('');
-    console.log('⚠️  IMPORTANT: After payment, user should be redirected to:');
-    console.log('   ', fullReturnUrl);
-    console.log('   NOT to /payment/success or any other page!');
+    console.log('✅ FLOW: NetworkX → /payment/success → User clicks Continue → /dashboard');
     console.log('');
 
     // Request structure for hosted payment page according to working NetworkX Pay example

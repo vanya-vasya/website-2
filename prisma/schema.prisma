@@ -17,9 +17,9 @@ model User {
   lastName             String?
   usedGenerations      Int           @default(0)
   availableGenerations Int           @default(20)
-  transactions         Transaction[]
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
+  transactions         Transaction[]
 }
 
 model Transaction {
@@ -35,17 +35,17 @@ model Transaction {
   message             String?
   paid_at             DateTime?
   receipt_url         String?
+  createdAt           DateTime  @default(now())
   reason              String?
   webhookEventId      String?   @unique
-  createdAt           DateTime  @default(now())
   user                User      @relation(fields: [tracking_id], references: [clerkId])
 }
 
 model WebhookEvent {
-  id             String   @id @default(cuid())
-  eventId        String   @unique
-  eventType      String
-  processed      Boolean  @default(false)
-  processedAt    DateTime?
-  createdAt      DateTime @default(now())
+  id          String    @id @default(cuid())
+  eventId     String    @unique
+  eventType   String
+  processed   Boolean   @default(false)
+  processedAt DateTime?
+  createdAt   DateTime  @default(now())
 }

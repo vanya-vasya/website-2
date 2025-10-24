@@ -1,14 +1,28 @@
 -- Fix Transaction table schema
--- 1. Make tracking_id unique for proper idempotency
--- 2. Fix foreign key relationship (userId -> User.clerkId)
--- 3. Add indexes for better query performance
--- 4. Make userId NOT NULL (required for referential integrity)
+-- 1. Handle duplicate tracking_id values
+-- 2. Make tracking_id unique for proper idempotency
+-- 3. Fix foreign key relationship (userId -> User.clerkId)
+-- 4. Add indexes for better query performance
+-- 5. Make userId NOT NULL (required for referential integrity)
 
--- Step 1: Drop existing foreign key constraint
--- Note: In Prisma relationMode="prisma", foreign keys are not enforced at database level
--- So we just need to update the schema
+-- Step 1: Handle duplicate tracking_id values
+-- Keep only the most recent transaction for each tracking_id
+DO $$ 
+BEGIN
+  -- Delete older duplicate transactions, keeping the newest one
+  DELETE FROM "Transaction" t1
+  USING "Transaction" t2
+  WHERE t1."tracking_id" = t2."tracking_id"
+    AND t1."createdAt" < t2."createdAt";
+END $$;
 
--- Step 2: Make tracking_id unique (if not already)
+-- Step 2: Update existing NULL userId values
+-- In production, you should manually review and fix these records
+UPDATE "Transaction" 
+SET "userId" = "tracking_id" 
+WHERE "userId" IS NULL OR "userId" = '';
+
+-- Step 3: Make tracking_id unique (if not already)
 DO $$ 
 BEGIN
   IF NOT EXISTS (
@@ -19,12 +33,6 @@ BEGIN
     ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_tracking_id_key" UNIQUE ("tracking_id");
   END IF;
 END $$;
-
--- Step 3: Update existing NULL userId values to empty string (temporary fix)
--- In production, you should manually review and fix these records
-UPDATE "Transaction" 
-SET "userId" = "tracking_id" 
-WHERE "userId" IS NULL OR "userId" = '';
 
 -- Step 4: Make userId NOT NULL
 ALTER TABLE "Transaction" ALTER COLUMN "userId" SET NOT NULL;

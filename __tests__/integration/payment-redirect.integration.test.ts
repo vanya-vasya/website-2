@@ -13,11 +13,11 @@ import prismadb from "@/lib/prismadb";
 import { NextRequest } from "next/server";
 
 // Mock Clerk auth
-jest.mock("@clerk/nextjs", () => ({
+jest.mock("@clerk/nextjs/server", () => ({
   auth: jest.fn(),
 }));
 
-const { auth } = require("@clerk/nextjs");
+const { auth } = require("@clerk/nextjs/server");
 
 describe("Payment Redirect Integration Tests", () => {
   const testClerkId = `test_payment_user_${Date.now()}_${Math.random().toString(36).substring(7)}`;

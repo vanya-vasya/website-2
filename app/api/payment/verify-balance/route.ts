@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import prismadb from '@/lib/prismadb';
 
 // GET - Verify if user's balance has been updated after payment

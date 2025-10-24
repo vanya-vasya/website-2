@@ -13,7 +13,7 @@ import prismadb from "@/lib/prismadb";
 import { NextRequest } from "next/server";
 
 // Mock Clerk auth
-jest.mock("@clerk/nextjs", () => ({
+jest.mock("@clerk/nextjs/server", () => ({
   auth: jest.fn(),
 }));
 
@@ -30,7 +30,7 @@ jest.mock("@/lib/prismadb", () => ({
   },
 }));
 
-const { auth } = require("@clerk/nextjs");
+const { auth } = require("@clerk/nextjs/server");
 
 describe("Balance Verification API Unit Tests", () => {
   const mockUserId = "test_user_123";

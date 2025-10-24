@@ -1,26 +1,34 @@
-# Update to match your values: branch_name, app_name, SSH key name on GitHub from previous step if changed, server ip, username, port, and server Node pathname (using 'which pm2' on server to get path)
+# Nerbixa (Website 1) - CI/CD Configuration
+# This workflow deploys only the Nerbixa project to prevent conflicts with other projects
 
-name: Deploy Next.js App
+name: Deploy Nerbixa (Website 1)
 
 on:
   push:
     branches:
-      - main # Change to your specific branch
-      # - deployprod  # Additional branch for deployment
+      - main # Main production branch for Nerbixa
+      - feature/nerbixa-deployment # Nerbixa deployment branch
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - '*.md'
+  workflow_dispatch: # Allow manual deployment
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: production # Add environment protection
     steps:
-      - name: Checkout repository
+      - name: Checkout Nerbixa repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js for Nerbixa
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: 'npm'
 
-      - name: Check Node.js version
+      - name: Verify Node.js version
         run: node -v
 
       - name: Set up SSH
@@ -28,27 +36,40 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Deploy to VPS
+      - name: Deploy Nerbixa to VPS
         env:
           HOST: 62.113.97.230
           USERNAME: root
           TARGET_DIR: /var/www/nerbixa
-          APP_NAME: nerbixa #should match the name of the server block
+          APP_NAME: nerbixa # Nerbixa-specific app name
           PORT: 3008
+          PROJECT_NAME: "Nerbixa (Website 1)"
 
         run: |
+          echo "🚀 Deploying $PROJECT_NAME to production server..."
           ssh -o StrictHostKeyChecking=no $USERNAME@$HOST << EOF
-            export PATH=/root/.nvm/versions/node/v20.17.0/bin:$PATH #'which pm2' command on terminal will give the right path
+            echo "📁 Navigating to Nerbixa project directory..."
+            export PATH=/root/.nvm/versions/node/v20.17.0/bin:$PATH
             cd $TARGET_DIR
+            
+            echo "📥 Pulling latest Nerbixa code..."
             git pull origin ${GITHUB_REF#refs/heads/}
+            
+            echo "📦 Installing Nerbixa dependencies..."
             npm install
+            
+            echo "🔨 Building Nerbixa application..."
             npm run build
+            
+            echo "🔄 Managing Nerbixa PM2 process..."
             if pm2 list | grep -q $APP_NAME; then
-              echo "Restarting application: $APP_NAME"
+              echo "♻️  Restarting Nerbixa application: $APP_NAME"
               pm2 restart $APP_NAME
             else
-              echo "Starting application: $APP_NAME"
+              echo "🆕 Starting new Nerbixa application: $APP_NAME"
               pm2 start npm --name $APP_NAME -- start -- --port=$PORT
-            fi            
+            fi
+            
             pm2 save
+            echo "✅ Nerbixa deployment completed successfully!"
           EOF

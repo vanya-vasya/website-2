@@ -29,7 +29,7 @@ const TermsAndConditions = () => {
               <h3 className="page-title__title" style={{ color: 'black', fontSize: '32px', marginBottom: '20px' }}>Terms and Conditions</h3>
             </div>
             <p className="page-title__text" style={{ color: 'black' }}>
-              Updated: 25 October 2025 (Asia/Tbilisi)
+              Updated: 25 October 2025
             </p>
             <p className="page-title__text" style={{ color: 'black', marginTop: '10px' }}>
               These Terms and Conditions outline the key rules and requirements for using our services. We encourage you to read them carefully.

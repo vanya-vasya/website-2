@@ -40,7 +40,7 @@ export default async function DashboardLayout({
                 initialAvailableGenerations={apiAvailableGenerations}
               />
             </div>
-            <div className="rounded-full bg-indigo-500/10 border border-indigo-500/20 backdrop-filter backdrop-blur-sm">
+            <div className="dashboard-clerk-avatar rounded-full bg-indigo-500/10 border border-indigo-500/20 backdrop-filter backdrop-blur-sm hover:bg-indigo-500/10 hover:border-indigo-500/20 hover:shadow-none active:bg-indigo-500/10 focus:outline-none focus:ring-0">
               <UserButton afterSignOutUrl="/" />
             </div>
           </div>

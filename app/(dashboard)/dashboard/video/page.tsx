@@ -132,7 +132,7 @@ const VideoPage = () => {
               <Loader />
             </div>
           )}
-          {!video && !isLoading && <Empty label="It's empty ¯\_(ツ)_/¯" />}
+          {!video && !isLoading && <Empty label="No results yet" />}
           {video && (
             <video
               controls

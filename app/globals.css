@@ -447,3 +447,56 @@ input:-webkit-autofill:active {
   box-shadow: 0 0 0 30px transparent inset !important;
   transition: background-color 5000s ease-in-out 0s;
 }
+
+/* Dashboard Clerk Avatar - Remove all hover/focus effects */
+.dashboard-clerk-avatar,
+.dashboard-clerk-avatar .cl-userButton-root,
+.dashboard-clerk-avatar .cl-userButtonTrigger,
+.dashboard-clerk-avatar .cl-avatarBox,
+.dashboard-clerk-avatar .cl-avatarImage {
+  box-shadow: none !important;
+  outline: none !important;
+  background: transparent !important;
+  border: none !important;
+  transition: none !important;
+}
+
+.dashboard-clerk-avatar:hover,
+.dashboard-clerk-avatar .cl-userButton-root:hover,
+.dashboard-clerk-avatar .cl-userButtonTrigger:hover,
+.dashboard-clerk-avatar .cl-avatarBox:hover,
+.dashboard-clerk-avatar .cl-avatarImage:hover {
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+  border: none !important;
+}
+
+.dashboard-clerk-avatar:focus,
+.dashboard-clerk-avatar .cl-userButton-root:focus,
+.dashboard-clerk-avatar .cl-userButtonTrigger:focus,
+.dashboard-clerk-avatar .cl-avatarBox:focus,
+.dashboard-clerk-avatar .cl-avatarImage:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  ring: 0 !important;
+}
+
+.dashboard-clerk-avatar:active,
+.dashboard-clerk-avatar .cl-userButton-root:active,
+.dashboard-clerk-avatar .cl-userButtonTrigger:active,
+.dashboard-clerk-avatar .cl-avatarBox:active,
+.dashboard-clerk-avatar .cl-avatarImage:active {
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+  border: none !important;
+}
+
+.dashboard-clerk-avatar .cl-userButtonTrigger:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}

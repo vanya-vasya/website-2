@@ -125,7 +125,7 @@ Price: 1 credits"
             </div>
           )}
           {messages.length === 0 && !isLoading && (
-            <Empty label="It's empty ¯\_(ツ)_/¯" />
+            <Empty label="No results yet" />
           )}
           <div className="flex flex-col-reverse gap-y-4">
             {messages.map((message) => (

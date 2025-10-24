@@ -176,7 +176,7 @@ const MusicPage = () => {
             </div>
           )}
           {musicList.length === 0 && !isLoading && (
-            <Empty label="It's empty ¯\_(ツ)_/¯" />
+            <Empty label="No results yet" />
           )}
           <div className="space-y-4">
             {musicList.map((music, index) => (

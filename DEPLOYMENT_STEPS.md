@@ -235,3 +235,4 @@ curl -X POST https://nerbixa.com/api/test/create-user \
 **Confidence Level**: High (all local tests passing)  
 **Risk Level**: Low (isolated schema fix, fully tested)
 
+

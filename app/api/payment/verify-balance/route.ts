@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import prismadb from '@/lib/prismadb';
+import db from '@/lib/db';
 
 // GET - Verify if user's balance has been updated after payment
 export async function GET(request: NextRequest) {
@@ -19,36 +19,30 @@ export async function GET(request: NextRequest) {
     const transactionId = searchParams.get('transactionId');
 
     // Get user's current balance
-    const user = await prismadb.user.findUnique({
-      where: {
-        clerkId: userId,
-      },
-      select: {
-        availableGenerations: true,
-        usedGenerations: true,
-      },
-    });
+    const userResult = await db.query(
+      'SELECT "availableGenerations", "usedGenerations" FROM "User" WHERE "clerkId" = $1',
+      [userId]
+    );
 
-    if (!user) {
+    if (userResult.rows.length === 0) {
       return NextResponse.json(
         { error: 'User not found', balanceUpdated: false },
         { status: 404 }
       );
     }
 
+    const user = userResult.rows[0];
     const currentBalance = user.availableGenerations;
 
     // If transactionId is provided, check if transaction exists
     if (transactionId) {
-      const transaction = await prismadb.transaction.findFirst({
-        where: {
-          userId: userId,
-          tracking_id: transactionId,
-          status: 'successful',
-        },
-      });
+      const transactionResult = await db.query(
+        'SELECT * FROM "Transaction" WHERE "userId" = $1 AND "tracking_id" = $2 AND "status" = $3',
+        [userId, transactionId, 'successful']
+      );
 
-      if (transaction) {
+      if (transactionResult.rows.length > 0) {
+        const transaction = transactionResult.rows[0];
         return NextResponse.json({
           success: true,
           balanceUpdated: true,
@@ -94,4 +88,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-

@@ -1,8 +1,6 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { headers } from "next/headers";
-
-import prismadb from "@/lib/prismadb";
+import db from "@/lib/db";
 import { absoluteUrl } from "@/lib/utils";
 
 const settingsUrl = absoluteUrl("/settings");
@@ -19,7 +17,6 @@ export async function POST(req: Request): Promise<NextResponse> {
     const generationsCount = Number(body.generationsCount);
 
     const { userId } = auth();
-
     const user = await currentUser();
 
     if (!generationsCount) {
@@ -30,28 +27,25 @@ export async function POST(req: Request): Promise<NextResponse> {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    let userGenerations = await prismadb.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
+    const userResult = await db.query(
+      'SELECT * FROM "User" WHERE "clerkId" = $1',
+      [userId]
+    );
 
-    return new NextResponse("Internal Error", { status: 500 });
+    if (userResult.rows.length === 0) {
+      return new NextResponse("User not found", { status: 404 });
+    }
 
-    // const newAvailableGenerations = userGenerations.availableGenerations - userGenerations.usedGenerations + generationsCount;
-    // const newUsedGenerations = 0;
+    const userGenerations = userResult.rows[0];
+    const newAvailableGenerations = userGenerations.availableGenerations - userGenerations.usedGenerations + generationsCount;
+    const newUsedGenerations = 0;
 
-    // await prismadb.userApiLimit.update({
-    //   where: {
-    //     userId,
-    //   },
-    //   data: {
-    //     availableGenerations: newAvailableGenerations,
-    //     usedGenerations: newUsedGenerations,
-    //   },
-    // });
+    await db.query(
+      'UPDATE "User" SET "availableGenerations" = $1, "usedGenerations" = $2 WHERE "clerkId" = $3',
+      [newAvailableGenerations, newUsedGenerations, userId]
+    );
 
-    // return new NextResponse("Success", { status: 200 });
+    return new NextResponse("Success", { status: 200 });
   } catch (error) {
     console.log("[GENERATIONS_ERROR]", error);
     return new NextResponse("Internal Error", { status: 500 });

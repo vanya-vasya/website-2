@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import prismadb from '@/lib/prismadb';
+import db from '@/lib/db';
 
 /**
  * Networx Payment Webhook Handler
@@ -20,12 +20,10 @@ import prismadb from '@/lib/prismadb';
  * - Only update User table for balance changes on successful payments
  */
 
-// Функция для верификации подписи webhook согласно документации Networx
+// Verify webhook signature according to Networx documentation
 function verifyWebhookSignature(data: Record<string, any>, signature: string, secretKey: string): boolean {
-  // Удаляем подпись из данных для верификации
   const { signature: _, ...dataForSignature } = data;
 
-  // Сортируем параметры по ключу
   const sortedParams = Object.keys(dataForSignature)
     .sort()
     .reduce((obj: Record<string, any>, key) => {
@@ -33,12 +31,10 @@ function verifyWebhookSignature(data: Record<string, any>, signature: string, se
       return obj;
     }, {});
 
-  // Создаем строку для подписи
   const signString = Object.entries(sortedParams)
     .map(([key, value]) => `${key}=${value}`)
     .join('&');
 
-  // Создаем подпись HMAC SHA256
   const expectedSignature = crypto
     .createHmac('sha256', secretKey)
     .update(signString)
@@ -47,13 +43,13 @@ function verifyWebhookSignature(data: Record<string, any>, signature: string, se
   return expectedSignature === signature;
 }
 
-// Извлечение количества токенов из описания платежа
+// Extract token amount from payment description
 function extractTokensFromDescription(description: string): number | null {
   const match = description.match(/\((\d+)\s+Tokens?\)/i);
   return match ? parseInt(match[1], 10) : null;
 }
 
-// POST - Обработка webhook уведомлений от Networx
+// POST - Handle webhook notifications from Networx
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
   let transactionId: string | undefined;
@@ -101,7 +97,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Верифицируем подпись webhook
+    // Verify webhook signature
     const signature = body.signature;
     if (!signature) {
       console.error('❌ Missing signature in webhook');
@@ -122,15 +118,14 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ Webhook signature verified');
 
-    // Идемпотентность: Проверка на дубликаты через webhookEventId
+    // Idempotency: Check for duplicates via webhookEventId
     if (transaction_id) {
-      const existingTransaction = await prismadb.transaction.findUnique({
-        where: {
-          webhookEventId: transaction_id
-        }
-      });
+      const existingTransaction = await db.query(
+        'SELECT * FROM "Transaction" WHERE "webhookEventId" = $1',
+        [transaction_id]
+      );
 
-      if (existingTransaction) {
+      if (existingTransaction.rows.length > 0) {
         console.log('⚠️  Duplicate webhook detected - transaction already processed:', transaction_id);
         return NextResponse.json({ 
           status: 'ok',
@@ -140,7 +135,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Обработка статусов согласно документации Networx
+    // Process statuses according to Networx documentation
     switch (status) {
       case 'success':
       case 'successful':
@@ -154,23 +149,15 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        // CRITICAL: Проверяем существование пользователя
-        // Мы НЕ создаем пользователей в webhook платежей
-        // Пользователи должны быть созданы только через Clerk webhook
-        const user = await prismadb.user.findUnique({
-          where: {
-            clerkId: tracking_id,
-          },
-          select: {
-            id: true,
-            clerkId: true,
-            email: true,
-            usedGenerations: true,
-            availableGenerations: true,
-          },
-        });
+        // CRITICAL: Check user existence
+        // We DO NOT create users in payment webhook
+        // Users must be created only via Clerk webhook
+        const userResult = await db.query(
+          'SELECT * FROM "User" WHERE "clerkId" = $1',
+          [tracking_id]
+        );
 
-        if (!user) {
+        if (userResult.rows.length === 0) {
           console.error('❌ User not found:', tracking_id);
           console.error('⚠️  Payment received for non-existent user. User must be created via Clerk webhook first.');
           return NextResponse.json(
@@ -182,11 +169,12 @@ export async function POST(request: NextRequest) {
           );
         }
 
+        const user = userResult.rows[0];
         console.log('✅ User found:', user.email);
         console.log('Current balance:', user.availableGenerations);
         console.log('Used generations:', user.usedGenerations);
 
-        // Извлекаем количество токенов из описания
+        // Extract token amount from description
         const tokensToAdd = description ? extractTokensFromDescription(description) : null;
         
         if (!tokensToAdd) {
@@ -199,52 +187,51 @@ export async function POST(request: NextRequest) {
 
         console.log('🎟️  Tokens to add:', tokensToAdd);
 
-        // Выполняем операции в транзакции базы данных
-        // ВАЖНО: Все данные о транзакциях идут ТОЛЬКО в таблицу Transaction
-        // В таблице User обновляется ТОЛЬКО баланс токенов (availableGenerations, usedGenerations)
+        // Execute operations in database transaction
+        // IMPORTANT: All transaction data goes ONLY to Transaction table
+        // In User table we update ONLY token balance (availableGenerations, usedGenerations)
         try {
-          await prismadb.$transaction(async (tx) => {
-            // 1. Создаем запись о транзакции в таблице Transaction
-            const newTransaction = await tx.transaction.create({
-              data: {
-                tracking_id: transaction_id || tracking_id,
-                userId: tracking_id, // Clerk user ID для связи
-                status: 'successful',
-                amount: amount ? parseInt(amount) : null,
-                currency: currency || 'USD',
-                description: description || `Payment for ${tokensToAdd} tokens`,
-                type: type || 'payment',
-                payment_method_type: payment_method_type || 'card',
-                message: message || 'Payment successful',
-                paid_at: paid_at ? new Date(paid_at) : new Date(),
-                receipt_url: null,
-                webhookEventId: transaction_id, // Для идемпотентности
-              },
-            });
+          await db.transaction(async (client) => {
+            // 1. Create transaction record in Transaction table
+            const newTransactionId = db.generateId();
+            await client.query(
+              `INSERT INTO "Transaction" 
+                ("id", "tracking_id", "userId", "status", "amount", "currency", "description", 
+                 "type", "payment_method_type", "message", "paid_at", "webhookEventId") 
+               VALUES ($1, $2, $3, 'successful', $4, $5, $6, $7, $8, $9, $10, $11)`,
+              [
+                newTransactionId,
+                transaction_id || tracking_id,
+                tracking_id,
+                amount ? parseInt(amount) : null,
+                currency || 'USD',
+                description || `Payment for ${tokensToAdd} tokens`,
+                type || 'payment',
+                payment_method_type || 'card',
+                message || 'Payment successful',
+                paid_at ? new Date(paid_at) : new Date(),
+                transaction_id
+              ]
+            );
 
-            console.log('✅ Transaction record created in Transaction table:', newTransaction.id);
+            console.log('✅ Transaction record created in Transaction table:', newTransactionId);
             console.log('   Transaction ID:', transaction_id);
             console.log('   Amount:', amount, currency);
             console.log('   Tokens:', tokensToAdd);
 
-            // 2. Обновляем ТОЛЬКО баланс пользователя (НЕ создаем нового пользователя)
-            // User table содержит ТОЛЬКО профиль и баланс, НЕ данные транзакций
-            const updatedUser = await tx.user.update({
-              where: {
-                clerkId: tracking_id,
-              },
-              data: {
-                // Формула: новый баланс = текущий доступный - использованный + купленные токены
-                availableGenerations: user.availableGenerations - user.usedGenerations + tokensToAdd,
-                usedGenerations: 0, // Сброс использованных после пополнения
-              },
-            });
+            // 2. Update ONLY user balance (DO NOT create new user)
+            // User table contains ONLY profile and balance, NOT transaction data
+            const newBalance = user.availableGenerations - user.usedGenerations + tokensToAdd;
+            await client.query(
+              'UPDATE "User" SET "availableGenerations" = $1, "usedGenerations" = 0 WHERE "clerkId" = $2',
+              [newBalance, tracking_id]
+            );
 
             console.log('✅ User balance updated in User table');
             console.log('   Previous balance:', user.availableGenerations);
             console.log('   Used generations:', user.usedGenerations);
-            console.log('   New available generations:', updatedUser.availableGenerations);
-            console.log('   Reset used generations:', updatedUser.usedGenerations);
+            console.log('   New available generations:', newBalance);
+            console.log('   Reset used generations:', 0);
           });
 
           const processingTime = Date.now() - startTime;
@@ -267,23 +254,28 @@ export async function POST(request: NextRequest) {
         console.log(`❌ Payment failed for order ${order_id}`);
         console.log('Error message:', error_message);
         
-        // Записываем ТОЛЬКО в таблицу Transaction, НЕ обновляем User
+        // Write ONLY to Transaction table, DO NOT update User
         if (transaction_id) {
-          await prismadb.transaction.create({
-            data: {
-              tracking_id: transaction_id,
-              userId: tracking_id || null,
-              status: 'failed',
-              amount: amount ? parseInt(amount) : null,
-              currency: currency || 'USD',
-              description: description || 'Payment failed',
-              type: type || 'payment',
-              payment_method_type: payment_method_type || 'card',
-              message: error_message || 'Payment failed',
-              reason: error_message,
-              webhookEventId: transaction_id,
-            },
-          });
+          const failedTransactionId = db.generateId();
+          await db.query(
+            `INSERT INTO "Transaction" 
+              ("id", "tracking_id", "userId", "status", "amount", "currency", "description", 
+               "type", "payment_method_type", "message", "reason", "webhookEventId") 
+             VALUES ($1, $2, $3, 'failed', $4, $5, $6, $7, $8, $9, $10, $11)`,
+            [
+              failedTransactionId,
+              transaction_id,
+              tracking_id || null,
+              amount ? parseInt(amount) : null,
+              currency || 'USD',
+              description || 'Payment failed',
+              type || 'payment',
+              payment_method_type || 'card',
+              error_message || 'Payment failed',
+              error_message,
+              transaction_id
+            ]
+          );
           console.log('✅ Failed transaction record created in Transaction table');
         }
         break;
@@ -291,22 +283,27 @@ export async function POST(request: NextRequest) {
       case 'pending':
         console.log(`⏳ Payment pending for order ${order_id}`);
         
-        // Записываем ТОЛЬКО в таблицу Transaction, НЕ обновляем User
+        // Write ONLY to Transaction table, DO NOT update User
         if (transaction_id) {
-          await prismadb.transaction.create({
-            data: {
-              tracking_id: transaction_id,
-              userId: tracking_id || null,
-              status: 'pending',
-              amount: amount ? parseInt(amount) : null,
-              currency: currency || 'USD',
-              description: description || 'Payment pending',
-              type: type || 'payment',
-              payment_method_type: payment_method_type || 'card',
-              message: message || 'Payment pending',
-              webhookEventId: transaction_id,
-            },
-          });
+          const pendingTransactionId = db.generateId();
+          await db.query(
+            `INSERT INTO "Transaction" 
+              ("id", "tracking_id", "userId", "status", "amount", "currency", "description", 
+               "type", "payment_method_type", "message", "webhookEventId") 
+             VALUES ($1, $2, $3, 'pending', $4, $5, $6, $7, $8, $9, $10)`,
+            [
+              pendingTransactionId,
+              transaction_id,
+              tracking_id || null,
+              amount ? parseInt(amount) : null,
+              currency || 'USD',
+              description || 'Payment pending',
+              type || 'payment',
+              payment_method_type || 'card',
+              message || 'Payment pending',
+              transaction_id
+            ]
+          );
           console.log('✅ Pending transaction record created in Transaction table');
         }
         break;
@@ -314,22 +311,27 @@ export async function POST(request: NextRequest) {
       case 'canceled':
         console.log(`🚫 Payment canceled for order ${order_id}`);
         
-        // Записываем ТОЛЬКО в таблицу Transaction, НЕ обновляем User
+        // Write ONLY to Transaction table, DO NOT update User
         if (transaction_id) {
-          await prismadb.transaction.create({
-            data: {
-              tracking_id: transaction_id,
-              userId: tracking_id || null,
-              status: 'canceled',
-              amount: amount ? parseInt(amount) : null,
-              currency: currency || 'USD',
-              description: description || 'Payment canceled',
-              type: type || 'payment',
-              payment_method_type: payment_method_type || 'card',
-              message: message || 'Payment canceled',
-              webhookEventId: transaction_id,
-            },
-          });
+          const canceledTransactionId = db.generateId();
+          await db.query(
+            `INSERT INTO "Transaction" 
+              ("id", "tracking_id", "userId", "status", "amount", "currency", "description", 
+               "type", "payment_method_type", "message", "webhookEventId") 
+             VALUES ($1, $2, $3, 'canceled', $4, $5, $6, $7, $8, $9, $10)`,
+            [
+              canceledTransactionId,
+              transaction_id,
+              tracking_id || null,
+              amount ? parseInt(amount) : null,
+              currency || 'USD',
+              description || 'Payment canceled',
+              type || 'payment',
+              payment_method_type || 'card',
+              message || 'Payment canceled',
+              transaction_id
+            ]
+          );
           console.log('✅ Canceled transaction record created in Transaction table');
         }
         break;
@@ -338,46 +340,50 @@ export async function POST(request: NextRequest) {
         console.log(`💰 Payment refunded for order ${order_id}`);
         
         if (transaction_id && tracking_id) {
-          // Извлекаем количество токенов для возврата
+          // Extract tokens for refund
           const tokensToRefund = description ? extractTokensFromDescription(description) : null;
           
           if (tokensToRefund) {
-            // Обрабатываем возврат в транзакции
-            await prismadb.$transaction(async (tx) => {
-              // 1. Создаем запись о возврате в Transaction table
-              await tx.transaction.create({
-                data: {
-                  tracking_id: transaction_id,
-                  userId: tracking_id,
-                  status: 'refunded',
-                  amount: amount ? parseInt(amount) : null,
-                  currency: currency || 'USD',
-                  description: description || 'Payment refunded',
-                  type: 'refund',
-                  payment_method_type: payment_method_type || 'card',
-                  message: message || 'Payment refunded',
-                  webhookEventId: transaction_id,
-                },
-              });
+            // Process refund in transaction
+            await db.transaction(async (client) => {
+              // 1. Create refund record in Transaction table
+              const refundTransactionId = db.generateId();
+              await client.query(
+                `INSERT INTO "Transaction" 
+                  ("id", "tracking_id", "userId", "status", "amount", "currency", "description", 
+                   "type", "payment_method_type", "message", "webhookEventId") 
+                 VALUES ($1, $2, $3, 'refunded', $4, $5, $6, 'refund', $7, $8, $9)`,
+                [
+                  refundTransactionId,
+                  transaction_id,
+                  tracking_id,
+                  amount ? parseInt(amount) : null,
+                  currency || 'USD',
+                  description || 'Payment refunded',
+                  payment_method_type || 'card',
+                  message || 'Payment refunded',
+                  transaction_id
+                ]
+              );
               console.log('✅ Refund transaction record created in Transaction table');
 
-              // 2. Вычитаем токены из баланса пользователя (ТОЛЬКО обновление баланса)
-              const user = await tx.user.findUnique({
-                where: { clerkId: tracking_id },
-                select: { availableGenerations: true }
-              });
+              // 2. Subtract tokens from user balance (ONLY balance update)
+              const userResult = await client.query(
+                'SELECT "availableGenerations" FROM "User" WHERE "clerkId" = $1',
+                [tracking_id]
+              );
 
-              if (user) {
-                await tx.user.update({
-                  where: { clerkId: tracking_id },
-                  data: {
-                    // Вычитаем возвращенные токены, но не уходим в минус
-                    availableGenerations: Math.max(0, user.availableGenerations - tokensToRefund),
-                  },
-                });
+              if (userResult.rows.length > 0) {
+                const currentBalance = userResult.rows[0].availableGenerations;
+                const newBalance = Math.max(0, currentBalance - tokensToRefund);
+                
+                await client.query(
+                  'UPDATE "User" SET "availableGenerations" = $1 WHERE "clerkId" = $2',
+                  [newBalance, tracking_id]
+                );
                 console.log('✅ User balance adjusted for refund in User table');
                 console.log('   Tokens refunded:', tokensToRefund);
-                console.log('   New balance:', Math.max(0, user.availableGenerations - tokensToRefund));
+                console.log('   New balance:', newBalance);
               }
             });
           }
@@ -388,7 +394,7 @@ export async function POST(request: NextRequest) {
         console.log(`❓ Unknown payment status: ${status} for order ${order_id}`);
     }
 
-    // Возвращаем успешный ответ согласно требованиям Networx
+    // Return successful response according to Networx requirements
     return NextResponse.json({ status: 'ok' }, { status: 200 });
 
   } catch (error) {
@@ -410,7 +416,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET - Для проверки доступности endpoint'а
+// GET - For checking endpoint availability
 export async function GET() {
   return NextResponse.json({
     message: 'Networx webhook endpoint is active',

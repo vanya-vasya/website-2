@@ -5,13 +5,11 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { Webhook } from "svix";
 
-import { createUser, deleteUser, updateUser } from "@/lib/actions/user.actions";
-import prismadb from "@/lib/prismadb";
+import { deleteUser, updateUser } from "@/lib/actions/user.actions";
+import db from "@/lib/db";
 
 export async function POST(req: Request) {
-  // You can find this in the Clerk Dashboard -> Webhooks -> choose the webhook
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
-
 
   if (!WEBHOOK_SECRET) {
     throw new Error(
@@ -39,7 +37,6 @@ export async function POST(req: Request) {
   // Create a new Svix instance with your secret.
   const wh = new Webhook(WEBHOOK_SECRET!);
   
-
   let evt: WebhookEvent;
 
   // Verify the payload with the headers
@@ -60,7 +57,6 @@ export async function POST(req: Request) {
   const { id } = evt.data;
   const eventType = evt.type;
   
-
   // CREATE
   if (eventType === "user.created") {
     const { id, email_addresses, image_url, first_name, last_name } = evt.data;
@@ -68,81 +64,75 @@ export async function POST(req: Request) {
 
     try {
       // Check for idempotency - see if this webhook event was already processed
-      const existingEvent = await prismadb.webhookEvent.findUnique({
-        where: { eventId: svixEventId },
-      });
+      const existingEventResult = await db.query(
+        'SELECT * FROM "WebhookEvent" WHERE "eventId" = $1',
+        [svixEventId]
+      );
 
-      if (existingEvent?.processed) {
+      if (existingEventResult.rows.length > 0 && existingEventResult.rows[0].processed) {
         console.log(`Webhook event ${svixEventId} already processed, skipping...`);
-        const existingUser = await prismadb.user.findUnique({
-          where: { clerkId: id },
-        });
+        const existingUserResult = await db.query(
+          'SELECT * FROM "User" WHERE "clerkId" = $1',
+          [id]
+        );
         return NextResponse.json({ 
           message: "Already processed", 
-          user: existingUser,
+          user: existingUserResult.rows[0],
           idempotent: true 
         });
       }
 
-      // Use Prisma transaction to ensure atomicity
+      // Use database transaction to ensure atomicity
       console.log(`[Clerk Webhook] Starting transaction for user creation`, {
         clerkId: id,
         email: email_addresses[0].email_address,
       });
 
-      const result = await prismadb.$transaction(async (tx) => {
+      const result = await db.transaction(async (client) => {
         // Create webhook event record for idempotency
-        await tx.webhookEvent.create({
-          data: {
-            eventId: svixEventId,
-            eventType: "user.created",
-            processed: false,
-          },
-        });
+        const webhookEventId = db.generateId();
+        await client.query(
+          `INSERT INTO "WebhookEvent" ("id", "eventId", "eventType", "processed") 
+           VALUES ($1, $2, $3, false)`,
+          [webhookEventId, svixEventId, "user.created"]
+        );
         console.log(`[Clerk Webhook] Webhook event created`);
 
         // Create user with initial 20 credits
-        const newUser = await tx.user.create({
-          data: {
-            clerkId: id,
-            email: email_addresses[0].email_address,
-            firstName: first_name,
-            lastName: last_name,
-            photo: image_url,
-            availableGenerations: 20,
-          },
-        });
+        const userId = db.generateId();
+        const userResult = await client.query(
+          `INSERT INTO "User" 
+            ("id", "clerkId", "email", "firstName", "lastName", "photo", "availableGenerations") 
+           VALUES ($1, $2, $3, $4, $5, $6, 20) 
+           RETURNING *`,
+          [userId, id, email_addresses[0].email_address, first_name, last_name, image_url]
+        );
+        const newUser = userResult.rows[0];
         console.log(`[Clerk Webhook] User created`, { 
           userId: newUser.id,
           clerkId: newUser.clerkId 
         });
 
         // Create transaction record for signup bonus
-        const transaction = await tx.transaction.create({
-          data: {
-            tracking_id: id,
-            userId: newUser.id,
-            amount: 20,
-            type: "credit",
-            reason: "signup bonus",
-            status: "completed",
-            webhookEventId: svixEventId,
-            paid_at: new Date(),
-          },
-        });
+        const transactionId = db.generateId();
+        const transactionResult = await client.query(
+          `INSERT INTO "Transaction" 
+            ("id", "tracking_id", "userId", "amount", "type", "reason", "status", "webhookEventId", "paid_at") 
+           VALUES ($1, $2, $3, 20, 'credit', 'signup bonus', 'completed', $4, NOW()) 
+           RETURNING *`,
+          [transactionId, id, newUser.id, svixEventId]
+        );
+        const transaction = transactionResult.rows[0];
         console.log(`[Clerk Webhook] Transaction record created`, {
           transactionId: transaction.id,
           amount: transaction.amount,
         });
 
         // Mark webhook event as processed
-        await tx.webhookEvent.update({
-          where: { eventId: svixEventId },
-          data: {
-            processed: true,
-            processedAt: new Date(),
-          },
-        });
+        await client.query(
+          'UPDATE "WebhookEvent" SET "processed" = true, "processedAt" = NOW() WHERE "eventId" = $1',
+          [svixEventId]
+        );
         console.log(`[Clerk Webhook] Webhook event marked as processed`);
 
         return { user: newUser, transaction };
@@ -211,7 +201,5 @@ export async function POST(req: Request) {
 }
 
 export async function GET(req: Request) {
-  // const user = { clerkId: "111", email:"text2@cfas.com", photo:"https://fsdfdsafasd.com2", firstName:"maris2", lastName:'rabisko2', username: 'test2'}
-  // const newUser = await createUser(user);
   return NextResponse.json({ message: "OK" });
 }

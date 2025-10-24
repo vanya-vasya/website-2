@@ -52,26 +52,56 @@ export default function HomePage() {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
-  // Handle payment success notification
+  // Handle payment success and NetworkX redirect notifications
   useEffect(() => {
+    // Check for multiple payment success parameters
     const paymentStatus = searchParams.get('payment');
+    const paymentSuccess = searchParams.get('payment_success');
+    const status = searchParams.get('status');
     const orderId = searchParams.get('order_id');
+    const token = searchParams.get('token');
+    const uid = searchParams.get('uid');
     
     console.log('═════════════════════════════════════════════════════════');
     console.log('📍 Dashboard Page Loaded');
     console.log('Current URL:', window.location.href);
     console.log('Query Parameters:', {
       payment: paymentStatus,
+      payment_success: paymentSuccess,
+      status: status,
       order_id: orderId,
-      token: searchParams.get('token'),
-      status: searchParams.get('status'),
-      uid: searchParams.get('uid')
+      token: token,
+      uid: uid
     });
     console.log('═════════════════════════════════════════════════════════');
     
-    if (paymentStatus === 'success' && orderId) {
-      console.log('✅ SUCCESS: Payment success detected!');
-      console.log('   - Payment Status:', paymentStatus);
+    // Handle NetworkX direct redirect with status=successful
+    if (status === 'successful' && token && uid) {
+      console.log('✅ SUCCESS: NetworkX payment redirect detected!');
+      console.log('   - Status:', status);
+      console.log('   - Token:', token);
+      console.log('   - UID:', uid);
+      console.log('   - Showing success notification...');
+      
+      toast.success('Payment successful! Your credits have been added to your account.', {
+        duration: 5000,
+        icon: '🎉',
+      });
+      
+      // Clean up URL parameters
+      const url = new URL(window.location.href);
+      url.searchParams.delete('status');
+      url.searchParams.delete('token');
+      url.searchParams.delete('uid');
+      url.searchParams.delete('order_id');
+      window.history.replaceState({}, '', url.pathname);
+      
+      console.log('✅ URL cleaned successfully');
+    }
+    // Handle payment success from success page
+    else if (paymentStatus === 'success' || paymentSuccess === 'true') {
+      console.log('✅ SUCCESS: Payment success detected from redirect!');
+      console.log('   - Payment Status:', paymentStatus || paymentSuccess);
       console.log('   - Order ID:', orderId);
       console.log('   - Showing success notification...');
       
@@ -85,6 +115,7 @@ export default function HomePage() {
       const originalUrl = url.toString();
       
       url.searchParams.delete('payment');
+      url.searchParams.delete('payment_success');
       url.searchParams.delete('order_id');
       url.searchParams.delete('token');
       url.searchParams.delete('status');
@@ -103,7 +134,7 @@ export default function HomePage() {
       console.log('⚠️  WARNING: Non-success payment status detected:', paymentStatus);
       console.log('   - This should NOT show success notification');
       console.log('   - Order ID:', orderId);
-    } else if (!paymentStatus) {
+    } else if (!paymentStatus && !status) {
       console.log('ℹ️  INFO: No payment status in URL (normal page load)');
     }
   }, [searchParams]);

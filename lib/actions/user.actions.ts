@@ -1,7 +1,20 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import prismadb from "@/lib/prismadb";
+import db from "@/lib/db";
+
+export interface User {
+  id: string;
+  clerkId: string;
+  email: string;
+  photo: string;
+  firstName: string | null;
+  lastName: string | null;
+  usedGenerations: number;
+  availableGenerations: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 // CREATE OR GET - Upsert user (create if not exists, return if exists)
 export async function createOrGetUser(clerkUser: {
@@ -15,31 +28,36 @@ export async function createOrGetUser(clerkUser: {
     console.log('[CREATE_OR_GET_USER] Starting for clerkId:', clerkUser.clerkId);
     
     // Try to find existing user
-    const existingUser = await prismadb.user.findUnique({
-      where: { clerkId: clerkUser.clerkId },
-    });
+    const existingResult = await db.query<User>(
+      'SELECT * FROM "User" WHERE "clerkId" = $1',
+      [clerkUser.clerkId]
+    );
 
-    if (existingUser) {
-      console.log('[CREATE_OR_GET_USER] User exists:', existingUser.id);
-      return existingUser;
+    if (existingResult.rows.length > 0) {
+      console.log('[CREATE_OR_GET_USER] User exists:', existingResult.rows[0].id);
+      return existingResult.rows[0];
     }
 
     // User doesn't exist, create new
     console.log('[CREATE_OR_GET_USER] Creating new user');
-    const newUser = await prismadb.user.create({
-      data: {
-        clerkId: clerkUser.clerkId,
-        email: clerkUser.email,
-        firstName: clerkUser.firstName,
-        lastName: clerkUser.lastName,
-        photo: clerkUser.photo,
-        availableGenerations: 20, // Initial free tokens
-        usedGenerations: 0,
-      },
-    });
+    const userId = db.generateId();
+    const result = await db.query<User>(
+      `INSERT INTO "User" 
+        ("id", "clerkId", "email", "firstName", "lastName", "photo", "availableGenerations", "usedGenerations") 
+       VALUES ($1, $2, $3, $4, $5, $6, 20, 0) 
+       RETURNING *`,
+      [
+        userId,
+        clerkUser.clerkId,
+        clerkUser.email,
+        clerkUser.firstName || null,
+        clerkUser.lastName || null,
+        clerkUser.photo
+      ]
+    );
 
-    console.log('[CREATE_OR_GET_USER] Created user:', newUser.id);
-    return newUser;
+    console.log('[CREATE_OR_GET_USER] Created user:', result.rows[0].id);
+    return result.rows[0];
     
   } catch (error) {
     console.error('[CREATE_OR_GET_USER] Error:', error);
@@ -48,64 +66,121 @@ export async function createOrGetUser(clerkUser: {
 }
 
 // CREATE
-export async function createUser(user: any) {
+export async function createUser(user: {
+  clerkId: string;
+  email: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  photo: string;
+  availableGenerations?: number;
+  usedGenerations?: number;
+}) {
   try {
     console.log('[createUser] Starting user creation', { 
       clerkId: user.clerkId,
       email: user.email 
     });
     
-    const newUser = await prismadb.user.create({
-      data: user,
-    });
+    const userId = db.generateId();
+    const result = await db.query<User>(
+      `INSERT INTO "User" 
+        ("id", "clerkId", "email", "firstName", "lastName", "photo", "availableGenerations", "usedGenerations") 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+       RETURNING *`,
+      [
+        userId,
+        user.clerkId,
+        user.email,
+        user.firstName || null,
+        user.lastName || null,
+        user.photo,
+        user.availableGenerations || 20,
+        user.usedGenerations || 0
+      ]
+    );
 
     console.log('[createUser] User created successfully', { 
-      id: newUser.id,
-      clerkId: newUser.clerkId 
+      id: result.rows[0].id,
+      clerkId: result.rows[0].clerkId 
     });
 
-    return newUser;
+    return result.rows[0];
   } catch (error) {
     console.error('[createUser] Error creating user:', error);
-    console.error('[createUser] User data:', user);
     throw error;
   }
 }
 
 // READ
-export async function getUserById(userId: string){
+export async function getUserById(userId: string) {
   try {
-    const user = await prismadb.user.findUnique({
-      where: { clerkId: userId },
-    });
+    const result = await db.query<User>(
+      'SELECT * FROM "User" WHERE "clerkId" = $1',
+      [userId]
+    );
 
-    if (!user) throw new Error("User not found");
+    if (result.rows.length === 0) {
+      throw new Error("User not found");
+    }
 
-    return user;
+    return result.rows[0];
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }
 
-
 // UPDATE
-export async function updateUser(clerkId: string, user: any){
+export async function updateUser(clerkId: string, user: {
+  firstName?: string | null;
+  lastName?: string | null;
+  photo?: string;
+  email?: string;
+}) {
   try {
     console.log('[updateUser] Updating user', { clerkId });
     
-    const updatedUser = await prismadb.user.update({
-      where: { clerkId },
-      data: user,
-    });
+    const updates: string[] = [];
+    const values: any[] = [];
+    let paramIndex = 1;
 
-    if (!updatedUser) throw new Error("User update failed");
+    if (user.firstName !== undefined) {
+      updates.push(`"firstName" = $${paramIndex++}`);
+      values.push(user.firstName);
+    }
+    if (user.lastName !== undefined) {
+      updates.push(`"lastName" = $${paramIndex++}`);
+      values.push(user.lastName);
+    }
+    if (user.photo !== undefined) {
+      updates.push(`"photo" = $${paramIndex++}`);
+      values.push(user.photo);
+    }
+    if (user.email !== undefined) {
+      updates.push(`"email" = $${paramIndex++}`);
+      values.push(user.email);
+    }
+
+    if (updates.length === 0) {
+      throw new Error("No fields to update");
+    }
+
+    values.push(clerkId);
+    const result = await db.query<User>(
+      `UPDATE "User" SET ${updates.join(', ')} WHERE "clerkId" = $${paramIndex} RETURNING *`,
+      values
+    );
+
+    if (result.rows.length === 0) {
+      throw new Error("User update failed - user not found");
+    }
 
     console.log('[updateUser] User updated successfully', { 
-      id: updatedUser.id,
-      clerkId: updatedUser.clerkId 
+      id: result.rows[0].id,
+      clerkId: result.rows[0].clerkId 
     });
 
-    return updatedUser;
+    return result.rows[0];
   } catch (error) {
     console.error('[updateUser] Error updating user:', error);
     throw error;
@@ -116,43 +191,45 @@ export async function updateUser(clerkId: string, user: any){
 export async function deleteUser(clerkId: string) {
   try {
     // Find user to delete
-    const userToDelete = await prismadb.user.findUnique({
-      where: { clerkId },
-    });
+    const findResult = await db.query<User>(
+      'SELECT * FROM "User" WHERE "clerkId" = $1',
+      [clerkId]
+    );
 
-    if (!userToDelete) {
+    if (findResult.rows.length === 0) {
       throw new Error("User not found");
     }
 
     // Delete user
-    const deletedUser = await prismadb.user.delete({
-      where: { id: userToDelete.id },
-    });
+    const result = await db.query<User>(
+      'DELETE FROM "User" WHERE "id" = $1 RETURNING *',
+      [findResult.rows[0].id]
+    );
 
     revalidatePath("/");
 
-    return deletedUser;
+    return result.rows[0];
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }
 
 // USE CREDITS
 export async function updateCredits(userId: string, creditFee: number) {
   try {
-    const updatedUserCredits = await prismadb.user.update({
-      where: { id: userId },
-      data: {
-        usedGenerations: {
-          increment: creditFee,
-        },
-      },
-    });
+    const result = await db.query<User>(
+      'UPDATE "User" SET "usedGenerations" = "usedGenerations" + $1 WHERE "id" = $2 RETURNING *',
+      [creditFee, userId]
+    );
 
-    if (!updatedUserCredits) throw new Error("User credits update failed");
+    if (result.rows.length === 0) {
+      throw new Error("User credits update failed");
+    }
 
-    return updatedUserCredits;
+    return result.rows[0];
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }

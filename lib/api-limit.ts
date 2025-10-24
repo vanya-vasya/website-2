@@ -1,8 +1,23 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
+import db from "@/lib/db";
 
-import prismadb from "@/lib/prismadb";
-import { Transaction } from "@prisma/client";
-import { createOrGetUser } from "@/lib/actions/user.actions";
+export interface Transaction {
+  id: string;
+  tracking_id: string;
+  userId: string | null;
+  status: string | null;
+  amount: number | null;
+  currency: string | null;
+  description: string | null;
+  type: string | null;
+  payment_method_type: string | null;
+  message: string | null;
+  paid_at: Date | null;
+  receipt_url: string | null;
+  createdAt: Date;
+  reason: string | null;
+  webhookEventId: string | null;
+}
 
 export const incrementApiLimit = async (value: number) => {
   const { userId } = auth();
@@ -11,32 +26,17 @@ export const incrementApiLimit = async (value: number) => {
     return;
   }
 
-  let userApiLimit = await prismadb.user.findUnique({
-    where: { clerkId: userId },
-  });
+  const result = await db.query(
+    'SELECT "usedGenerations" FROM "User" WHERE "clerkId" = $1',
+    [userId]
+  );
 
-  // FALLBACK: If user not in DB, create them (happens with OAuth sign-in)
-  if (!userApiLimit) {
-    console.log('[API_LIMIT] User not found in DB, creating via fallback...');
-    const clerkUser = await currentUser();
-    
-    if (clerkUser) {
-      userApiLimit = await createOrGetUser({
-        clerkId: clerkUser.id,
-        email: clerkUser.emailAddresses[0]?.emailAddress || '',
-        firstName: clerkUser.firstName,
-        lastName: clerkUser.lastName,
-        photo: clerkUser.imageUrl || '',
-      });
-      console.log('[API_LIMIT] User created via fallback:', userApiLimit?.id);
-    }
-  }
-
-  if (userApiLimit) {
-    await prismadb.user.update({
-      where: { clerkId: userId },
-      data: { usedGenerations: userApiLimit.usedGenerations + value },
-    });
+  if (result.rows.length > 0) {
+    const currentUsed = result.rows[0].usedGenerations;
+    await db.query(
+      'UPDATE "User" SET "usedGenerations" = $1 WHERE "clerkId" = $2',
+      [currentUsed + value, userId]
+    );
   }
 };
 
@@ -47,102 +47,57 @@ export const checkApiLimit = async (generationPrice: number) => {
     return false;
   }
 
-  const userApiLimit = await prismadb.user.findUnique({
-    where: { clerkId: userId },
-  });
-  if (
-    userApiLimit &&
-    userApiLimit.usedGenerations < userApiLimit.availableGenerations &&
-    userApiLimit.availableGenerations - userApiLimit.usedGenerations >=
-      generationPrice
-  ) {
-    return true;
-  } else {
+  const result = await db.query(
+    'SELECT "usedGenerations", "availableGenerations" FROM "User" WHERE "clerkId" = $1',
+    [userId]
+  );
+
+  if (result.rows.length === 0) {
     return false;
   }
+
+  const user = result.rows[0];
+  const remainingGenerations = user.availableGenerations - user.usedGenerations;
+
+  return remainingGenerations >= generationPrice;
 };
 
 export const getApiAvailableGenerations = async () => {
-  try {
-    const { userId } = auth();
+  const { userId } = auth();
 
-    if (!userId) {
-      return 0;
-    }
-
-    let userApiLimit = await prismadb.user.findUnique({
-      where: {
-        clerkId: userId,
-      },
-    });
-
-    // FALLBACK: If user not in DB, create them (happens with OAuth sign-in)
-    if (!userApiLimit) {
-      console.log('[API_LIMIT] User not found in DB, creating via fallback...');
-      const clerkUser = await currentUser();
-      
-      if (clerkUser) {
-        userApiLimit = await createOrGetUser({
-          clerkId: clerkUser.id,
-          email: clerkUser.emailAddresses[0]?.emailAddress || '',
-          firstName: clerkUser.firstName,
-          lastName: clerkUser.lastName,
-          photo: clerkUser.imageUrl || '',
-        });
-        console.log('[API_LIMIT] User created via fallback:', userApiLimit?.id);
-      }
-    }
-
-    if (!userApiLimit) {
-      return 0;
-    }
-
-    return userApiLimit.availableGenerations;
-  } catch (error) {
-    console.error("[GET_API_AVAILABLE_GENERATIONS] Error:", error);
+  if (!userId) {
     return 0;
   }
+
+  const result = await db.query(
+    'SELECT "availableGenerations" FROM "User" WHERE "clerkId" = $1',
+    [userId]
+  );
+
+  if (result.rows.length === 0) {
+    return 0;
+  }
+
+  return result.rows[0].availableGenerations;
 };
 
 export const getApiUsedGenerations = async () => {
-  try {
-    const { userId } = auth();
-    if (!userId) {
-      return 0;
-    }
-
-    let userApiLimit = await prismadb.user.findUnique({
-      where: {
-        clerkId: userId,
-      },
-    });
-
-    // FALLBACK: If user not in DB, create them (happens with OAuth sign-in)
-    if (!userApiLimit) {
-      console.log('[API_LIMIT] User not found in DB, creating via fallback...');
-      const clerkUser = await currentUser();
-      
-      if (clerkUser) {
-        userApiLimit = await createOrGetUser({
-          clerkId: clerkUser.id,
-          email: clerkUser.emailAddresses[0]?.emailAddress || '',
-          firstName: clerkUser.firstName,
-          lastName: clerkUser.lastName,
-          photo: clerkUser.imageUrl || '',
-        });
-        console.log('[API_LIMIT] User created via fallback:', userApiLimit?.id);
-      }
-    }
-
-    if (!userApiLimit) {
-      return 0;
-    }
-
-    return userApiLimit.usedGenerations;
-  } catch (error) {
-    console.error("[GET_API_USED_GENERATIONS] Error:", error);
+  const { userId } = auth();
+  
+  if (!userId) {
     return 0;
   }
+
+  const result = await db.query(
+    'SELECT "usedGenerations" FROM "User" WHERE "clerkId" = $1',
+    [userId]
+  );
+
+  if (result.rows.length === 0) {
+    return 0;
+  }
+
+  return result.rows[0].usedGenerations;
 };
 
 export async function fetchPaymentHistory(): Promise<Transaction[] | null> {
@@ -152,15 +107,15 @@ export async function fetchPaymentHistory(): Promise<Transaction[] | null> {
     if (!userId) {
       return null;
     }
-    const transactions = await prismadb.transaction.findMany({
-      where: {
-        userId: userId,
-      },
-    });
-    return transactions;
+
+    const result = await db.query<Transaction>(
+      'SELECT * FROM "Transaction" WHERE "userId" = $1 ORDER BY "createdAt" DESC',
+      [userId]
+    );
+
+    return result.rows;
   } catch (error) {
-    // console.error("[FETCH_PAYMENT_HISTORY_ERROR]", error);
-    // throw new Error("Failed to fetch payment history");
+    console.error("[FETCH_PAYMENT_HISTORY_ERROR]", error);
     return null;
   }
 }

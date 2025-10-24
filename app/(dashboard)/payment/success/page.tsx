@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, ArrowLeft, Receipt } from 'lucide-react';
 import { Loader } from '@/components/loader';
+import { toast } from 'react-hot-toast';
 
 interface TransactionData {
   transaction_id?: string;
@@ -17,12 +18,29 @@ interface TransactionData {
   customer_email?: string;
 }
 
+interface BalanceVerificationData {
+  success: boolean;
+  balanceUpdated: boolean;
+  currentBalance?: number;
+  transaction?: {
+    id: string;
+    amount: string;
+    status: string;
+    paid_at: Date;
+  };
+}
+
 const PaymentSuccessPage = () => {
   const [transactionData, setTransactionData] = useState<TransactionData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isVerifyingBalance, setIsVerifyingBalance] = useState(false);
+  const [balanceVerified, setBalanceVerified] = useState(false);
+  const [redirectCountdown, setRedirectCountdown] = useState(5);
   const searchParams = useSearchParams();
+  const router = useRouter();
 
+  // Fetch transaction data
   useEffect(() => {
     const fetchTransactionData = async () => {
       const token = searchParams.get('token');
@@ -54,6 +72,80 @@ const PaymentSuccessPage = () => {
 
     fetchTransactionData();
   }, [searchParams]);
+
+  // Poll for balance verification
+  useEffect(() => {
+    if (!transactionData || balanceVerified || error) return;
+
+    const orderId = searchParams.get('order_id') || transactionData.order_id;
+    if (!orderId) return;
+
+    setIsVerifyingBalance(true);
+
+    const pollBalance = async () => {
+      try {
+        const response = await fetch(`/api/payment/verify-balance?transactionId=${orderId}`);
+        const data: BalanceVerificationData = await response.json();
+
+        if (data.success && data.balanceUpdated) {
+          setBalanceVerified(true);
+          setIsVerifyingBalance(false);
+          toast.success('Баланс успешно обновлен! Перенаправление на панель управления...');
+          return true;
+        }
+        return false;
+      } catch (error) {
+        console.error('Error verifying balance:', error);
+        return false;
+      }
+    };
+
+    // Initial check
+    pollBalance().then((verified) => {
+      if (verified) return;
+
+      // Poll every 2 seconds for up to 30 seconds
+      let attempts = 0;
+      const maxAttempts = 15;
+      
+      const pollInterval = setInterval(async () => {
+        attempts++;
+        
+        const verified = await pollBalance();
+        
+        if (verified || attempts >= maxAttempts) {
+          clearInterval(pollInterval);
+          
+          if (!verified) {
+            setIsVerifyingBalance(false);
+            toast('Баланс будет обновлен в ближайшее время', {
+              icon: '⏳',
+            });
+          }
+        }
+      }, 2000);
+
+      return () => clearInterval(pollInterval);
+    });
+  }, [transactionData, balanceVerified, error, searchParams]);
+
+  // Countdown and redirect to dashboard
+  useEffect(() => {
+    if (!balanceVerified) return;
+
+    const countdownInterval = setInterval(() => {
+      setRedirectCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(countdownInterval);
+          router.push('/dashboard');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(countdownInterval);
+  }, [balanceVerified, router]);
 
   if (isLoading) {
     return (
@@ -102,6 +194,38 @@ const PaymentSuccessPage = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* Balance Verification Status */}
+          {isVerifyingBalance && !balanceVerified && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-center space-x-3">
+                <Loader />
+                <div>
+                  <p className="text-sm font-semibold text-blue-900">
+                    Обновление баланса токенов...
+                  </p>
+                  <p className="text-xs text-blue-700 mt-1">
+                    Пожалуйста, подождите, пока мы обновим ваш баланс
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Balance Verified - Redirect Countdown */}
+          {balanceVerified && (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="text-center">
+                <CheckCircle className="w-8 h-8 text-green-600 mx-auto mb-2" />
+                <p className="text-sm font-semibold text-green-900">
+                  Баланс успешно обновлен!
+                </p>
+                <p className="text-xs text-green-700 mt-2">
+                  Перенаправление на панель управления через {redirectCountdown} сек...
+                </p>
+              </div>
+            </div>
+          )}
+
           {transactionData && (
             <div className="bg-gray-50 p-4 rounded-lg space-y-3">
               <h3 className="font-semibold text-gray-900">Детали транзакции:</h3>
@@ -150,17 +274,23 @@ const PaymentSuccessPage = () => {
           <div className="border-t pt-4">
             <p className="text-sm text-gray-600 mb-4">
               Уведомление о платеже было отправлено на ваш email. 
-              Вы можете продолжить использование всех функций платформы.
+              {balanceVerified 
+                ? ' Ваши токены готовы к использованию!' 
+                : ' Вы можете продолжить использование всех функций платформы.'}
             </p>
           </div>
 
           <div className="flex flex-col space-y-3">
-            <Link href="/dashboard" className="w-full">
-              <Button className="w-full">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Вернуться в панель управления
-              </Button>
-            </Link>
+            <Button 
+              onClick={() => router.push('/dashboard')} 
+              className="w-full"
+              disabled={isVerifyingBalance && !balanceVerified}
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              {balanceVerified 
+                ? `Перейти к панели (${redirectCountdown}s)` 
+                : 'Вернуться в панель управления'}
+            </Button>
             
             <Link href="/dashboard/billing/payment-history" className="w-full">
               <Button variant="outline" className="w-full">

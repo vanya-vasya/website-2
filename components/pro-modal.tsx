@@ -200,6 +200,7 @@ export const ProModal = () => {
               orderId={`gen_${userId}_${Date.now()}`}
               description={`Nerbixa Generations Purchase (${watch("generations")} Tokens)`}
               customerEmail={user?.emailAddresses[0].emailAddress || ""}
+              userId={userId || ""}
               onSuccess={handlePaymentSuccess}
               onError={handlePaymentError}
               onCancel={handlePaymentCancel}

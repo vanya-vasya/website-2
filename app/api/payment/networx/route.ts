@@ -30,12 +30,20 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     console.log('Request body:', body);
     
-    const { amount, currency = 'USD', orderId, description, customerEmail } = body;
+    const { amount, currency = 'USD', orderId, description, customerEmail, userId } = body;
     
     if (!amount || !orderId) {
       console.log('Missing required fields:', { amount, orderId });
       return NextResponse.json(
         { error: 'Amount and orderId are required' },
+        { status: 400 }
+      );
+    }
+
+    if (!userId) {
+      console.log('Missing userId');
+      return NextResponse.json(
+        { error: 'UserId is required for tracking' },
         { status: 400 }
       );
     }
@@ -67,13 +75,13 @@ export async function POST(request: NextRequest) {
           amount: amount * 100, // Amount in cents (EUR 2.50 = 250)
           currency: currency,
           description: description || 'Payment for order',
-          tracking_id: orderId // Связываем платёж с заказом
+          tracking_id: userId // Use userId for tracking to match user in webhook
         },
         customer: {
           email: customerEmail || 'test@example.com' // Always include customer email
         },
         settings: {
-          return_url: returnUrl, // URL для возврата после успешной оплаты
+          return_url: `${returnUrl}?order_id=${orderId}`, // Pass orderId in return URL
           notification_url: notificationUrl // URL для получения webhook уведомлений
         }
       }

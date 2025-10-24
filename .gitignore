@@ -8,6 +8,8 @@
 
 # testing
 /coverage
+jest-results.json
+.jest-cache
 
 # next.js
 /.next/
@@ -19,6 +21,18 @@
 # misc
 .DS_Store
 *.pem
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store?
+ehthumbs.db
 
 # debug
 npm-debug.log*
@@ -28,6 +42,14 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
+.env.test
+.env.production
+
+# Sensitive files
+*.key
+*.pem
+*.p12
+*.pfx
 
 # vercel
 .vercel

@@ -50,7 +50,7 @@ const companyDetails = [
     icon: FileText,
   },
   {
-    name: "support@zinvero.com",
+    name: "support@nerbixa.com",
     icon: Mail,
   },
   {
@@ -64,14 +64,14 @@ const Footer = () => {
   let year = date.getFullYear();
 
   return (
-    <footer className="main-footer max-w-[1350px] mx-auto bg-white">
-      <div className="main-footer__top">
+    <footer className="main-footer w-full bg-white">
+      <div className="main-footer__top max-w-[1350px] mx-auto">
         <div className="px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             <div className="pr-4 pl-4">
               <div className="footer-widget__column footer-widget__about">
                 <div className="footer-widget__logo">
-                  <Image width={"98"} height={"39"} src="/logos/zinvero-logo.png" alt="Zinvero Logo" />
+                  <Image width={"98"} height={"39"} src="/logos/nerbixa-logo.png" alt="Nerbixa Logo" />
                 </div>
                 <p 
                   className="footer-widget__about-text"
@@ -199,7 +199,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      <div className="main-footer__bottom">
+      <div className="main-footer__bottom max-w-[1350px] mx-auto">
         <div className="flex justify-between items-center px-4 mx-4">
           <div className="">
             <p 
@@ -213,7 +213,7 @@ const Footer = () => {
                 color: '#0f172a'
               }}
             >
-              Zinvero, Copyright © {year}. All Rights Reserved.
+              Nerbixa, Copyright © {year}. All Rights Reserved.
             </p>
           </div>
         </div>

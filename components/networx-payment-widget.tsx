@@ -14,6 +14,7 @@ interface NetworkPaymentWidgetProps {
   orderId: string;
   description?: string;
   customerEmail?: string;
+  userId?: string;
   onSuccess?: (transactionData: any) => void;
   onError?: (error: any) => void;
   onCancel?: () => void;
@@ -35,6 +36,7 @@ export const NetworkPaymentWidget: React.FC<NetworkPaymentWidgetProps> = ({
   orderId,
   description,
   customerEmail,
+  userId,
   onSuccess,
   onError,
   onCancel,
@@ -65,6 +67,7 @@ export const NetworkPaymentWidget: React.FC<NetworkPaymentWidgetProps> = ({
           orderId,
           description,
           customerEmail: email,
+          userId,
         }),
       });
 

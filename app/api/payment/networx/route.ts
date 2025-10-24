@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     console.log('Request body:', body);
     
-    const { amount, currency = 'USD', orderId, description, customerEmail } = body;
+    const { amount, currency = 'USD', orderId, description, customerEmail, userId } = body;
     
     if (!amount || !orderId) {
       console.log('Missing required fields:', { amount, orderId });
@@ -40,20 +40,45 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!userId) {
+      console.log('Missing userId');
+      return NextResponse.json(
+        { error: 'UserId is required for tracking' },
+        { status: 400 }
+      );
+    }
+
     // Networx Pay API credentials and configuration
-    const shopId = process.env.NETWORX_SHOP_ID || '29959';
-    const secretKey = process.env.NETWORX_SECRET_KEY || 'dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950';
+    const shopId = process.env.NETWORX_SHOP_ID;
+    const secretKey = process.env.NETWORX_SECRET_KEY;
+    
+    // Check if credentials are configured
+    if (!shopId || !secretKey) {
+      console.error('❌ NETWORX CREDENTIALS NOT CONFIGURED');
+      console.error('Please set NETWORX_SHOP_ID and NETWORX_SECRET_KEY in environment variables');
+      return NextResponse.json(
+        { 
+          error: 'Payment gateway not configured',
+          message: 'Please contact support. Payment credentials are missing.',
+          details: 'NETWORX_SHOP_ID and NETWORX_SECRET_KEY must be set in environment variables'
+        },
+        { status: 500 }
+      );
+    }
+    
     // Force correct API URL for hosted payment page - override any incorrect environment variable
     const apiUrl = 'https://checkout.networxpay.com';  // Correct API URL for hosted payment page
-    const returnUrl = process.env.NETWORX_RETURN_URL || 'https://nerbixa.com/payment/success';
+    const returnUrl = process.env.NETWORX_RETURN_URL || 'https://nerbixa.com/payment/callback';
     const notificationUrl = process.env.NETWORX_WEBHOOK_URL || 'https://nerbixa.com/api/webhooks/networx';
-    const testMode = false; // Use real NetworkX Pay API
+    const useTestMode = process.env.NETWORX_TEST_MODE === 'true'; // Enable test transactions
     
     console.log('Environment variables:', {
-      shopId: shopId ? 'SET' : 'MISSING',
-      secretKey: secretKey ? 'SET' : 'MISSING',
+      shopId: shopId.substring(0, 5) + '***', // Mask for security
+      secretKey: '***' + secretKey.substring(secretKey.length - 4), // Mask for security
       apiUrl,
-      testMode
+      useTestMode,
+      returnUrl,
+      notificationUrl
     });
     
     console.log('API Version: 2, Authentication: HTTP Basic, Using Hosted Payment Page');
@@ -61,47 +86,33 @@ export async function POST(request: NextRequest) {
     // Request structure for hosted payment page according to working NetworkX Pay example
     const requestData = {
       checkout: {
-        test: true, // Always use NetworkX Pay test mode for development
+        test: useTestMode, // Use environment variable to control test mode
         transaction_type: "payment",
         order: {
           amount: amount * 100, // Amount in cents (EUR 2.50 = 250)
           currency: currency,
           description: description || 'Payment for order',
-          tracking_id: orderId // Связываем платёж с заказом
+          tracking_id: userId // Use userId for tracking to match user in webhook
         },
         customer: {
           email: customerEmail || 'test@example.com' // Always include customer email
         },
         settings: {
-          return_url: returnUrl, // URL для возврата после успешной оплаты
+          return_url: `${returnUrl}?order_id=${orderId}`, // Pass orderId in return URL
           notification_url: notificationUrl // URL для получения webhook уведомлений
         }
       }
     };
 
-    console.log('Final request data:', requestData);
+    console.log('Final request data:', {
+      ...requestData,
+      checkout: {
+        ...requestData.checkout,
+        customer: { email: '***@***' } // Mask email in logs
+      }
+    });
     
-    // FOR DEVELOPMENT: Use test mode implementation until correct API endpoints are confirmed
-    if (testMode) {
-      console.log('🧪 TEST MODE: Simulating payment token creation');
-      
-      // Generate a test token for development
-      const testToken = `test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const testTransactionId = `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      console.log('✅ TEST MODE: Token created successfully:', testToken);
-      
-      return NextResponse.json({
-        success: true,
-        token: testToken,
-        payment_url: `https://checkout.networxpay.com/ctp/pay/${testToken}`,
-        checkout_id: testTransactionId,
-        test_mode: true,
-        message: 'Test payment checkout created successfully (development mode)'
-      });
-    }
-    
-    // Make real API call to Networx Pay (Production mode)
+    // Make API call to Networx Pay
     const networxApiUrl = `${apiUrl}/ctp/api/checkouts`;  // Correct endpoint for hosted payment page
     console.log('Making request to:', networxApiUrl);
 
@@ -119,33 +130,82 @@ export async function POST(request: NextRequest) {
 
       if (!networxResponse.ok) {
         const errorData = await networxResponse.text();
-        console.error('Networx API Error Response:', errorData);
+        console.error('❌ Networx API Error Response:', errorData);
+        console.error('Response Status:', networxResponse.status);
+        console.error('Response Headers:', Object.fromEntries(networxResponse.headers.entries()));
+        
+        // Try to parse error as JSON for better error messages
+        let errorDetails = errorData;
+        try {
+          const parsedError = JSON.parse(errorData);
+          errorDetails = JSON.stringify(parsedError, null, 2);
+          
+          // Check for specific errors
+          if (parsedError.response?.message === 'Access denied') {
+            console.error('🔒 ACCESS DENIED - Possible causes:');
+            console.error('1. Invalid Shop ID or Secret Key');
+            console.error('2. Account not activated in Networx Dashboard');
+            console.error('3. API access not enabled for this account');
+            console.error('4. IP whitelist restrictions');
+            console.error('Current Shop ID:', shopId.substring(0, 5) + '***');
+            
+            return NextResponse.json(
+              { 
+                error: 'Payment gateway authentication failed',
+                message: 'Unable to connect to payment processor. Please contact support.',
+                details: 'Authentication error - credentials may be invalid or account not activated',
+                supportInfo: {
+                  action: 'Please verify Networx credentials in environment variables',
+                  required: ['NETWORX_SHOP_ID', 'NETWORX_SECRET_KEY'],
+                  documentation: 'Check NETWORX_AUTH_FIX.md for troubleshooting steps'
+                }
+              },
+              { status: 503 }
+            );
+          }
+        } catch (e) {
+          // Error is not JSON, keep as text
+        }
+        
         return NextResponse.json(
           { 
-            error: 'Failed to create payment token',
-            details: `API returned ${networxResponse.status}: ${errorData}`
+            error: 'Failed to create payment checkout',
+            details: `API returned ${networxResponse.status}`,
+            message: 'Unable to initialize payment. Please try again or contact support.',
+            errorData: errorDetails
           },
           { status: 400 }
         );
       }
 
       const networxResult = await networxResponse.json();
-      console.log('Networx API Success Response:', networxResult);
+      console.log('✅ Networx API Success Response received');
+      console.log('Checkout created:', {
+        hasToken: !!networxResult.checkout?.token,
+        hasRedirectUrl: !!networxResult.checkout?.redirect_url,
+        testMode: networxResult.checkout?.test
+      });
 
       // Проверяем успешность ответа от Networx hosted payment page
       if (networxResult.checkout && networxResult.checkout.token && networxResult.checkout.redirect_url) {
+        console.log('✅ Payment checkout created successfully');
+        console.log('Token:', networxResult.checkout.token);
+        console.log('Redirect URL:', networxResult.checkout.redirect_url);
+        
         return NextResponse.json({
           success: true,
           token: networxResult.checkout.token,
           payment_url: networxResult.checkout.redirect_url,
           checkout_id: networxResult.checkout.token, // Используем token как идентификатор
+          test_mode: useTestMode
         });
       } else {
-        console.error('Networx API returned unsuccessful response:', networxResult);
+        console.error('❌ Networx API returned unexpected response format:', networxResult);
         return NextResponse.json(
           { 
             error: 'Payment checkout creation failed',
-            details: networxResult.error || networxResult.message || 'Unknown error'
+            message: 'Payment processor returned invalid response',
+            details: networxResult.error || networxResult.message || 'Invalid response format'
           },
           { status: 400 }
         );

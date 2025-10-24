@@ -18,12 +18,12 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Zinvero",
+  title: "Nerbixa",
   description: "AI-powered creative tools for everyone",
   icons: {
-    icon: "/logos/zinvero-logo.png",
-    shortcut: "/logos/zinvero-logo.png",
-    apple: "/logos/zinvero-logo.png",
+    icon: "/logos/nerbixa-logo.png",
+    shortcut: "/logos/nerbixa-logo.png",
+    apple: "/logos/nerbixa-logo.png",
   },
 };
 
@@ -33,7 +33,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      signInUrl="/sign-in"
+      signUpUrl="/sign-up"
+      afterSignInUrl="/dashboard"
+      afterSignUpUrl="/dashboard"
+    >
       <html lang="en" suppressHydrationWarning>
         <body
           className={cn(

@@ -7,11 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
+import { useAuth } from '@clerk/nextjs';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'react-hot-toast';
 
 const PaymentTestPage = () => {
+  const { userId } = useAuth();
+  
   const [paymentConfig, setPaymentConfig] = useState({
     amount: 10.00,
     currency: 'USD',
@@ -170,6 +172,7 @@ const PaymentTestPage = () => {
               orderId={paymentConfig.orderId}
               description={paymentConfig.description}
               customerEmail={paymentConfig.customerEmail}
+              userId={userId || "test_user_123"}
               onSuccess={handlePaymentSuccess}
               onError={handlePaymentError}
               onCancel={handlePaymentCancel}

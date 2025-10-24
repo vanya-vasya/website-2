@@ -29,8 +29,10 @@ const PrivacyPolicy = () => {
               <h3 className="page-title__title" style={{ color: 'black', fontSize: '32px', marginBottom: '20px' }}>Privacy Policy</h3>
             </div>
             <p className="page-title__text" style={{ color: 'black' }}>
-              This Privacy Policy includes important information about your
-              personal data and we encourage you to read it carefully.
+              Updated: 25 October 2025 (Asia/Tbilisi)
+            </p>
+            <p className="page-title__text" style={{ color: 'black', marginTop: '10px' }}>
+              We strongly encourage you to read this Privacy Policy, as it explains important aspects of your personal data.
             </p>
           </div>
         </div>
@@ -43,12 +45,7 @@ const PrivacyPolicy = () => {
                 <div className="career-page-top__content-box-two">
 
                   <p className="career-page-top__text-1 pt-8" style={{ color: 'black' }}>
-                    Welcome to nerbixa.com! This Privacy Policy explains how we
-                    collect, use, disclose, and safeguard your information when
-                    you visit our website and use our AI generation services.
-                    Please read this policy carefully. If you do not agree with
-                    the terms of this Privacy Policy, please do not access the
-                    site.
+                    Welcome to nerbixa.com! This Privacy Policy outlines how we collect, use, share, and protect your information when you visit our website or use our AI-powered services. Please review this policy carefully. If you do not agree with its terms, we kindly ask that you refrain from accessing or using our site.
                   </p>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
                     Information We Collect
@@ -57,21 +54,13 @@ const PrivacyPolicy = () => {
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        <strong>Personal Information:</strong> When you register
-                        on nerbixa.com, we may collect the following personal
-                        information: Name, Email address, Payment information
-                        (for purchasing additional generations).
+                        <strong>Personal Information:</strong> When you register on nerbixa.com, we may collect details such as your name, email address, and payment information (if you use any paid features or services).
                       </p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        <strong>Usage Information:</strong> We may also collect
-                        information on how you interact with our website,
-                        including: IP address, Browser type and version, Time
-                        zone setting, Browser plug-in types and versions,
-                        Operating system and platform, Other technology on the
-                        devices you use to access this website.
+                        <strong>Usage Information:</strong> We may gather technical data about how you interact with our website, including your IP address, browser type, device details, time zone, and browsing activity.
                       </p>
                     </li>
                   </ul>
@@ -82,35 +71,25 @@ const PrivacyPolicy = () => {
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        <strong>To Provide and Improve Our Services:</strong> We
-                        use your information to provide you with the AI
-                        generation services you request and to improve the
-                        overall performance of our website.
+                        <strong>To Provide and Improve Services:</strong> We utilize your information to provide access to our tools and continuously refine the functionality and efficiency of our platform.
                       </p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        <strong>To Communicate with You:</strong> We may use
-                        your email address to send you updates, newsletters, and
-                        other communications related to your use of
-                        nerbixa.com.
+                        <strong>User Communication:</strong> Your contact details may be used to share announcements, product updates, newsletters, or important service notifications regarding your activity on nerbixa.com.
                       </p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        <strong>For Billing and Account Management:</strong> We
-                        use your payment information to process payments for
-                        additional generations and to manage your account.
+                        <strong>Payments & Account Handling:</strong> Payment information is processed to enable paid features, while account details are managed to ensure smooth operation and accuracy.
                       </p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        <strong>To Ensure Security and Compliance:</strong> We
-                        use your information to help maintain the security of
-                        our website and to comply with legal requirements.
+                        <strong>Safety & Legal Compliance:</strong> Collected data assists us in protecting our services, preventing misuse, and fulfilling our obligations under applicable laws.
                       </p>
                     </li>
                   </ul>
@@ -121,91 +100,67 @@ const PrivacyPolicy = () => {
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        <strong>Service Providers:</strong> We may share your
-                        information with third-party service providers who
-                        perform services on our behalf, such as payment
-                        processing and data analysis.
+                        <strong>Service Partners:</strong> We may provide your information to reliable third-party providers that support us with services such as payment handling, analytics, or technical maintenance.
                       </p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        <strong>Legal Requirements:</strong> We may disclose
-                        your information if required to do so by law or in
-                        response to valid requests by public authorities.
+                        <strong>Compliance with Law:</strong> Your data may be shared if necessary to meet legal requirements or to respond to official requests from government authorities.
                       </p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        <strong>Business Transfers:</strong> In the event of a
-                        merger, acquisition, or sale of all or a portion of our
-                        assets, your information may be transferred to the
-                        acquiring entity.
+                        <strong>Business Transitions:</strong> Should nerbixa.com undergo a merger, acquisition, or restructuring, your information could be included among the assets transferred.
                       </p>
                     </li>
                   </ul>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>Data Security</h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    We implement appropriate technical and organizational
-                    measures to protect your personal information against
-                    accidental or unlawful destruction, loss, alteration,
-                    unauthorized disclosure, or access.
+                    Your personal information is secured through appropriate measures designed to prevent unauthorized use, alteration, or exposure. We regularly review and update our security practices to address emerging threats and maintain data integrity. Despite these efforts, no system can guarantee complete protection, but we are committed to applying industry-standard safeguards to keep your data as safe as possible.
                   </p>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>Your Rights</h4>
                   <ul className="career-page-top__points-list list-unstyled">
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        <strong>Access:</strong> You have the right to request
-                        access to the personal information we hold about you.
+                        <strong>Access:</strong> You have the right to request a copy of the personal information we hold about you.
                       </p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        <strong>Correction:</strong> You have the right to
-                        request that we correct any inaccuracies in your
-                        personal information.
+                        <strong>Correction:</strong> If any of your details are inaccurate or incomplete, you may ask us to update or correct them.
                       </p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        <strong>Deletion:</strong> You have the right to request
-                        that we delete your personal information.
+                        <strong>Deletion:</strong> You can request the removal of your personal data from our systems, subject to certain legal or contractual obligations.
                       </p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        <strong>Objection:</strong> You have the right to object
-                        to the processing of your personal information in
-                        certain circumstances.
+                        <strong>Objection:</strong> In specific situations, you may object to how we process your information.
                       </p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        <strong>Portability:</strong> You have the right to
-                        request a copy of your personal information in a
-                        portable format.
+                        <strong>Portability:</strong> You may request your personal data in a structured, commonly used, and machine-readable format.
                       </p>
                     </li>
                   </ul>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    To exercise any of these rights, please contact us at
-                    support@nerbixa.com.
+                    To exercise your rights, please contact us at support@nerbixa.com.
                   </p>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
                     Changes to This Privacy Policy
                   </h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    We may update this Privacy Policy from time to time. When we
-                    do, we will post the updated policy on this page and update
-                    the effective date at the top of the policy. We encourage
-                    you to review this Privacy Policy periodically to stay
-                    informed about how we are protecting your information.
+                    This policy may be revised periodically, and any changes will be reflected on this page with an updated &quot;effective date.&quot; We encourage you to review it regularly to stay informed.
                   </p>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>Contact Us</h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>

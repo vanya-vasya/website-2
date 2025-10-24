@@ -29,9 +29,10 @@ const TermsAndConditions = () => {
               <h3 className="page-title__title" style={{ color: 'black', fontSize: '32px', marginBottom: '20px' }}>Terms and Conditions</h3>
             </div>
             <p className="page-title__text" style={{ color: 'black' }}>
-              These Terms and Conditions include important information about
-              your use of our services and we encourage you to read them
-              carefully.
+              Updated: 25 October 2025 (Asia/Tbilisi)
+            </p>
+            <p className="page-title__text" style={{ color: 'black', marginTop: '10px' }}>
+              These Terms and Conditions outline the key rules and requirements for using our services. We encourage you to read them carefully.
             </p>
           </div>
         </div>
@@ -44,61 +45,43 @@ const TermsAndConditions = () => {
                 <div className="career-page-top__content-box-two">
 
                   <p className="career-page-top__text-1 pt-8" style={{ color: 'black' }}>
-                    Welcome to nerbixa.com! These Terms and Conditions
-                    (&quot;Terms&quot;) constitute a distance agreement between
-                    GUΑRΑΝТЕЕD GRЕΑТ SЕRVIСЕ LТD (&quot;Company&quot;), a company registered
-                    under the laws of England and Wales, Company Number:
-                    15982295, with its registered address at Dept 6162 43 Owston Road,
-                    Carcroft, Doncaster, United Kingdom, DN6 8DA, and you
-                    (&quot;Customer&quot;).
+                    Welcome to nerbixa.com! These Terms and Conditions (&quot;Terms&quot;) represent a legal agreement between you (&quot;User&quot;) and GUΑRΑΝТЕЕD GRЕΑТ SЕRVIСЕ LТD (&quot;Company&quot;). By accessing or using our website and the AI-powered content generation services we provide, you agree to comply with and be bound by these Terms.
                   </p>
                   <p className="career-page-top__text-1 pt-8" style={{ color: 'black' }}>
-                    By accessing or using nerbixa.com, you agree to be bound by
-                    these Terms. If you do not agree with these Terms, please do
-                    not use our services.
+                    By accessing our site and using our services, you agree to comply with these Terms. If you do not agree to these Terms, please refrain from using our services.
                   </p>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
                     1. Use of Services
                   </h4>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>Eligibility</h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    To use our services, you must be at least 18 years old and
-                    capable of entering into a binding contract.
+                    You must be at least 18 years old and legally capable of entering into a binding agreement to use our services.
                   </p>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>Registration</h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    You are required to create an account to access our AI
-                    generation services. During registration, you must provide
-                    accurate and complete information. You are responsible for
-                    maintaining the confidentiality of your account credentials
-                    and for all activities that occur under your account.
+                    To access our AI content generation services, you must first create an account. During the registration process, you agree to provide accurate, current, and complete information. You are solely responsible for safeguarding your account credentials and for any actions or activities carried out under your account.
                   </p>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
                     2. AI Generations
                   </h4>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>Free Generations</h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    Upon registration, you will receive a limited number of free
-                    generations. These free generations are provided at our
-                    discretion and may be subject to change.
+                    Upon registration, you will receive a limited number of free generations. These free generations are provided at our discretion and may be subject to change.
                   </p>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
                     AI Generation Models
                   </h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    We offer various AI generation models, each requiring a
-                    specific number of generations to create content. The
-                    available models and their generation requirements are as
-                    follows:
+                    We offer various AI generation models, each requiring a specific number of generations to create content. The available models and their requirements are as follows:
                   </p>
                   <ul className="career-page-top__points-list list-unstyled">
                     <li className="mt-[26px]">
                       <div className="career-page-top__points-shape"></div>
-                      <p style={{ color: 'black' }}>Conversation: 1 generation per interaction</p>
+                      <p style={{ color: 'black' }}>AI Chat Assistant: 1 generation per interaction</p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
-                      <p style={{ color: 'black' }}>Image Generation: 10 generations per image</p>
+                      <p style={{ color: 'black' }}>Image Generation: 14 generations per image</p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
@@ -106,21 +89,19 @@ const TermsAndConditions = () => {
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
-                      <p style={{ color: 'black' }}>Music Generation: 15 generations per music piece</p>
+                      <p style={{ color: 'black' }}>Music Generation: 11 generations per music piece</p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
-                      <p style={{ color: 'black' }}>Speech Generation: 15 generations per speech piece</p>
+                      <p style={{ color: 'black' }}>Speech Generation: 13 generations per speech piece</p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
-                      <p style={{ color: 'black' }}>Code Generation: 3 generations per code snippet</p>
+                      <p style={{ color: 'black' }}>Code Generation: 5 generations per code snippet</p>
                     </li>
                   </ul>
                   <p className="career-page-top__text-1 mt-[26px]" style={{ color: 'black' }}>
-                    Users start with 20 free generations upon registration. For
-                    example, a user can generate 2 images, or generate a music
-                    piece and interact with the bot 5 times.
+                    Users start with 20 free generations upon registration. For example, a user can generate 1 image, or generate a music piece.
                   </p>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>3. User Conduct</h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
@@ -154,13 +135,7 @@ const TermsAndConditions = () => {
                     4. Intellectual Property
                   </h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    All content generated using our tools is the exclusive
-                    property of the user who created it. Nerbixa does not
-                    claim ownership rights to the generated content. You retain
-                    all rights to use, distribute, and create derivative works
-                    from the content you create. Nerbixa provides you with
-                    a platform to generate content, but does not require any
-                    rights to its use.
+                    All content generated through our platform is the sole property of the user who creates it. GUΑRΑΝТЕЕD GRЕΑТ SЕRVIСЕ LТD does not claim any ownership rights over the generated content. You retain full rights to use, distribute, modify, and create derivative works from the content you produce. The Company merely provides the tools and platform for generation and does not require or assume any rights to your creations.
                   </p>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
                     5. Disclaimer of Warranties
@@ -175,12 +150,7 @@ const TermsAndConditions = () => {
                     6. Limitation of Liability
                   </h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    To the fullest extent permitted by law, Nerbixa shall
-                    not be liable for any indirect, incidental, special,
-                    consequential, or punitive damages, or any loss of profits
-                    or revenues, whether incurred directly or indirectly, or any
-                    loss of data, use, goodwill, or other intangible losses,
-                    resulting from:
+                    To the fullest extent permitted by law, GUΑRΑΝТЕЕD GRЕΑТ SЕRVIСЕ LТD shall not be held liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, revenues, data, use, goodwill, or other intangible assets, whether incurred directly or indirectly, arising from:
                   </p>
                   <ul className="career-page-top__points-list list-unstyled">
                     <li className="mt-[26px]">
@@ -190,15 +160,13 @@ const TermsAndConditions = () => {
                     <li>
                       <div className="career-page-top__points-shape"></div>
                       <p style={{ color: 'black' }}>
-                        Any unauthorized access to or use of our servers and/or
-                        any personal information stored therein
+                        Any unauthorized access to or use of our servers and/or any personal information stored therein
                       </p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
                       <p style={{ color: 'black' }}>
-                        Any bugs, viruses, or other harmful code that may be
-                        transmitted to or through our services
+                        Any bugs, viruses, or other harmful code that may be transmitted to or through our services
                       </p>
                     </li>
                   </ul>
@@ -206,13 +174,7 @@ const TermsAndConditions = () => {
                     7. Indemnification
                   </h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    You agree to indemnify and hold harmless Nerbixa, its
-                    affiliates, and their respective officers, directors,
-                    employees, and agents from and against any claims,
-                    liabilities, damages, losses, and expenses, including
-                    reasonable attorneys&apos; fees, arising out of or in any
-                    way connected with your access to or use of our services, or
-                    your violation of these Terms.
+                    You agree to indemnify and hold harmless GUΑRΑΝТЕЕD GRЕΑТ SЕRVIСЕ LТD, its affiliates, and their respective officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, or expenses (including reasonable attorneys&apos; fees) that arise out of or are in any way connected to your use of our services or your breach of these Terms.
                   </p>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
                     8. Changes to These Terms
@@ -226,9 +188,7 @@ const TermsAndConditions = () => {
                   </p>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>9. Governing Law</h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    These Terms shall be governed by and construed in accordance
-                    with the laws of the European Union, without regard to its
-                    conflict of law principles.
+                    These Terms shall be governed by and construed in accordance with the laws of the United Kingdom, without regard to its conflict of law principles.
                   </p>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>10. Contact Us</h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>

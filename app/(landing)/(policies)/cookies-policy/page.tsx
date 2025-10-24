@@ -29,9 +29,10 @@ const CookiesPolicy = () => {
               <h3 className="page-title__title" style={{ color: 'black', fontSize: '32px', marginBottom: '20px' }}>Cookies Policy</h3>
             </div>
             <p className="page-title__text" style={{ color: 'black' }}>
-              This Cookies Policy provides important information about the use
-              of cookies on our website. Please read it carefully to understand
-              how we use cookies and how you can control them.
+              Updated: 25 October 2025 (Asia/Tbilisi)
+            </p>
+            <p className="page-title__text" style={{ color: 'black', marginTop: '10px' }}>
+              This Cookies Policy explains how our website uses cookies, why we use them, and how you can control their use. Please review it carefully to stay informed.
             </p>
           </div>
         </div>
@@ -44,19 +45,13 @@ const CookiesPolicy = () => {
                 <div className="career-page-top__content-box-two">
 
                   <p className="career-page-top__text-1 pt-8" style={{ color: 'black' }}>
-                    At nerbixa.com, we use cookies to enhance your browsing
-                    experience, provide personalized services, and analyze our
-                    website traffic. This policy explains what cookies are, how
-                    we use them, and your choices regarding their usage.
+                    At nerbixa.com, we use cookies to improve your browsing experience, deliver personalized features, and analyze site traffic. This Cookies Policy explains what cookies are, how we utilize them, and the choices you have for managing their use.
                   </p>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
                     What Are Cookies?
                   </h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    Cookies are small text files that are placed on your device
-                    when you visit a website. They help us recognize your device
-                    and store information about your preferences or past actions
-                    on our site.
+                    Cookies are small text files placed on your device when you visit our website. These files help us identify your device and store data about your preferences or previous actions on our site.
                   </p>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
                     Types of Cookies We Use
@@ -68,41 +63,25 @@ const CookiesPolicy = () => {
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        <strong>Essential Cookies:</strong> These cookies are
-                        necessary for the basic functioning of our website. They
-                        enable core features such as security, network
-                        management, and accessibility.
+                        <strong>Essential Cookies:</strong> These cookies are essential for the basic functioning of our website. They enable fundamental features like security, network management, and accessibility.
                       </p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        <strong>Performance and Analytics Cookies:</strong> We
-                        use these cookies to collect information about how you
-                        use our website. This helps us understand website
-                        performance and improve our services. We use Google
-                        Analytics for this purpose.
+                        <strong>Performance and Analytics Cookies:</strong> These cookies help us collect data about how visitors interact with our website. This information is used to improve the site&apos;s performance and enhance our services. We use tools like Google Analytics for this purpose.
                       </p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        <strong>Functionality Cookies:</strong> These cookies
-                        allow our website to remember choices you make and
-                        provide enhanced, more personalized features. For
-                        example, they can remember your preferences on our site.
+                        <strong>Functionality Cookies:</strong> These cookies allow our website to remember choices you make and offer a more personalized experience. For example, they can save your preferences across sessions.
                       </p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        <strong>Advertising and Targeting Cookies:</strong> We
-                        may use these cookies to make advertising messages more
-                        relevant to you. They perform functions like preventing
-                        the same ad from continuously reappearing, ensuring that
-                        ads are properly displayed for advertisers, and in some
-                        cases selecting advertisements that are based on your
-                        interests.
+                        <strong>Advertising and Targeting Cookies:</strong> These cookies help us deliver ads that are more relevant to your interests. They ensure that ads are displayed correctly and prevent the same ad from being shown repeatedly.
                       </p>
                     </li>
                   </ul>
@@ -110,41 +89,33 @@ const CookiesPolicy = () => {
                     Third-Party Cookies
                   </h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    In addition to our own cookies, we use third-party cookies
-                    to report usage statistics of the website and deliver
-                    advertisements on and through the site. These cookies are
-                    provided by third-party services such as Google Analytics,
-                    which help us understand and analyze how visitors use our
-                    website.
+                    In addition to our own cookies, we may use third-party cookies for purposes such as tracking website usage and displaying ads. These cookies are provided by third-party services, such as Google Analytics, which help us understand how visitors use our site.
                   </p>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
                     How We Use Cookies
                   </h4>
-                  <p className="career-page-top__text-1" style={{ color: 'black' }}>We use cookies to:</p>
+                  <p className="career-page-top__text-1" style={{ color: 'black' }}>Cookies are used for the following purposes:</p>
                   <ul className="career-page-top__points-list list-unstyled pt-4">
                     <li>
                       <div className="career-page-top__points-shape"></div>
-                        <p style={{ color: 'black' }}>Ensure the website functions properly and securely</p>
+                        <p style={{ color: 'black' }}>Ensure the proper and secure functioning of our website</p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        Improve your browsing experience by remembering your
-                        preferences and settings
+                        Enhance your browsing experience by remembering your preferences and settings
                       </p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        Understand how you use our website and identify areas
-                        for improvement
+                        Analyze how you use our website and identify areas for improvement
                       </p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        Deliver personalized content and advertising that is
-                        relevant to your interests
+                        Deliver personalized content and advertising based on your interests
                       </p>
                     </li>
                   </ul>
@@ -152,8 +123,7 @@ const CookiesPolicy = () => {
                     Your Choices Regarding Cookies
                   </h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    You have several options for managing cookies on your
-                    device. You can:
+                    You have various options for managing cookies on your device. You can:
                   </p>
                   <ul className="career-page-top__points-list list-unstyled pt-4">
                     <li>
@@ -163,22 +133,22 @@ const CookiesPolicy = () => {
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        Use opt-out tools provided by third-party services like
-                        Google Analytics
+                        Use opt-out tools provided by third-party services like Google Analytics
                       </p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
                                               <p style={{ color: 'black' }}>
-                        Adjust your preferences in our cookie consent manager,
-                        if available
+                        Adjust your preferences in our cookie consent manager, if available
                       </p>
                     </li>
                   </ul>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    Please note that blocking or deleting cookies may affect
-                    your ability to use certain features of our website and may
-                    impact your experience.
+                    Please note that blocking or deleting cookies may affect your ability to use certain features of our website and could impact your experience.
+                  </p>
+                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>Contact Us</h4>
+                  <p className="career-page-top__text-1" style={{ color: 'black' }}>
+                    If you have any questions regarding our use of cookies or need assistance managing your cookie preferences, feel free to contact us at support@nerbixa.com.
                   </p>
                 </div>
               </div>

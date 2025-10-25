@@ -11,7 +11,12 @@
     "test:ci": "jest --ci --coverage",
     "test:unit": "jest --testPathPattern=__tests__/(?!integration)",
     "test:integration": "jest --testPathPattern=__tests__/integration",
-    "db:setup": "npx tsx scripts/setup-database.ts"
+    "db:setup": "npx tsx scripts/setup-database.ts",
+    "webhook:test": "npx tsx scripts/test-clerk-webhook.ts",
+    "webhook:verify": "npx tsx scripts/verify-webhook-production.ts",
+    "webhook:curl": "./scripts/test-webhook-curl.sh GET",
+    "webhook:health": "curl http://localhost:3000/api/webhooks/clerk",
+    "user:create": "node create-vladimir-user.js"
   },
   "dependencies": {
     "@bytescale/upload-widget-react": "^4.19.0",

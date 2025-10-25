@@ -5,9 +5,13 @@
  * Run this to reset the database
  */
 
+import { config } from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Pool } from 'pg';
+
+// Load environment variables
+config({ path: '.env.local' });
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,

@@ -35,7 +35,7 @@ const PaymentSuccessPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [isVerifyingBalance, setIsVerifyingBalance] = useState(false);
   const [balanceVerified, setBalanceVerified] = useState(false);
-  const [redirectCountdown, setRedirectCountdown] = useState(5);
+  const [redirectCountdown, setRedirectCountdown] = useState(0); // INSTANT redirect
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -128,23 +128,16 @@ const PaymentSuccessPage = () => {
     });
   }, [transactionData, balanceVerified, error, searchParams]);
 
-  // Countdown and redirect to dashboard after balance verification
+  // INSTANT redirect to dashboard after balance verification
   useEffect(() => {
     if (!balanceVerified) return;
 
-    const countdownInterval = setInterval(() => {
-      setRedirectCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(countdownInterval);
-          // Redirect to dashboard with success parameter
-          router.push('/dashboard?payment_success=true');
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    // Redirect immediately without countdown
+    const timeoutId = setTimeout(() => {
+      router.push('/dashboard?payment_success=true');
+    }, 100); // 100ms delay for smooth transition
 
-    return () => clearInterval(countdownInterval);
+    return () => clearTimeout(timeoutId);
   }, [balanceVerified, router]);
 
   if (isLoading) {
@@ -209,7 +202,7 @@ const PaymentSuccessPage = () => {
             </div>
           )}
 
-          {/* Balance Verified - Redirect Countdown */}
+          {/* Balance Verified - Instant Redirect */}
           {balanceVerified && (
             <div className="bg-green-50 border border-green-200 rounded-lg p-4">
               <div className="text-center">
@@ -218,7 +211,7 @@ const PaymentSuccessPage = () => {
                   Баланс успешно обновлен!
                 </p>
                 <p className="text-xs text-green-700 mt-2">
-                  Перенаправление на панель управления через {redirectCountdown} сек...
+                  Перенаправление на панель управления...
                 </p>
               </div>
             </div>
@@ -285,9 +278,7 @@ const PaymentSuccessPage = () => {
               disabled={isVerifyingBalance && !balanceVerified}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              {balanceVerified 
-                ? `Continue to Dashboard (${redirectCountdown}s)` 
-                : 'Continue to Dashboard'}
+              Continue to Dashboard
             </Button>
             
             <Button 

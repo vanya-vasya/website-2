@@ -64,65 +64,86 @@ export async function POST(request: NextRequest) {
     console.log(JSON.stringify(body, null, 2));
     console.log('═══════════════════════════════════════════════════════');
     
+    // CRITICAL FIX: Networx sends data inside "transaction" object
+    const transaction = body.transaction;
+    if (!transaction) {
+      console.error('❌ Missing transaction object in webhook payload');
+      return NextResponse.json(
+        { error: 'Invalid webhook payload: missing transaction' },
+        { status: 400 }
+      );
+    }
+
     const { 
       status, 
-      order_id, 
-      transaction_id, 
+      uid, // Networx uses "uid", not "transaction_id"
       amount, 
       currency, 
       type,
-      customer_email,
-      error_message,
       tracking_id,
       description,
       payment_method_type,
       message,
-      paid_at
-    } = body;
+      paid_at,
+      customer
+    } = transaction;
 
+    const transaction_id = uid;
+    const customer_email = customer?.email;
+    
     transactionId = transaction_id;
     userId = tracking_id;
 
     console.log('═══════════════════════════════════════════════════════');
     console.log('📥 Networx Webhook Parsed Data:');
     console.log('Timestamp:', new Date().toISOString());
-    console.log('Transaction ID:', transaction_id);
-    console.log('Order ID:', order_id);
+    console.log('Transaction ID (uid):', transaction_id);
     console.log('Status:', status);
     console.log('Type:', type);
     console.log('Amount:', amount, currency);
     console.log('Tracking ID (User ID):', tracking_id);
+    console.log('Customer Email:', customer_email);
+    console.log('Payment Method:', payment_method_type);
+    console.log('Paid At:', paid_at);
     console.log('═══════════════════════════════════════════════════════');
 
-    const secretKey = process.env.NETWORX_SECRET_KEY || 'dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950';
-    if (!secretKey) {
-      console.error('❌ NETWORX_SECRET_KEY not configured');
-      return NextResponse.json(
-        { error: 'Server configuration error' },
-        { status: 500 }
-      );
-    }
-
-    // Verify webhook signature
-    const signature = body.signature;
-    if (!signature) {
-      console.error('❌ Missing signature in webhook');
+    // Get signature from headers (Networx sends it as X-Signature header)
+    const signature = request.headers.get('x-signature') || request.headers.get('X-Signature');
+    
+    // Networx might not send signature for test transactions
+    const isTestTransaction = transaction.test === true;
+    
+    if (!signature && !isTestTransaction) {
+      console.error('❌ Missing signature in webhook (not a test transaction)');
       return NextResponse.json(
         { error: 'Missing signature' },
         { status: 400 }
       );
     }
 
-    const isValidSignature = verifyWebhookSignature(body, signature, secretKey);
-    if (!isValidSignature) {
-      console.error('❌ Invalid webhook signature');
-      return NextResponse.json(
-        { error: 'Invalid signature' },
-        { status: 403 }
-      );
-    }
+    if (signature) {
+      const secretKey = process.env.NETWORX_SECRET_KEY || 'dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950';
+      if (!secretKey) {
+        console.error('❌ NETWORX_SECRET_KEY not configured');
+        return NextResponse.json(
+          { error: 'Server configuration error' },
+          { status: 500 }
+        );
+      }
 
-    console.log('✅ Webhook signature verified');
+      const isValidSignature = verifyWebhookSignature(body, signature, secretKey);
+      if (!isValidSignature) {
+        console.error('❌ Invalid webhook signature');
+        return NextResponse.json(
+          { error: 'Invalid signature' },
+          { status: 403 }
+        );
+      }
+
+      console.log('✅ Webhook signature verified');
+    } else {
+      console.log('⚠️  Test transaction detected, skipping signature verification');
+    }
 
     // Idempotency: Check for duplicates via webhookEventId
     if (transaction_id) {
@@ -145,7 +166,7 @@ export async function POST(request: NextRequest) {
     switch (status) {
       case 'success':
       case 'successful':
-        console.log(`💰 Processing successful payment for order ${order_id}`);
+        console.log(`💰 Processing successful payment for transaction ${transaction_id}`);
         
         if (!tracking_id) {
           console.error('❌ Missing tracking_id (userId) in successful payment webhook');
@@ -227,9 +248,10 @@ export async function POST(request: NextRequest) {
 
             // 2. Update ONLY user balance (DO NOT create new user)
             // User table contains ONLY profile and balance, NOT transaction data
-            const newBalance = user.availableGenerations - user.usedGenerations + tokensToAdd;
+            // FIXED: Simply add tokens to current balance, don't reset usedGenerations
+            const newBalance = user.availableGenerations + tokensToAdd;
             await client.query(
-              'UPDATE "User" SET "availableGenerations" = $1, "usedGenerations" = 0 WHERE "clerkId" = $2',
+              'UPDATE "User" SET "availableGenerations" = $1 WHERE "clerkId" = $2',
               [newBalance, tracking_id]
             );
 

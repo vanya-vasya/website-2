@@ -6,7 +6,7 @@ import { incrementApiLimit, checkApiLimit } from "@/lib/api-limit";
 import { MODEL_GENERATIONS_PRICE } from "@/constants";
 
 const configuration = {
-  apiKey: process.env.OPEN_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY,
 };
 
 const instructionMessage = {

@@ -41,25 +41,45 @@ export const incrementApiLimit = async (value: number) => {
 };
 
 export const checkApiLimit = async (generationPrice: number) => {
-  const { userId } = auth();
+  try {
+    const { userId } = auth();
+    console.log("[checkApiLimit] Checking limit for user:", userId, "Price:", generationPrice);
 
-  if (!userId) {
+    if (!userId) {
+      console.error("[checkApiLimit] No userId provided");
+      return false;
+    }
+
+    const result = await db.query(
+      'SELECT "usedGenerations", "availableGenerations" FROM "User" WHERE "clerkId" = $1',
+      [userId]
+    );
+    console.log("[checkApiLimit] Query result rows:", result.rows.length);
+
+    if (result.rows.length === 0) {
+      console.error("[checkApiLimit] User not found in database:", userId);
+      return false;
+    }
+
+    const user = result.rows[0];
+    const remainingGenerations = user.availableGenerations - user.usedGenerations;
+    console.log("[checkApiLimit] User stats:", {
+      available: user.availableGenerations,
+      used: user.usedGenerations,
+      remaining: remainingGenerations,
+      required: generationPrice,
+      hasEnough: remainingGenerations >= generationPrice
+    });
+
+    return remainingGenerations >= generationPrice;
+  } catch (error) {
+    console.error("[checkApiLimit] Error:", error);
+    if (error instanceof Error) {
+      console.error("[checkApiLimit] Error message:", error.message);
+      console.error("[checkApiLimit] Error stack:", error.stack);
+    }
     return false;
   }
-
-  const result = await db.query(
-    'SELECT "usedGenerations", "availableGenerations" FROM "User" WHERE "clerkId" = $1',
-    [userId]
-  );
-
-  if (result.rows.length === 0) {
-    return false;
-  }
-
-  const user = result.rows[0];
-  const remainingGenerations = user.availableGenerations - user.usedGenerations;
-
-  return remainingGenerations >= generationPrice;
 };
 
 export const getApiAvailableGenerations = async () => {

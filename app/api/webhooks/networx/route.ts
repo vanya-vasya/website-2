@@ -58,6 +58,12 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     
+    // LOG RAW BODY FOR DEBUGGING
+    console.log('═══════════════════════════════════════════════════════');
+    console.log('📥 Networx Webhook Received - RAW BODY:');
+    console.log(JSON.stringify(body, null, 2));
+    console.log('═══════════════════════════════════════════════════════');
+    
     const { 
       status, 
       order_id, 
@@ -78,7 +84,7 @@ export async function POST(request: NextRequest) {
     userId = tracking_id;
 
     console.log('═══════════════════════════════════════════════════════');
-    console.log('📥 Networx Webhook Received');
+    console.log('📥 Networx Webhook Parsed Data:');
     console.log('Timestamp:', new Date().toISOString());
     console.log('Transaction ID:', transaction_id);
     console.log('Order ID:', order_id);

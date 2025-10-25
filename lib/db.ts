@@ -9,15 +9,19 @@ interface Database {
   end(): Promise<void>;
 }
 
-// Create connection pool
+// Create connection pool with increased timeouts for Neon serverless
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
   },
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 10000,
+  max: 20, // Maximum pool size
+  idleTimeoutMillis: 30000, // 30 seconds idle timeout
+  connectionTimeoutMillis: 30000, // 30 seconds connection timeout (increased from 10s)
+  query_timeout: 60000, // 60 seconds query timeout
+  statement_timeout: 60000, // 60 seconds statement timeout
+  keepAlive: true, // Keep connections alive
+  keepAliveInitialDelayMillis: 10000, // Initial delay for keep-alive
 });
 
 // Helper function to generate CUID-like IDs

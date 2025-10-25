@@ -279,8 +279,8 @@ export async function POST(request: NextRequest) {
         break;
 
       case 'failed':
-        console.log(`❌ Payment failed for order ${order_id}`);
-        console.log('Error message:', error_message);
+        console.log(`❌ Payment failed for transaction ${transaction_id}`);
+        console.log('Error message:', message);
         
         // Write ONLY to Transaction table, DO NOT update User
         if (transaction_id) {
@@ -299,8 +299,8 @@ export async function POST(request: NextRequest) {
               description || 'Payment failed',
               type || 'payment',
               payment_method_type || 'card',
-              error_message || 'Payment failed',
-              error_message,
+              message || 'Payment failed',
+              message || 'Payment failed',
               transaction_id
             ]
           );
@@ -309,7 +309,7 @@ export async function POST(request: NextRequest) {
         break;
 
       case 'pending':
-        console.log(`⏳ Payment pending for order ${order_id}`);
+        console.log(`⏳ Payment pending for transaction ${transaction_id}`);
         
         // Write ONLY to Transaction table, DO NOT update User
         if (transaction_id) {
@@ -337,7 +337,7 @@ export async function POST(request: NextRequest) {
         break;
 
       case 'canceled':
-        console.log(`🚫 Payment canceled for order ${order_id}`);
+        console.log(`🚫 Payment canceled for transaction ${transaction_id}`);
         
         // Write ONLY to Transaction table, DO NOT update User
         if (transaction_id) {
@@ -365,7 +365,7 @@ export async function POST(request: NextRequest) {
         break;
 
       case 'refunded':
-        console.log(`💰 Payment refunded for order ${order_id}`);
+        console.log(`💰 Payment refunded for transaction ${transaction_id}`);
         
         if (transaction_id && tracking_id) {
           // Extract tokens for refund
@@ -419,7 +419,7 @@ export async function POST(request: NextRequest) {
         break;
 
       default:
-        console.log(`❓ Unknown payment status: ${status} for order ${order_id}`);
+        console.log(`❓ Unknown payment status: ${status} for transaction ${transaction_id}`);
     }
 
     // Return successful response according to Networx requirements

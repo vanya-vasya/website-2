@@ -80,11 +80,11 @@ const TransformedImage = ({ image, type, title, transformationConfig, isTransfor
           {isTransforming && (
             <div className="flex-center absolute left-[50%] top-[50%] size-full -translate-x-1/2 -translate-y-1/2 flex-col gap-2 rounded-[10px] bg-dark-700/90">
               <Image 
-                className='mx-auto'
-                src="/assets/icons/spinner.svg"
+                className='mx-auto animate-spin'
+                src="/logos/nerbixa-icon.png"
                 width={50}
                 height={50}
-                alt="spinner"
+                alt="Loading"
               />
               <p className="text-white/80">Please wait...</p>
             </div>

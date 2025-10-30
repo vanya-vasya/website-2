@@ -10,7 +10,7 @@ export const Loader = () => {
           fill
         />
       </div>
-      <p className="text-sm text-white font-medium">
+      <p className="text-sm text-black dark:text-black font-medium">
         Nerbixa is thinking...
       </p>
     </div>

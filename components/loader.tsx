@@ -2,7 +2,7 @@ import Image from "next/image"
 
 export const Loader = () => {
   return (
-    <div className="h-full flex flex-col gap-y-4 items-center justify-center bg-white">
+    <div className="h-full flex flex-col gap-y-4 items-center justify-center">
       <div className="w-10 h-10 relative animate-spin">
         <Image
           alt="Logo"
@@ -10,7 +10,7 @@ export const Loader = () => {
           fill
         />
       </div>
-      <p className="text-sm text-gray-700">
+      <p className="text-sm text-white font-medium">
         Nerbixa is thinking...
       </p>
     </div>

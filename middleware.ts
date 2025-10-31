@@ -7,7 +7,7 @@ const isProtectedRoute = createRouteMatcher([
   '/dashboard(.*)',
 ]);
 
-export default clerkMiddleware(async (auth, req) => {
+export default clerkMiddleware((auth, req) => {
   // Log auth attempts for debugging (remove in production if not needed)
   if (process.env.NODE_ENV === 'development') {
     console.log('[Clerk Middleware]', {
@@ -18,7 +18,7 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   if (isProtectedRoute(req)) {
-    await auth.protect();
+    auth().protect();
   }
 });
 

@@ -79,8 +79,6 @@ export default function RootLayout({
       signUpUrl="/sign-up"
       afterSignInUrl="/dashboard"
       afterSignUpUrl="/dashboard"
-      domain={process.env.NEXT_PUBLIC_CLERK_DOMAIN}
-      isSatellite={false}
     >
       <html lang="en" suppressHydrationWarning>
         <body

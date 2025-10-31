@@ -48,7 +48,7 @@ export async function GET(req: Request) {
         afterSignIn: process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL || "/dashboard",
         afterSignUp: process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL || "/dashboard",
       },
-      warnings: [],
+      warnings: [] as string[],
     };
 
     // Add warnings

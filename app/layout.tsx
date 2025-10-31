@@ -18,6 +18,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.nerbixa.com"),
   title: "Nerbixa",
   description: "AI-powered creative tools for everyone",
   manifest: "/site.webmanifest",
@@ -45,7 +46,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://nerbixa.com",
+    url: "https://www.nerbixa.com",
     siteName: "Nerbixa",
     title: "Nerbixa - AI-powered creative tools",
     description: "AI-powered creative tools for everyone",
@@ -73,10 +74,13 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
       signInUrl="/sign-in"
       signUpUrl="/sign-up"
       afterSignInUrl="/dashboard"
       afterSignUpUrl="/dashboard"
+      domain={process.env.NEXT_PUBLIC_CLERK_DOMAIN}
+      isSatellite={false}
     >
       <html lang="en" suppressHydrationWarning>
         <body

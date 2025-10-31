@@ -113,6 +113,17 @@ export async function POST(request: NextRequest) {
     // Networx might not send signature for test transactions
     const isTestTransaction = transaction.test === true;
     
+    // ENHANCED TEST MODE LOGGING
+    if (isTestTransaction) {
+      console.log('🧪 TEST MODE TRANSACTION DETECTED');
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log('⚠️  TEST MODE ENABLED - This is a test payment');
+      console.log('   - Signature verification: SKIPPED');
+      console.log('   - Database writes: ENABLED');
+      console.log('   - Balance updates: ENABLED');
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    }
+    
     if (!signature && !isTestTransaction) {
       console.error('❌ Missing signature in webhook (not a test transaction)');
       return NextResponse.json(
@@ -141,7 +152,7 @@ export async function POST(request: NextRequest) {
       }
 
       console.log('✅ Webhook signature verified');
-    } else {
+    } else if (isTestTransaction) {
       console.log('⚠️  Test transaction detected, skipping signature verification');
     }
 
@@ -218,9 +229,27 @@ export async function POST(request: NextRequest) {
         // IMPORTANT: All transaction data goes ONLY to Transaction table
         // In User table we update ONLY token balance (availableGenerations, usedGenerations)
         try {
+          // ENHANCED TEST MODE LOGGING - Before DB Transaction
+          if (transaction.test === true) {
+            console.log('\n🧪 TEST MODE: Starting Database Transaction');
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            console.log('About to execute:');
+            console.log('  1. INSERT into Transaction table');
+            console.log('  2. UPDATE User balance');
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+          }
+
           await db.transaction(async (client) => {
             // 1. Create transaction record in Transaction table
             const newTransactionId = db.generateId();
+            
+            if (transaction.test === true) {
+              console.log('🧪 TEST MODE: Inserting Transaction record...');
+              console.log('   Record ID:', newTransactionId);
+              console.log('   Webhook Event ID:', transaction_id);
+              console.log('   User ID:', tracking_id);
+            }
+
             await client.query(
               `INSERT INTO "Transaction" 
                 ("id", "tracking_id", "userId", "status", "amount", "currency", "description", 
@@ -250,6 +279,14 @@ export async function POST(request: NextRequest) {
             // User table contains ONLY profile and balance, NOT transaction data
             // FIXED: Simply add tokens to current balance, don't reset usedGenerations
             const newBalance = user.availableGenerations + tokensToAdd;
+            
+            if (transaction.test === true) {
+              console.log('\n🧪 TEST MODE: Updating User balance...');
+              console.log('   Current balance:', user.availableGenerations);
+              console.log('   Tokens to add:', tokensToAdd);
+              console.log('   New balance:', newBalance);
+            }
+
             await client.query(
               'UPDATE "User" SET "availableGenerations" = $1 WHERE "clerkId" = $2',
               [newBalance, tracking_id]
@@ -259,12 +296,22 @@ export async function POST(request: NextRequest) {
             console.log('   Previous balance:', user.availableGenerations);
             console.log('   Used generations:', user.usedGenerations);
             console.log('   New available generations:', newBalance);
-            console.log('   Reset used generations:', 0);
+            
+            if (transaction.test === true) {
+              console.log('\n🧪 TEST MODE: Database Transaction Successful!');
+              console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+              console.log('✅ Transaction record: CREATED');
+              console.log('✅ User balance: UPDATED');
+              console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+            }
           });
 
           const processingTime = Date.now() - startTime;
           console.log('═══════════════════════════════════════════════════════');
           console.log('✅ Payment processed successfully');
+          if (transaction.test === true) {
+            console.log('🧪 TEST MODE: All database changes committed');
+          }
           console.log('Processing time:', processingTime, 'ms');
           console.log('User ID:', tracking_id);
           console.log('Transaction ID:', transaction_id);
@@ -273,6 +320,13 @@ export async function POST(request: NextRequest) {
 
         } catch (dbError) {
           console.error('❌ Database transaction failed:', dbError);
+          if (transaction.test === true) {
+            console.error('\n🧪 TEST MODE: Database Transaction FAILED!');
+            console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            console.error('Error details:', dbError);
+            console.error('Stack trace:', dbError instanceof Error ? dbError.stack : 'N/A');
+            console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+          }
           throw dbError;
         }
 

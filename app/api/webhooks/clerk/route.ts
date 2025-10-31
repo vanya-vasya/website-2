@@ -63,6 +63,20 @@ export async function POST(req: Request) {
     const svixEventId = evt.data.id || svix_id;
 
     try {
+      // Get email address safely
+      const userEmail = email_addresses?.[0]?.email_address || null;
+      
+      if (!userEmail) {
+        console.error(`[Clerk Webhook] No email address found for user ${id}`);
+        return NextResponse.json(
+          { 
+            message: "Error creating user", 
+            error: "No email address found in webhook data" 
+          },
+          { status: 400 }
+        );
+      }
+
       // Check for idempotency - see if this webhook event was already processed
       const existingEventResult = await db.query(
         'SELECT * FROM "WebhookEvent" WHERE "eventId" = $1',
@@ -85,7 +99,7 @@ export async function POST(req: Request) {
       // Use database transaction to ensure atomicity
       console.log(`[Clerk Webhook] Starting transaction for user creation`, {
         clerkId: id,
-        email: email_addresses[0].email_address,
+        email: userEmail,
       });
 
       const result = await db.transaction(async (client) => {
@@ -105,7 +119,7 @@ export async function POST(req: Request) {
             ("id", "clerkId", "email", "firstName", "lastName", "photo", "availableGenerations") 
            VALUES ($1, $2, $3, $4, $5, $6, 20) 
            RETURNING *`,
-          [userId, id, email_addresses[0].email_address, first_name, last_name, image_url]
+          [userId, id, userEmail, first_name, last_name, image_url]
         );
         const newUser = userResult.rows[0];
         console.log(`[Clerk Webhook] User created`, { 

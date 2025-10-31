@@ -7,9 +7,30 @@ const isProtectedRoute = createRouteMatcher([
   '/dashboard(.*)',
 ]);
 
-export default clerkMiddleware((auth, req) => {
+export default clerkMiddleware(async (auth, req) => {
+  const { userId } = await auth();
+  
+  // Log auth attempts for debugging (remove in production if not needed)
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[Clerk Middleware]', {
+      path: req.nextUrl.pathname,
+      isProtected: isProtectedRoute(req),
+      userId: userId || 'not-authenticated',
+      url: req.url,
+    });
+  }
+
   if (isProtectedRoute(req)) {
-    auth().protect();
+    try {
+      await auth().protect();
+    } catch (error) {
+      console.error('[Clerk Middleware] Auth protection error:', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        path: req.nextUrl.pathname,
+        url: req.url,
+      });
+      throw error;
+    }
   }
 });
 

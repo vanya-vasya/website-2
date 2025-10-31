@@ -16,7 +16,10 @@
     "webhook:verify": "npx tsx scripts/verify-webhook-production.ts",
     "webhook:curl": "./scripts/test-webhook-curl.sh GET",
     "webhook:health": "curl http://localhost:3000/api/webhooks/clerk",
-    "user:create": "node create-vladimir-user.js"
+    "user:create": "node create-vladimir-user.js",
+    "payment:diagnose": "npx tsx scripts/diagnose-test-payment-flow.ts",
+    "payment:webhook-sim": "npx tsx scripts/webhook-simulator-test-mode.ts",
+    "payment:reconcile": "npx tsx scripts/reconcile-missing-payments.ts"
   },
   "dependencies": {
     "@bytescale/upload-widget-react": "^4.19.0",

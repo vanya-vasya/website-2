@@ -21,16 +21,7 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   if (isProtectedRoute(req)) {
-    try {
-      await auth().protect();
-    } catch (error) {
-      console.error('[Clerk Middleware] Auth protection error:', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        path: req.nextUrl.pathname,
-        url: req.url,
-      });
-      throw error;
-    }
+    auth.protect();
   }
 });
 

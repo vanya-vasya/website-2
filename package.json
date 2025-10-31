@@ -2,6 +2,14 @@
   "name": "nerbixa",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vanya-vasya/website-1.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vanya-vasya/website-1/issues"
+  },
+  "homepage": "https://github.com/vanya-vasya/website-1#readme",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",

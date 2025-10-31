@@ -99,3 +99,37 @@ _backup/
 test-results/
 playwright-report/
 test-results.xml
+
+# Lock files (optional - keep only one)
+# yarn.lock
+# pnpm-lock.yaml
+
+# Debug
+.pnp.*
+.yarn/*
+
+# Sentry
+.sentryclirc
+
+# Local History
+.history/
+
+# Turbo
+.turbo
+
+# Production
+*.production
+
+# MacOS
+*.DS_Store
+.AppleDouble
+.LSOverride
+
+# JetBrains
+*.iml
+.idea/
+
+# Misc
+*.pem
+*.key
+!public/**/*.key

@@ -1,0 +1,75 @@
+# Nerbixa (Website 1) - CI/CD Configuration
+# This workflow deploys only the Nerbixa project to prevent conflicts with other projects
+
+name: Deploy Nerbixa (Website 1)
+
+on:
+  push:
+    branches:
+      - main # Main production branch for Nerbixa
+      - feature/nerbixa-deployment # Nerbixa deployment branch
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - '*.md'
+  workflow_dispatch: # Allow manual deployment
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production # Add environment protection
+    steps:
+      - name: Checkout Nerbixa repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js for Nerbixa
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: 'npm'
+
+      - name: Verify Node.js version
+        run: node -v
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy Nerbixa to VPS
+        env:
+          HOST: 62.113.97.230
+          USERNAME: root
+          TARGET_DIR: /var/www/nerbixa
+          APP_NAME: nerbixa # Nerbixa-specific app name
+          PORT: 3008
+          PROJECT_NAME: "Nerbixa (Website 1)"
+
+        run: |
+          echo "🚀 Deploying $PROJECT_NAME to production server..."
+          ssh -o StrictHostKeyChecking=no $USERNAME@$HOST << EOF
+            echo "📁 Navigating to Nerbixa project directory..."
+            export PATH=/root/.nvm/versions/node/v20.17.0/bin:$PATH
+            cd $TARGET_DIR
+            
+            echo "📥 Pulling latest Nerbixa code..."
+            git pull origin ${GITHUB_REF#refs/heads/}
+            
+            echo "📦 Installing Nerbixa dependencies..."
+            npm install
+            
+            echo "🔨 Building Nerbixa application..."
+            npm run build
+            
+            echo "🔄 Managing Nerbixa PM2 process..."
+            if pm2 list | grep -q $APP_NAME; then
+              echo "♻️  Restarting Nerbixa application: $APP_NAME"
+              pm2 restart $APP_NAME
+            else
+              echo "🆕 Starting new Nerbixa application: $APP_NAME"
+              pm2 start npm --name $APP_NAME -- start -- --port=$PORT
+            fi
+            
+            pm2 save
+            echo "✅ Nerbixa deployment completed successfully!"
+          EOF

@@ -19,7 +19,7 @@ Your Secure-processor Pay integration is now **fully functional** on localhost:3
 {
   "success": true,
   "token": "test_1755795417113_c88ozxffc",
-  "payment_url": "https://checkout.secure-processorpay.com?token=test_1755795417113_c88ozxffc",
+  "payment_url": "https://checkout.networxpay.com?token=test_1755795417113_c88ozxffc",
   "transaction_id": "txn_1755795417113_bzaly685l",
   "test_mode": true,
   "message": "Test payment token created successfully (development mode)"
@@ -70,7 +70,7 @@ SECURE_PROCESSOR_CANCEL_URL=http://localhost:3001/payment/cancel
 SECURE_PROCESSOR_WEBHOOK_URL=http://localhost:3001/api/webhooks/secure-processor
 NEXT_PUBLIC_SECURE_PROCESSOR_SHOP_ID=29959
 NEXT_PUBLIC_SECURE_PROCESSOR_TEST_MODE=true
-NEXT_PUBLIC_SECURE_PROCESSOR_WIDGET_URL=https://checkout.secure-processorpay.com
+NEXT_PUBLIC_SECURE_PROCESSOR_WIDGET_URL=https://checkout.networxpay.com
 NEXT_PUBLIC_APP_URL=http://localhost:3001
 ```
 

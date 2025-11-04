@@ -461,7 +461,7 @@ Current URL: https://www.nerbixa.com/dashboard?payment=success&order_id=...
 **Expected Network Sequence:**
 ```
 1. POST /api/payment/secure-processor → 200 OK
-2. GET  checkout.secure-processorpay.com → 200 OK
+2. GET  checkout.networxpay.com → 200 OK
 3. [User completes payment]
 4. GET  /dashboard?payment=success&order_id=... → 200 OK ✅
 ```

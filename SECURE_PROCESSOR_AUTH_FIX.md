@@ -28,7 +28,7 @@ SECURE_PROCESSOR_WEBHOOK_URL=https://your-domain.vercel.app/api/webhooks/secure-
 ```
 
 ### 3. API Endpoint
-**Текущий:** `https://checkout.secure-processorpay.com/ctp/api/checkouts`
+**Текущий:** `https://checkout.networxpay.com/ctp/api/checkouts`
 **Возможная проблема:** Возможно нужен другой endpoint для вашего аккаунта.
 
 ### 4. IP Whitelist

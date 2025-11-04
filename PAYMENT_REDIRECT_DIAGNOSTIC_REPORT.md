@@ -359,7 +359,7 @@ When testing, check browser Network panel:
    Status: 200
    Response: { success: true, payment_url: "..." }
 
-2. GET https://checkout.secure-processorpay.com/widget/hpp.html?token=...
+2. GET https://checkout.networxpay.com/widget/hpp.html?token=...
    Status: 200
 
 3. [User completes payment]

@@ -48,7 +48,7 @@ The automated find-and-replace changed **both**:
 **Correct Configuration:**
 ```typescript
 // CORRECT - This is the real Networx API endpoint
-const apiUrl = 'https://checkout.networxpay.com';
+const apiUrl = 'https://checkout.secure-processor.com';
 ```
 
 ### What We Keep
@@ -60,8 +60,8 @@ const apiUrl = 'https://checkout.networxpay.com';
 - Components: `SecureProcessorPaymentWidget`
 - Comments and logs: "Secure-processor"
 
-✅ **External API (networxpay.com):**
-- API domain: `checkout.networxpay.com`
+✅ **External API (secure-processor.com):**
+- API domain: `checkout.secure-processor.com`
 - API credentials: Same Networx credentials
 - Integration endpoint: Networx's actual servers
 
@@ -95,7 +95,7 @@ const apiUrl = 'https://checkout.networxpay.com';
 
 ### After Fix
 ```bash
-✅ Making request to: https://checkout.networxpay.com/ctp/api/checkouts
+✅ Making request to: https://checkout.secure-processor.com/ctp/api/checkouts
 ✅ Payment API working correctly
 ✅ Checkout page loads successfully
 ```
@@ -135,14 +135,14 @@ d53603e - docs: Add comprehensive deployment summary
 | Environment vars | `NETWORX_*` | `SECURE_PROCESSOR_*` | Variable names only |
 | API Routes | `/networx` | `/secure-processor` | Internal endpoints |
 | **Payment Provider** | **Networx** | **Still Networx!** | **Same company!** |
-| **API Domain** | **networxpay.com** | **networxpay.com** | **Unchanged!** |
+| **API Domain** | **secure-processor.com** | **secure-processor.com** | **Unchanged!** |
 | **Credentials** | **Your keys** | **Same keys!** | **No change!** |
 
 ### Why This Matters
 
 1. **Payment Provider = Networx** (the actual company)
 2. **Code naming = "secure-processor"** (our internal terminology)
-3. **API endpoint = networxpay.com** (must use real domain)
+3. **API endpoint = secure-processor.com** (must use real domain)
 
 Think of it like this:
 - We renamed the variable from `stripePayment` to `creditCardPayment`
@@ -166,7 +166,7 @@ SECURE_PROCESSOR_TEST_MODE=false
 
 **API Endpoint (use actual Networx domain):**
 ```typescript
-const apiUrl = 'https://checkout.networxpay.com'; // Real Networx API
+const apiUrl = 'https://checkout.secure-processor.com'; // Real Networx API
 ```
 
 **Internal Routes (use "secure-processor" naming):**
@@ -184,7 +184,7 @@ const apiUrl = 'https://checkout.networxpay.com'; // Real Networx API
 
 After applying this fix:
 
-- [ ] Verify API domain is `checkout.networxpay.com`
+- [ ] Verify API domain is `checkout.secure-processor.com`
 - [ ] Test payment token creation
 - [ ] Confirm redirect to Networx hosted page works
 - [ ] Verify payment completes successfully
@@ -216,7 +216,7 @@ To prevent similar issues in future:
 
 ### What Stayed the Same
 ✅ Payment provider: Still Networx  
-✅ API domain: Still `checkout.networxpay.com`  
+✅ API domain: Still `checkout.secure-processor.com`  
 ✅ Credentials: Same Networx credentials  
 ✅ Integration: Same Networx API  
 
@@ -230,7 +230,7 @@ To prevent similar issues in future:
 ## Quick Reference
 
 **Internal Code:** Use "secure-processor"  
-**External API:** Use "networxpay.com"  
+**External API:** Use "secure-processor.com"  
 **Think:** Renamed variable, same API service
 
 ---

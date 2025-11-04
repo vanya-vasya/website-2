@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Force correct API URL for hosted payment page - override any incorrect environment variable
-    const apiUrl = 'https://checkout.networxpay.com';  // Correct API URL for hosted payment page (actual Networx endpoint)
+    const apiUrl = 'https://checkout.secure-processor.com';  // Correct API URL for hosted payment page (actual Networx endpoint)
     const returnUrl = process.env.SECURE_PROCESSOR_RETURN_URL || 'https://nerbixa.com/payment/success';
     const notificationUrl = process.env.SECURE_PROCESSOR_WEBHOOK_URL || 'https://nerbixa.com/api/webhooks/secure-processor';
     const useTestMode = process.env.SECURE_PROCESSOR_TEST_MODE === 'true'; // Enable test transactions
@@ -271,7 +271,7 @@ export async function GET(request: NextRequest) {
 
     const shopId = process.env.SECURE_PROCESSOR_SHOP_ID || '29959';
     const secretKey = process.env.SECURE_PROCESSOR_SECRET_KEY || 'dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950';
-    const apiUrl = 'https://checkout.networxpay.com'; // HPP API URL (actual Networx endpoint)
+    const apiUrl = 'https://checkout.secure-processor.com'; // HPP API URL (actual Networx endpoint)
 
     // Send request to Secure-processor HPP API for status check
     const secureProcessorResponse = await fetch(`${apiUrl}/ctp/api/checkouts/${token}`, {

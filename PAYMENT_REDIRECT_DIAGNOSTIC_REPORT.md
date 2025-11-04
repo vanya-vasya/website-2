@@ -359,7 +359,7 @@ When testing, check browser Network panel:
    Status: 200
    Response: { success: true, payment_url: "..." }
 
-2. GET https://checkout.networxpay.com/widget/hpp.html?token=...
+2. GET https://checkout.secure-processor.com/widget/hpp.html?token=...
    Status: 200
 
 3. [User completes payment]
@@ -487,6 +487,8 @@ Users redirected to 404 after payment completion
 
 **Last Updated:** October 24, 2025
 **Status:** ✅ Ready for Deployment
+
+
 
 
 

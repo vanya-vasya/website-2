@@ -81,7 +81,7 @@
 - ✅ `ENV_MIGRATION_GUIDE.md` - Complete migration guide for environment variables
 
 #### 8. URL & Endpoint Changes
-- ✅ `checkout.networxpay.com` → `checkout.networxpay.com`
+- ✅ `checkout.secure-processor.com` → `checkout.secure-processor.com`
 - ✅ `/api/webhooks/networx` → `/api/webhooks/secure-processor`
 - ✅ `/api/payment/networx` → `/api/payment/secure-processor`
 

@@ -21,7 +21,7 @@ SECURE_PROCESSOR_WEBHOOK_URL=https://nerbixa.com/api/webhooks/secure-processor
 ```
 NEXT_PUBLIC_SECURE_PROCESSOR_SHOP_ID=29959
 NEXT_PUBLIC_SECURE_PROCESSOR_TEST_MODE=false
-NEXT_PUBLIC_SECURE_PROCESSOR_WIDGET_URL=https://checkout.networxpay.com
+NEXT_PUBLIC_SECURE_PROCESSOR_WIDGET_URL=https://checkout.secure-processor.com
 ```
 
 ## How to Add Environment Variables to Vercel

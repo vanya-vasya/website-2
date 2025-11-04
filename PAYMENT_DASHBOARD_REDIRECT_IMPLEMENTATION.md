@@ -108,7 +108,7 @@ useEffect(() => {
 2. Payment API creates checkout token
    ↓
 3. User redirected to SecureProcessor hosted page
-   https://checkout.networxpay.com/widget/hpp.html?token=xxx
+   https://checkout.secure-processor.com/widget/hpp.html?token=xxx
    ↓
 4. User completes payment
    ↓

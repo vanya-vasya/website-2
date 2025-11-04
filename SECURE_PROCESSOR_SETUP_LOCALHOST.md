@@ -36,7 +36,7 @@ SECURE_PROCESSOR_WEBHOOK_URL=http://localhost:3001/api/webhooks/secure-processor
 # Client-side variables
 NEXT_PUBLIC_SECURE_PROCESSOR_SHOP_ID=29959
 NEXT_PUBLIC_SECURE_PROCESSOR_TEST_MODE=true
-NEXT_PUBLIC_SECURE_PROCESSOR_WIDGET_URL=https://checkout.networxpay.com
+NEXT_PUBLIC_SECURE_PROCESSOR_WIDGET_URL=https://checkout.secure-processor.com
 NEXT_PUBLIC_APP_URL=http://localhost:3001
 ```
 

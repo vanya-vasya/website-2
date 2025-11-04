@@ -200,7 +200,7 @@ import { generatePdfReceipt } from '@/lib/receiptGeneration';
 {
   "success": true,
   "token": "checkout_token_xyz",
-  "payment_url": "https://checkout.networxpay.com/...",
+  "payment_url": "https://checkout.secure-processor.com/...",
   "checkout_id": "checkout_token_xyz",
   "test_mode": true
 }

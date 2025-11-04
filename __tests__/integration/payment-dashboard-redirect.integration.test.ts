@@ -58,7 +58,7 @@ describe('Payment Dashboard Redirect Integration', () => {
         ok: true,
         json: async () => ({
           checkout: {
-            redirect_url: 'https://checkout.networxpay.com/widget/hpp.html?token=test_token',
+            redirect_url: 'https://checkout.secure-processor.com/widget/hpp.html?token=test_token',
           },
         }),
       });
@@ -68,7 +68,7 @@ describe('Payment Dashboard Redirect Integration', () => {
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(data.payment_url).toContain('checkout.networxpay.com');
+      expect(data.payment_url).toContain('checkout.secure-processor.com');
 
       // Verify the mock was called with correct return URL
       const fetchCall = (global.fetch as jest.Mock).mock.calls[0];
@@ -101,7 +101,7 @@ describe('Payment Dashboard Redirect Integration', () => {
         ok: true,
         json: async () => ({
           checkout: {
-            redirect_url: 'https://checkout.networxpay.com/widget/hpp.html?token=custom_token',
+            redirect_url: 'https://checkout.secure-processor.com/widget/hpp.html?token=custom_token',
           },
         }),
       });
@@ -143,7 +143,7 @@ describe('Payment Dashboard Redirect Integration', () => {
         ok: true,
         json: async () => ({
           checkout: {
-            redirect_url: 'https://checkout.networxpay.com/widget/hpp.html?token=order_token',
+            redirect_url: 'https://checkout.secure-processor.com/widget/hpp.html?token=order_token',
           },
         }),
       });

@@ -74,7 +74,7 @@ describe('E2E: Payment to Dashboard Redirect Flow', () => {
       ok: true,
       json: async () => ({
         checkout: {
-          redirect_url: `https://checkout.networxpay.com/widget/hpp.html?token=test_token_${orderId}`,
+          redirect_url: `https://checkout.secure-processor.com/widget/hpp.html?token=test_token_${orderId}`,
         },
       }),
     });
@@ -90,7 +90,7 @@ describe('E2E: Payment to Dashboard Redirect Flow', () => {
     // Verify token creation
     expect(response.status).toBe(200);
     expect(tokenData.success).toBe(true);
-    expect(tokenData.payment_url).toContain('checkout.networxpay.com');
+    expect(tokenData.payment_url).toContain('checkout.secure-processor.com');
 
     // Step 3: Extract return URL from API call
     console.log('🔍 Step 3: Verifying return URL configuration...');
@@ -230,7 +230,7 @@ describe('E2E: Payment to Dashboard Redirect Flow', () => {
         ok: true,
         json: async () => ({
           checkout: {
-            redirect_url: 'https://checkout.networxpay.com/widget/hpp.html?token=test',
+            redirect_url: 'https://checkout.secure-processor.com/widget/hpp.html?token=test',
           },
         }),
       });
@@ -274,7 +274,7 @@ describe('E2E: Payment to Dashboard Redirect Flow', () => {
       ok: true,
       json: async () => ({
         checkout: {
-          redirect_url: 'https://checkout.networxpay.com/widget/hpp.html?token=test',
+          redirect_url: 'https://checkout.secure-processor.com/widget/hpp.html?token=test',
         },
       }),
     });
@@ -325,7 +325,7 @@ describe('E2E: Payment to Dashboard Redirect Flow', () => {
       ok: true,
       json: async () => ({
         checkout: {
-          redirect_url: 'https://checkout.networxpay.com/widget/hpp.html?token=test',
+          redirect_url: 'https://checkout.secure-processor.com/widget/hpp.html?token=test',
         },
       }),
     });

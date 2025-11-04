@@ -19,9 +19,9 @@ dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 interface DiagnosticResults {
   environment: {
     databaseUrl: boolean;
-    secure-processorShopId: boolean;
-    secure-processorSecretKey: boolean;
-    secure-processorTestMode: string | undefined;
+    secureProcessorShopId: boolean;
+    secureProcessorSecretKey: boolean;
+    secureProcessorTestMode: string | undefined;
     nodeEnv: string;
   };
   database: {
@@ -45,9 +45,9 @@ class PaymentFlowDiagnostic {
   private results: DiagnosticResults = {
     environment: {
       databaseUrl: false,
-      secure-processorShopId: false,
-      secure-processorSecretKey: false,
-      secure-processorTestMode: undefined,
+      secureProcessorShopId: false,
+      secureProcessorSecretKey: false,
+      secureProcessorTestMode: undefined,
       nodeEnv: process.env.NODE_ENV || 'development',
     },
     database: {
@@ -110,16 +110,16 @@ class PaymentFlowDiagnostic {
     }
 
     // Check Secure-processor credentials
-    this.results.environment.secure-processorShopId = !!process.env.SECURE_PROCESSOR_SHOP_ID;
-    console.log(`\nSECURE_PROCESSOR_SHOP_ID: ${this.results.environment.secure-processorShopId ? '✅ Set (' + process.env.SECURE_PROCESSOR_SHOP_ID + ')' : '❌ Missing'}`);
+    this.results.environment.secureProcessorShopId = !!process.env.SECURE_PROCESSOR_SHOP_ID;
+    console.log(`\nSECURE_PROCESSOR_SHOP_ID: ${this.results.environment.secureProcessorShopId ? '✅ Set (' + process.env.SECURE_PROCESSOR_SHOP_ID + ')' : '❌ Missing'}`);
     
-    this.results.environment.secure-processorSecretKey = !!process.env.SECURE_PROCESSOR_SECRET_KEY;
-    console.log(`SECURE_PROCESSOR_SECRET_KEY: ${this.results.environment.secure-processorSecretKey ? '✅ Set (***' + process.env.SECURE_PROCESSOR_SECRET_KEY?.slice(-4) + ')' : '❌ Missing'}`);
+    this.results.environment.secureProcessorSecretKey = !!process.env.SECURE_PROCESSOR_SECRET_KEY;
+    console.log(`SECURE_PROCESSOR_SECRET_KEY: ${this.results.environment.secureProcessorSecretKey ? '✅ Set (***' + process.env.SECURE_PROCESSOR_SECRET_KEY?.slice(-4) + ')' : '❌ Missing'}`);
 
     // Check test mode
-    this.results.environment.secure-processorTestMode = process.env.SECURE_PROCESSOR_TEST_MODE;
-    console.log(`SECURE_PROCESSOR_TEST_MODE: ${this.results.environment.secure-processorTestMode || 'not set'}`);
-    if (this.results.environment.secure-processorTestMode !== 'true') {
+    this.results.environment.secureProcessorTestMode = process.env.SECURE_PROCESSOR_TEST_MODE;
+    console.log(`SECURE_PROCESSOR_TEST_MODE: ${this.results.environment.secureProcessorTestMode || 'not set'}`);
+    if (this.results.environment.secureProcessorTestMode !== 'true') {
       this.results.issues.push('SECURE_PROCESSOR_TEST_MODE is not set to "true" - test payments might not work correctly');
       this.results.recommendations.push('Set SECURE_PROCESSOR_TEST_MODE=true in .env.local for test payments');
     }
@@ -386,7 +386,7 @@ class PaymentFlowDiagnostic {
     // Check for common issues
 
     // 1. Test mode not enabled
-    if (this.results.environment.secure-processorTestMode !== 'true') {
+    if (this.results.environment.secureProcessorTestMode !== 'true') {
       this.results.issues.push('Test mode not enabled in environment variables');
     }
 
@@ -435,7 +435,7 @@ class PaymentFlowDiagnostic {
     console.log('🎯 SUMMARY\n');
     console.log(`Environment: ${this.results.environment.nodeEnv}`);
     console.log(`Database Connected: ${this.results.database.connected ? '✅ Yes' : '❌ No'}`);
-    console.log(`Test Mode Enabled: ${this.results.environment.secure-processorTestMode === 'true' ? '✅ Yes' : '❌ No'}`);
+    console.log(`Test Mode Enabled: ${this.results.environment.secureProcessorTestMode === 'true' ? '✅ Yes' : '❌ No'}`);
     console.log(`Users in DB: ${this.results.database.userCount}`);
     console.log(`Transactions in DB: ${this.results.database.transactionCount}`);
     console.log(`Recent Transactions (7d): ${this.results.testData.testTransactions.length}`);

@@ -8,7 +8,7 @@
 
 ## ✅ **WHAT WAS FIXED**
 
-### 1. 🔥 **CRITICAL: Networx Webhook Not Processing**
+### 1. 🔥 **CRITICAL: Secure-processor Webhook Not Processing**
 
 **Problem:**
 ```
@@ -21,7 +21,7 @@ Tracking ID: undefined
 ```
 
 **Root Cause:**
-- Networx sends data inside `body.transaction` object
+- Secure-processor sends data inside `body.transaction` object
 - Code was trying to parse from `body` directly
 - Result: All data was `undefined`, webhook failed
 
@@ -110,7 +110,7 @@ useEffect(() => {
 
 ## 📦 **FILES MODIFIED**
 
-1. **`app/api/webhooks/networx/route.ts`**
+1. **`app/api/webhooks/secure-processor/route.ts`**
    - Fixed webhook payload parsing (extract from `body.transaction`)
    - Fixed signature verification (check headers, skip for test transactions)
    - Fixed balance calculation logic
@@ -120,7 +120,7 @@ useEffect(() => {
    - Changed countdown from 5s to instant (100ms)
    - Updated UI messages (removed countdown display)
 
-3. **`NETWORX_WEBHOOK_FIX_SUMMARY.md`**
+3. **`SECURE_PROCESSOR_WEBHOOK_FIX_SUMMARY.md`**
    - Comprehensive documentation of all fixes
 
 ---
@@ -148,11 +148,11 @@ git push origin main
    - Update in Vercel: Settings → Environment Variables
    - ⚠️ MUST match exactly (case-sensitive)
 
-2. **`NETWORX_WEBHOOK_URL`**
+2. **`SECURE_PROCESSOR_WEBHOOK_URL`**
    - Current (wrong): `https://website-2-fl3pjwurp-vladis-projects-8c520e18.vercel.app/payment/success`
-   - **Set to:** `https://www.nerbixa.com/api/webhooks/networx`
+   - **Set to:** `https://www.nerbixa.com/api/webhooks/secure-processor`
 
-3. **`NETWORX_RETURN_URL`**
+3. **`SECURE_PROCESSOR_RETURN_URL`**
    - **Set to:** `https://www.nerbixa.com/payment/success`
 
 ### Step 3: Redeploy on Vercel
@@ -187,7 +187,7 @@ git push origin main
 - [ ] Login and verify 20 credits in dashboard
 - [ ] Check DB for user record and signup bonus transaction
 
-### Test 2: Payment Flow (Networx Webhook)
+### Test 2: Payment Flow (Secure-processor Webhook)
 - [ ] Login as existing user
 - [ ] Go to: Credits/Buy Tokens page
 - [ ] Click "Buy 50 tokens" (€2.50)
@@ -197,12 +197,12 @@ git push origin main
    - CVV: `123`
 - [ ] **Expected:** Instant redirect to dashboard (no countdown)
 - [ ] Verify balance increased by 50 tokens
-- [ ] Check Vercel logs for Networx webhook success
+- [ ] Check Vercel logs for Secure-processor webhook success
 - [ ] Check DB for transaction record
 
 ### Expected Vercel Logs (Success):
 ```
-📥 Networx Webhook Received - RAW BODY:
+📥 Secure-processor Webhook Received - RAW BODY:
 { 
   "transaction": { 
     "uid": "1134bdda-...",
@@ -215,7 +215,7 @@ git push origin main
   }
 }
 
-📥 Networx Webhook Parsed Data:
+📥 Secure-processor Webhook Parsed Data:
    Transaction ID (uid): 1134bdda-...
    Status: successful
    Amount: 250 EUR
@@ -247,7 +247,7 @@ git push origin main
 ```
 1. User clicks "Buy 50 tokens"
    ↓
-2. Redirected to Networx payment page
+2. Redirected to Secure-processor payment page
    ↓
 3. User completes payment (€2.50)
    ↓
@@ -269,15 +269,15 @@ git push origin main
 1. **Check Vercel Logs**
    ```
    Vercel Dashboard → Deployments → Latest → Runtime Logs
-   Search for: "Networx Webhook Received"
+   Search for: "Secure-processor Webhook Received"
    ```
 
 2. **Verify Environment Variables**
    ```bash
    # Check in Vercel:
    - WEBHOOK_SECRET (from Clerk)
-   - NETWORX_WEBHOOK_URL = https://www.nerbixa.com/api/webhooks/networx
-   - NETWORX_SECRET_KEY (from Networx)
+   - SECURE_PROCESSOR_WEBHOOK_URL = https://www.nerbixa.com/api/webhooks/secure-processor
+   - SECURE_PROCESSOR_SECRET_KEY (from Secure-processor)
    - DATABASE_URL (from Neon)
    ```
 
@@ -288,11 +288,11 @@ git push origin main
    - Verify 200 status (not 307, 400, 403)
    ```
 
-4. **Check Networx Webhook**
+4. **Check Secure-processor Webhook**
    ```
-   Networx Dashboard → Transactions → View details
+   Secure-processor Dashboard → Transactions → View details
    - Check "Notification URL" field
-   - Should be: https://www.nerbixa.com/api/webhooks/networx
+   - Should be: https://www.nerbixa.com/api/webhooks/secure-processor
    ```
 
 ### Common Errors:
@@ -310,8 +310,8 @@ git push origin main
 
 ### BEFORE (Broken):
 ```
-❌ Networx webhook: "Transaction ID: undefined"
-❌ Networx webhook: "Missing signature in webhook"
+❌ Secure-processor webhook: "Transaction ID: undefined"
+❌ Secure-processor webhook: "Missing signature in webhook"
 ❌ No transaction records created
 ❌ User balance not updated
 ❌ 5-second countdown on success page
@@ -320,7 +320,7 @@ git push origin main
 
 ### AFTER (Fixed):
 ```
-✅ Networx webhook: All data parsed correctly
+✅ Secure-processor webhook: All data parsed correctly
 ✅ Transaction records created in DB
 ✅ User balance updated (+50 tokens)
 ✅ Instant redirect to dashboard
@@ -335,15 +335,15 @@ git push origin main
 - **Clerk Webhook Setup:** `CLERK_WEBHOOK_SETUP_README.md`
 - **Webhook Diagnostics:** `WEBHOOK_DIAGNOSTIC_FINAL_REPORT.md`
 - **Complete Fix Summary:** `WEBHOOK_COMPLETE_FIX_SUMMARY.md`
-- **Networx Fix Details:** `NETWORX_WEBHOOK_FIX_SUMMARY.md`
+- **Secure-processor Fix Details:** `SECURE_PROCESSOR_WEBHOOK_FIX_SUMMARY.md`
 
 ---
 
 ## 📝 **COMMIT HISTORY**
 
 ```
-✅ [d3209b7] 🔥 CRITICAL FIX: Networx webhook parsing and instant payment redirect
-   - Fix Networx webhook payload parsing
+✅ [d3209b7] 🔥 CRITICAL FIX: Secure-processor webhook parsing and instant payment redirect
+   - Fix Secure-processor webhook payload parsing
    - Fix balance calculation logic
    - Add instant redirect to dashboard
    - Add comprehensive documentation
@@ -354,8 +354,8 @@ git push origin main
 ## ⚠️ **IMPORTANT REMINDERS**
 
 1. **Update `WEBHOOK_SECRET` in Vercel** (from Clerk Dashboard)
-2. **Update `NETWORX_WEBHOOK_URL`** = `https://www.nerbixa.com/api/webhooks/networx`
-3. **Update `NETWORX_RETURN_URL`** = `https://www.nerbixa.com/payment/success`
+2. **Update `SECURE_PROCESSOR_WEBHOOK_URL`** = `https://www.nerbixa.com/api/webhooks/secure-processor`
+3. **Update `SECURE_PROCESSOR_RETURN_URL`** = `https://www.nerbixa.com/payment/success`
 4. **Update Clerk webhook URL** = `https://www.nerbixa.com/api/webhooks/clerk` (with `www`)
 5. **Redeploy on Vercel** after environment variable updates
 6. **Test thoroughly** with real registration and payment

@@ -11,7 +11,7 @@
 **Issue:** Users completing payment transactions were being redirected to a 404 Page Not Found instead of the dashboard.
 
 **Root Causes Identified:**
-1. Missing `NETWORX_RETURN_URL` environment variable in Vercel
+1. Missing `SECURE_PROCESSOR_RETURN_URL` environment variable in Vercel
 2. Old documentation referencing `/payment/success` page
 3. No diagnostic tools to detect configuration issues
 4. Insufficient logging to track redirect flow
@@ -23,11 +23,11 @@
 ### 1. Code Fixes ✅
 
 #### Payment API Return URL
-**File:** `app/api/payment/networx/route.ts`
+**File:** `app/api/payment/secure-processor/route.ts`
 
 ```typescript
 // Default return URL updated
-const returnUrl = process.env.NETWORX_RETURN_URL || 'https://nerbixa.com/dashboard';
+const returnUrl = process.env.SECURE_PROCESSOR_RETURN_URL || 'https://nerbixa.com/dashboard';
 
 // Full URL with success parameters
 const fullReturnUrl = `${returnUrl}?payment=success&order_id=${orderId}`;
@@ -72,7 +72,7 @@ console.log('══════════════════════�
 console.log('🔧 Payment API Configuration');
 console.log('Environment:', process.env.NODE_ENV);
 console.log('Return URL:', returnUrl);
-console.log('Has NETWORX_RETURN_URL env:', !!process.env.NETWORX_RETURN_URL);
+console.log('Has SECURE_PROCESSOR_RETURN_URL env:', !!process.env.SECURE_PROCESSOR_RETURN_URL);
 console.log('═════════════════════════════════════════════════════════');
 
 console.log('🎯 PAYMENT RETURN URL CONFIGURATION:');
@@ -193,10 +193,10 @@ npm test __tests__/e2e/payment-redirect.e2e.test.ts
 #### Check 1: Environment Variables
 ```typescript
 Checks:
-- NETWORX_RETURN_URL (set/unset)
-- NETWORX_WEBHOOK_URL
-- NETWORX_SHOP_ID
-- NETWORX_SECRET_KEY
+- SECURE_PROCESSOR_RETURN_URL (set/unset)
+- SECURE_PROCESSOR_WEBHOOK_URL
+- SECURE_PROCESSOR_SHOP_ID
+- SECURE_PROCESSOR_SECRET_KEY
 - NODE_ENV
 ```
 
@@ -268,10 +268,10 @@ npx tsx scripts/diagnose-payment-redirect.ts
 
 📋 CHECK 1: Environment Variables
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   NETWORX_RETURN_URL: https://www.nerbixa.com/dashboard
-   NETWORX_WEBHOOK_URL: https://nerbixa.com/api/webhooks/networx
-   NETWORX_SHOP_ID: ***
-   NETWORX_SECRET_KEY: ***
+   SECURE_PROCESSOR_RETURN_URL: https://www.nerbixa.com/dashboard
+   SECURE_PROCESSOR_WEBHOOK_URL: https://nerbixa.com/api/webhooks/secure-processor
+   SECURE_PROCESSOR_SHOP_ID: ***
+   SECURE_PROCESSOR_SECRET_KEY: ***
    NODE_ENV: production
 
 🎯 CHECK 2: Default Return URL Configuration
@@ -343,7 +343,7 @@ npx tsx scripts/diagnose-payment-redirect.ts
 **Required:** Set in Vercel Dashboard
 
 ```bash
-Variable: NETWORX_RETURN_URL
+Variable: SECURE_PROCESSOR_RETURN_URL
 Value:    https://www.nerbixa.com/dashboard
 
 Environments:
@@ -358,7 +358,7 @@ Environments:
    ```
    1. Visit: https://vercel.com/vanya-vasya/website-2/settings/environment-variables
    2. Click "Add New"
-   3. Name: NETWORX_RETURN_URL
+   3. Name: SECURE_PROCESSOR_RETURN_URL
    4. Value: https://www.nerbixa.com/dashboard
    5. Select all environments
    6. Click "Save"
@@ -366,17 +366,17 @@ Environments:
 
 2. **Via Vercel CLI:**
    ```bash
-   vercel env add NETWORX_RETURN_URL production
+   vercel env add SECURE_PROCESSOR_RETURN_URL production
    # Enter: https://www.nerbixa.com/dashboard
    
-   vercel env add NETWORX_RETURN_URL preview
+   vercel env add SECURE_PROCESSOR_RETURN_URL preview
    # Enter: https://www.nerbixa.com/dashboard
    ```
 
 3. **Verify:**
    ```bash
    vercel env ls
-   # Should show NETWORX_RETURN_URL in all environments
+   # Should show SECURE_PROCESSOR_RETURN_URL in all environments
    ```
 
 ---
@@ -425,7 +425,7 @@ Tests:       4 passed, 4 total
 🔧 Payment API Configuration
 Environment: production
 Return URL: https://www.nerbixa.com/dashboard
-Has NETWORX_RETURN_URL env: true ✅
+Has SECURE_PROCESSOR_RETURN_URL env: true ✅
 ═════════════════════════════════════════════════════════
 
 🎯 PAYMENT RETURN URL CONFIGURATION:
@@ -460,8 +460,8 @@ Current URL: https://www.nerbixa.com/dashboard?payment=success&order_id=...
 
 **Expected Network Sequence:**
 ```
-1. POST /api/payment/networx → 200 OK
-2. GET  checkout.networxpay.com → 200 OK
+1. POST /api/payment/secure-processor → 200 OK
+2. GET  checkout.secure-processorpay.com → 200 OK
 3. [User completes payment]
 4. GET  /dashboard?payment=success&order_id=... → 200 OK ✅
 ```
@@ -527,7 +527,7 @@ Expected: 0 results after fix
 **Check:**
 ```bash
 1. Environment variable set?
-   vercel env ls | grep NETWORX_RETURN_URL
+   vercel env ls | grep SECURE_PROCESSOR_RETURN_URL
 
 2. Deployment after setting variable?
    vercel ls
@@ -627,7 +627,7 @@ b090a68 feat: comprehensive payment redirect diagnostics and logging
 
 ### Modified Files (2)
 ```
-✅ app/api/payment/networx/route.ts (enhanced logging)
+✅ app/api/payment/secure-processor/route.ts (enhanced logging)
 ✅ app/(dashboard)/dashboard/page.tsx (enhanced logging)
 ```
 
@@ -655,7 +655,7 @@ npm install
 
 # Set up environment
 cp .env.example .env.local
-# Add: NETWORX_RETURN_URL=http://localhost:3000/dashboard
+# Add: SECURE_PROCESSOR_RETURN_URL=http://localhost:3000/dashboard
 
 # Run diagnostic
 npx tsx scripts/diagnose-payment-redirect.ts
@@ -672,7 +672,7 @@ npm run dev
 **Deployment:**
 ```bash
 # Set environment variable
-vercel env add NETWORX_RETURN_URL production
+vercel env add SECURE_PROCESSOR_RETURN_URL production
 
 # Deploy
 vercel --prod
@@ -719,10 +719,10 @@ vercel logs --prod --follow
 
 ### Next Action
 
-**⚠️  REQUIRED:** Set `NETWORX_RETURN_URL` environment variable in Vercel
+**⚠️  REQUIRED:** Set `SECURE_PROCESSOR_RETURN_URL` environment variable in Vercel
 
 ```bash
-Variable: NETWORX_RETURN_URL
+Variable: SECURE_PROCESSOR_RETURN_URL
 Value:    https://www.nerbixa.com/dashboard
 ```
 
@@ -733,6 +733,7 @@ After setting this variable, redeploy and test.
 **Last Updated:** October 24, 2025
 **Status:** ✅ Complete - Awaiting Environment Variable Setup
 **Priority:** 🔴 HIGH - Required for Payment Flow
+
 
 
 

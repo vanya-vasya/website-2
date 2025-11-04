@@ -61,7 +61,7 @@ Successfully implemented automatic dashboard redirect after payment completion w
 **Lines Changed:** ~150 lines added
 
 #### 2. Payment API
-**File:** `app/api/payment/networx/route.ts`
+**File:** `app/api/payment/secure-processor/route.ts`
 
 **Changes:**
 - Added `userId` parameter requirement
@@ -72,7 +72,7 @@ Successfully implemented automatic dashboard redirect after payment completion w
 **Lines Changed:** ~20 lines modified
 
 #### 3. Payment Widget Component
-**File:** `components/networx-payment-widget.tsx`
+**File:** `components/secure-processor-payment-widget.tsx`
 
 **Changes:**
 - Added `userId` prop to interface

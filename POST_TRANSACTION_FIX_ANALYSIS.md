@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-After successful payment through Networx payment gateway, users were not receiving their purchased credits. The root cause was an incomplete webhook handler that only logged payment notifications but did not update the database.
+After successful payment through Secure-processor payment gateway, users were not receiving their purchased credits. The root cause was an incomplete webhook handler that only logged payment notifications but did not update the database.
 
 ---
 
@@ -16,10 +16,10 @@ After successful payment through Networx payment gateway, users were not receivi
 
 ### Primary Issue: Incomplete Webhook Implementation
 
-**Location:** `/app/api/webhooks/networx/route.ts`
+**Location:** `/app/api/webhooks/secure-processor/route.ts`
 
 **Problem:**
-The Networx webhook handler was a stub implementation that only logged payment events but did not:
+The Secure-processor webhook handler was a stub implementation that only logged payment events but did not:
 1. Create transaction records in the database
 2. Update user credit balances
 3. Implement idempotency checks to prevent duplicate processing
@@ -39,8 +39,8 @@ case 'success':
 1. **Development Phase Implementation**: The webhook handler was created as a template with commented-out database operations
 2. **Multiple Payment Providers**: The codebase has two webhook handlers:
    - `/api/webhooks/payment/route.ts` - Fully implemented (different provider)
-   - `/api/webhooks/networx/route.ts` - Stub implementation (Networx)
-3. **Missing Integration**: The Networx integration was not completed before deployment
+   - `/api/webhooks/secure-processor/route.ts` - Stub implementation (Secure-processor)
+3. **Missing Integration**: The Secure-processor integration was not completed before deployment
 
 ### Impact
 
@@ -57,16 +57,16 @@ case 'success':
 
 ```
 1. User initiates payment
-   └─> POST /api/payment/networx (creates checkout)
-       └─> Redirects to Networx hosted payment page
+   └─> POST /api/payment/secure-processor (creates checkout)
+       └─> Redirects to Secure-processor hosted payment page
 
-2. User completes payment on Networx
+2. User completes payment on Secure-processor
 
-3. Networx sends webhook
-   └─> POST /api/webhooks/networx
+3. Secure-processor sends webhook
+   └─> POST /api/webhooks/secure-processor
        ❌ PROBLEM: Only logged, didn't update DB
 
-4. Networx redirects user back
+4. Secure-processor redirects user back
    └─> GET /payment/success?order_id=xxx
        └─> Polls /api/payment/verify-balance
            ❌ PROBLEM: No transaction found, balance not updated
@@ -102,11 +102,11 @@ model Transaction {
 ### Environment Variables
 
 **Required Variables:**
-- `NETWORX_SHOP_ID` - Merchant ID
-- `NETWORX_SECRET_KEY` - Webhook signature verification key
-- `NETWORX_RETURN_URL` - Success page URL (default: https://nerbixa.com/payment/success)
-- `NETWORX_WEBHOOK_URL` - Webhook endpoint URL (default: https://nerbixa.com/api/webhooks/networx)
-- `NETWORX_TEST_MODE` - Enable test transactions (true/false)
+- `SECURE_PROCESSOR_SHOP_ID` - Merchant ID
+- `SECURE_PROCESSOR_SECRET_KEY` - Webhook signature verification key
+- `SECURE_PROCESSOR_RETURN_URL` - Success page URL (default: https://nerbixa.com/payment/success)
+- `SECURE_PROCESSOR_WEBHOOK_URL` - Webhook endpoint URL (default: https://nerbixa.com/api/webhooks/secure-processor)
+- `SECURE_PROCESSOR_TEST_MODE` - Enable test transactions (true/false)
 
 ---
 
@@ -114,7 +114,7 @@ model Transaction {
 
 ### 1. Complete Webhook Handler Implementation
 
-**File:** `/app/api/webhooks/networx/route.ts`
+**File:** `/app/api/webhooks/secure-processor/route.ts`
 
 **Changes:**
 - ✅ Added database operations for all payment statuses
@@ -161,13 +161,13 @@ await prismadb.$transaction(async (tx) => {
 
 **Before:**
 ```typescript
-console.log('Networx webhook received:', body);
+console.log('Secure-processor webhook received:', body);
 ```
 
 **After:**
 ```typescript
 console.log('═══════════════════════════════════════════════════════');
-console.log('📥 Networx Webhook Received');
+console.log('📥 Secure-processor Webhook Received');
 console.log('Timestamp:', new Date().toISOString());
 console.log('Transaction ID:', transaction_id);
 console.log('User ID:', tracking_id);
@@ -178,7 +178,7 @@ console.log('══════════════════════�
 
 ### 3. Payment Status Handling
 
-Implemented handlers for all Networx payment statuses:
+Implemented handlers for all Secure-processor payment statuses:
 
 | Status | Action | DB Write | Balance Update |
 |--------|--------|----------|----------------|
@@ -190,7 +190,7 @@ Implemented handlers for all Networx payment statuses:
 
 ### 4. Integration Tests
 
-**File:** `/__tests__/integration/networx-webhook.integration.test.ts`
+**File:** `/__tests__/integration/secure-processor-webhook.integration.test.ts`
 
 **Coverage:**
 - ✅ Successful payment processing
@@ -215,15 +215,15 @@ Implemented handlers for all Networx payment statuses:
 
 ```bash
 # Check webhook is active
-curl https://nerbixa.com/api/webhooks/networx
-# Expected: { "message": "Networx webhook endpoint is active", "timestamp": "..." }
+curl https://nerbixa.com/api/webhooks/secure-processor
+# Expected: { "message": "Secure-processor webhook endpoint is active", "timestamp": "..." }
 ```
 
 ### 2. Test Payment Flow
 
 ```bash
 # Run integration tests
-npm test -- networx-webhook.integration.test.ts
+npm test -- secure-processor-webhook.integration.test.ts
 
 # Expected: All tests passing
 ```
@@ -250,7 +250,7 @@ After deployment, check logs for:
 
 ## Deployment Checklist
 
-- [x] Fix Networx webhook handler
+- [x] Fix Secure-processor webhook handler
 - [x] Add idempotency check
 - [x] Implement database transactions
 - [x] Add comprehensive logging
@@ -270,12 +270,12 @@ After deployment, check logs for:
 ### Required in Production
 
 ```bash
-# Networx Configuration
-NETWORX_SHOP_ID=your_shop_id_here
-NETWORX_SECRET_KEY=your_secret_key_here
-NETWORX_RETURN_URL=https://nerbixa.com/payment/success
-NETWORX_WEBHOOK_URL=https://nerbixa.com/api/webhooks/networx
-NETWORX_TEST_MODE=false  # Set to true for testing
+# Secure-processor Configuration
+SECURE_PROCESSOR_SHOP_ID=your_shop_id_here
+SECURE_PROCESSOR_SECRET_KEY=your_secret_key_here
+SECURE_PROCESSOR_RETURN_URL=https://nerbixa.com/payment/success
+SECURE_PROCESSOR_WEBHOOK_URL=https://nerbixa.com/api/webhooks/secure-processor
+SECURE_PROCESSOR_TEST_MODE=false  # Set to true for testing
 
 # Database
 DATABASE_URL=your_postgresql_connection_string
@@ -285,13 +285,13 @@ NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_***
 CLERK_SECRET_KEY=sk_***
 ```
 
-### Webhook URL Configuration in Networx Dashboard
+### Webhook URL Configuration in Secure-processor Dashboard
 
-1. Log into Networx merchant dashboard
+1. Log into Secure-processor merchant dashboard
 2. Navigate to Settings → Webhooks
-3. Add webhook URL: `https://nerbixa.com/api/webhooks/networx`
+3. Add webhook URL: `https://nerbixa.com/api/webhooks/secure-processor`
 4. Enable events: `payment.success`, `payment.failed`, `payment.refunded`
-5. Save and verify webhook signature key matches `NETWORX_SECRET_KEY`
+5. Save and verify webhook signature key matches `SECURE_PROCESSOR_SECRET_KEY`
 
 ---
 
@@ -365,7 +365,7 @@ If issues occur after deployment:
 
 - `PAYMENT_REDIRECT_IMPLEMENTATION.md` - Success page implementation
 - `PAYMENT_INTEGRATION_STATUS.md` - Overall payment integration status
-- `NETWORX_ENV_SETUP.md` - Environment setup guide
+- `SECURE_PROCESSOR_ENV_SETUP.md` - Environment setup guide
 - `WEBHOOK_IMPLEMENTATION_GUIDE.md` - Webhook best practices
 
 ---

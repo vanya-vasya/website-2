@@ -2,15 +2,15 @@
 
 ## Проблема "Access Denied" - Решение
 
-Ошибка возникает из-за отсутствия или неверных учетных данных Networx в Vercel.
+Ошибка возникает из-за отсутствия или неверных учетных данных Secure-processor в Vercel.
 
 ---
 
-## Шаг 1: Получить учетные данные Networx
+## Шаг 1: Получить учетные данные Secure-processor
 
 ### Вариант A: Реальные учетные данные (Production)
 
-1. Войдите в [Networx Dashboard](https://dashboard.networxpay.com)
+1. Войдите в [Secure-processor Dashboard](https://dashboard.secure-processorpay.com)
 2. Перейдите в **Settings → API Credentials**
 3. Скопируйте:
    - **Shop ID** (например: `29959`)
@@ -19,7 +19,7 @@
 ### Вариант B: Тестовые учетные данные (для разработки)
 
 Если у вас нет реальных учетных данных, запросите тестовые:
-- Email: support@networxpay.com
+- Email: support@secure-processorpay.com
 - Тема: "Request Test API Credentials"
 
 ---
@@ -36,25 +36,25 @@
 
 Добавьте следующие переменные для **Production**:
 
-#### 1. NETWORX_SHOP_ID
+#### 1. SECURE_PROCESSOR_SHOP_ID
 ```
-Value: ваш_shop_id_от_networx
+Value: ваш_shop_id_от_secure-processor
 Environment: Production, Preview, Development (отметьте все)
 ```
 
-#### 2. NETWORX_SECRET_KEY
+#### 2. SECURE_PROCESSOR_SECRET_KEY
 ```
-Value: ваш_secret_key_от_networx
+Value: ваш_secret_key_от_secure-processor
 Environment: Production, Preview, Development (отметьте все)
 ```
 
-#### 3. NETWORX_TEST_MODE
+#### 3. SECURE_PROCESSOR_TEST_MODE
 ```
 Value: true  (для тестирования) или false (для продакшена)
 Environment: Production, Preview, Development
 ```
 
-#### 4. NETWORX_RETURN_URL
+#### 4. SECURE_PROCESSOR_RETURN_URL
 ```
 Value: https://your-vercel-domain.vercel.app/payment/success
 Environment: Production
@@ -66,13 +66,13 @@ Value: https://website-2-git-feature-payment-redirect-vladis-projects-8c520e18.v
 Value: http://localhost:3000/payment/success
 ```
 
-#### 5. NETWORX_WEBHOOK_URL
+#### 5. SECURE_PROCESSOR_WEBHOOK_URL
 ```
-Value: https://your-vercel-domain.vercel.app/api/webhooks/networx
+Value: https://your-vercel-domain.vercel.app/api/webhooks/secure-processor
 Environment: Production
 
 Для Preview:
-Value: https://website-2-git-feature-payment-redirect-vladis-projects-8c520e18.vercel.app/api/webhooks/networx
+Value: https://website-2-git-feature-payment-redirect-vladis-projects-8c520e18.vercel.app/api/webhooks/secure-processor
 ```
 
 ---
@@ -82,21 +82,21 @@ Value: https://website-2-git-feature-payment-redirect-vladis-projects-8c520e18.v
 ### Конфигурация для Production (реальные платежи)
 
 ```env
-NETWORX_SHOP_ID=29959
-NETWORX_SECRET_KEY=your_real_secret_key_from_networx_dashboard
-NETWORX_TEST_MODE=false
-NETWORX_RETURN_URL=https://nerbixa.com/payment/success
-NETWORX_WEBHOOK_URL=https://nerbixa.com/api/webhooks/networx
+SECURE_PROCESSOR_SHOP_ID=29959
+SECURE_PROCESSOR_SECRET_KEY=your_real_secret_key_from_secure-processor_dashboard
+SECURE_PROCESSOR_TEST_MODE=false
+SECURE_PROCESSOR_RETURN_URL=https://nerbixa.com/payment/success
+SECURE_PROCESSOR_WEBHOOK_URL=https://nerbixa.com/api/webhooks/secure-processor
 ```
 
 ### Конфигурация для Testing (тестовые платежи)
 
 ```env
-NETWORX_SHOP_ID=your_test_shop_id
-NETWORX_SECRET_KEY=your_test_secret_key
-NETWORX_TEST_MODE=true
-NETWORX_RETURN_URL=https://your-preview-url.vercel.app/payment/success
-NETWORX_WEBHOOK_URL=https://your-preview-url.vercel.app/api/webhooks/networx
+SECURE_PROCESSOR_SHOP_ID=your_test_shop_id
+SECURE_PROCESSOR_SECRET_KEY=your_test_secret_key
+SECURE_PROCESSOR_TEST_MODE=true
+SECURE_PROCESSOR_RETURN_URL=https://your-preview-url.vercel.app/payment/success
+SECURE_PROCESSOR_WEBHOOK_URL=https://your-preview-url.vercel.app/api/webhooks/secure-processor
 ```
 
 ---
@@ -137,13 +137,13 @@ git push
 **Успешные логи должны показывать:**
 ```
 ✅ Environment variables: { shopId: '29959***', secretKey: '***key' }
-✅ Networx API Success Response received
+✅ Secure-processor API Success Response received
 ✅ Payment checkout created successfully
 ```
 
 **При ошибке будут логи:**
 ```
-❌ Networx API Error Response
+❌ Secure-processor API Error Response
 🔒 ACCESS DENIED - Possible causes
 ```
 
@@ -153,7 +153,7 @@ git push
 
 ### Ошибка 1: "Payment gateway not configured"
 
-**Причина:** Переменные NETWORX_SHOP_ID или NETWORX_SECRET_KEY не установлены
+**Причина:** Переменные SECURE_PROCESSOR_SHOP_ID или SECURE_PROCESSOR_SECRET_KEY не установлены
 
 **Решение:**
 1. Проверьте, что переменные добавлены в Vercel
@@ -165,11 +165,11 @@ git push
 **Причина:** Неверные учетные данные или аккаунт не активирован
 
 **Решение:**
-1. Проверьте Shop ID в Networx Dashboard
+1. Проверьте Shop ID в Secure-processor Dashboard
 2. Проверьте Secret Key (скопируйте заново)
 3. Убедитесь, что аккаунт активирован
 4. Проверьте, что API доступ включен
-5. Свяжитесь с Networx Support
+5. Свяжитесь с Secure-processor Support
 
 ### Ошибка 3: Переменные не применяются
 
@@ -191,17 +191,17 @@ git push
 
 ### IP Whitelist (если требуется)
 
-Если Networx требует IP whitelist, добавьте IP-адреса Vercel:
+Если Secure-processor требует IP whitelist, добавьте IP-адреса Vercel:
 1. Найдите IP вашего deployment в логах
-2. Добавьте их в Networx Dashboard → Settings → IP Whitelist
+2. Добавьте их в Secure-processor Dashboard → Settings → IP Whitelist
 3. Vercel использует различные IP, может потребоваться диапазон
 
 ### Custom Domain
 
 Если используете custom domain:
 ```env
-NETWORX_RETURN_URL=https://nerbixa.com/payment/success
-NETWORX_WEBHOOK_URL=https://nerbixa.com/api/webhooks/networx
+SECURE_PROCESSOR_RETURN_URL=https://nerbixa.com/payment/success
+SECURE_PROCESSOR_WEBHOOK_URL=https://nerbixa.com/api/webhooks/secure-processor
 ```
 
 Убедитесь, что:
@@ -213,11 +213,11 @@ NETWORX_WEBHOOK_URL=https://nerbixa.com/api/webhooks/networx
 
 ## Проверочный список
 
-- [ ] NETWORX_SHOP_ID добавлен в Vercel
-- [ ] NETWORX_SECRET_KEY добавлен в Vercel
-- [ ] NETWORX_TEST_MODE установлен (true/false)
-- [ ] NETWORX_RETURN_URL настроен правильно
-- [ ] NETWORX_WEBHOOK_URL настроен правильно
+- [ ] SECURE_PROCESSOR_SHOP_ID добавлен в Vercel
+- [ ] SECURE_PROCESSOR_SECRET_KEY добавлен в Vercel
+- [ ] SECURE_PROCESSOR_TEST_MODE установлен (true/false)
+- [ ] SECURE_PROCESSOR_RETURN_URL настроен правильно
+- [ ] SECURE_PROCESSOR_WEBHOOK_URL настроен правильно
 - [ ] Все переменные имеют правильный Environment
 - [ ] Deployment перезапущен после изменений
 - [ ] Логи проверены на ошибки
@@ -227,9 +227,9 @@ NETWORX_WEBHOOK_URL=https://nerbixa.com/api/webhooks/networx
 
 ## Контакты для поддержки
 
-**Networx Support:**
-- Email: support@networxpay.com
-- Dashboard: https://dashboard.networxpay.com
+**Secure-processor Support:**
+- Email: support@secure-processorpay.com
+- Dashboard: https://dashboard.secure-processorpay.com
 
 **Vercel Support:**
 - Dashboard: https://vercel.com/support
@@ -247,7 +247,7 @@ npm run dev
 vercel env ls
 
 # Добавить переменную через CLI
-vercel env add NETWORX_SHOP_ID
+vercel env add SECURE_PROCESSOR_SHOP_ID
 
 # Перезапустить deployment
 vercel --prod

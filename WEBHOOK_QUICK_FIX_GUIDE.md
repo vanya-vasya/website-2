@@ -1,4 +1,4 @@
-# Networx Webhook - Quick Fix Guide
+# Secure-processor Webhook - Quick Fix Guide
 
 **TL;DR:** Fixed webhook handler to actually update database when payments succeed.
 
@@ -72,7 +72,7 @@ await prismadb.$transaction(async (tx) => {
 ### 3. Comprehensive Logging ✅
 ```typescript
 console.log('═══════════════════════════════════════════════════════');
-console.log('📥 Networx Webhook Received');
+console.log('📥 Secure-processor Webhook Received');
 console.log('Transaction ID:', transaction_id);
 console.log('User ID:', tracking_id);
 console.log('Amount:', amount, currency);
@@ -85,16 +85,16 @@ console.log('══════════════════════�
 
 ### Run Tests
 ```bash
-npm test -- networx-webhook.integration.test.ts
+npm test -- secure-processor-webhook.integration.test.ts
 ```
 
 ### Manual Test
 ```bash
 # 1. Check webhook is alive
-curl https://nerbixa.com/api/webhooks/networx
+curl https://nerbixa.com/api/webhooks/secure-processor
 
 # 2. Make a test payment
-# (Use Networx test mode with NETWORX_TEST_MODE=true)
+# (Use Secure-processor test mode with SECURE_PROCESSOR_TEST_MODE=true)
 
 # 3. Check logs
 vercel logs --follow
@@ -127,7 +127,7 @@ grep "Processing time:" production.log | awk '{sum+=$NF; count++} END {print sum
 ## Payment Flow
 
 ```
-User → Payment Widget → Networx Hosted Page
+User → Payment Widget → Secure-processor Hosted Page
                               ↓
                         [Payment Success]
                               ↓
@@ -176,7 +176,7 @@ grep "❌ Webhook Processing Error" production.log | tail -5
 
 2. **Common issues:**
    - Missing tracking_id → Check payment API sends userId
-   - Invalid signature → Check NETWORX_SECRET_KEY
+   - Invalid signature → Check SECURE_PROCESSOR_SECRET_KEY
    - User not found → Check clerkId matches
    - Invalid description → Must include "(X Tokens)"
 
@@ -185,19 +185,19 @@ grep "❌ Webhook Processing Error" production.log | tail -5
 ## Environment Variables
 
 ```bash
-NETWORX_SHOP_ID=29959
-NETWORX_SECRET_KEY=dbfb6f...
-NETWORX_RETURN_URL=https://nerbixa.com/payment/success
-NETWORX_WEBHOOK_URL=https://nerbixa.com/api/webhooks/networx
-NETWORX_TEST_MODE=false  # Set to true for testing
+SECURE_PROCESSOR_SHOP_ID=29959
+SECURE_PROCESSOR_SECRET_KEY=dbfb6f...
+SECURE_PROCESSOR_RETURN_URL=https://nerbixa.com/payment/success
+SECURE_PROCESSOR_WEBHOOK_URL=https://nerbixa.com/api/webhooks/secure-processor
+SECURE_PROCESSOR_TEST_MODE=false  # Set to true for testing
 ```
 
 ---
 
 ## Files Changed
 
-- `app/api/webhooks/networx/route.ts` - Main fix
-- `__tests__/integration/networx-webhook.integration.test.ts` - New tests
+- `app/api/webhooks/secure-processor/route.ts` - Main fix
+- `__tests__/integration/secure-processor-webhook.integration.test.ts` - New tests
 
 ---
 
@@ -205,8 +205,8 @@ NETWORX_TEST_MODE=false  # Set to true for testing
 
 ✅ Webhook endpoint active:
 ```bash
-curl https://nerbixa.com/api/webhooks/networx
-# Should return: {"message":"Networx webhook endpoint is active",...}
+curl https://nerbixa.com/api/webhooks/secure-processor
+# Should return: {"message":"Secure-processor webhook endpoint is active",...}
 ```
 
 ✅ Recent transactions:

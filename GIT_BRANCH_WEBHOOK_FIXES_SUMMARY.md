@@ -49,7 +49,7 @@ Status: Tracking website-2/feature/webhook-fixes-complete-2025
 #### **🔧 Enhanced Code:**
 ```
 ✅ app/api/webhooks/clerk/route.enhanced.ts (16,938 bytes)
-✅ app/api/webhooks/networx/route.ts (modified with RAW logging)
+✅ app/api/webhooks/secure-processor/route.ts (modified with RAW logging)
 ✅ lib/db.ts (modified with increased timeouts)
 ```
 
@@ -87,9 +87,9 @@ keepAlive: true
 
 **Result:** No more "Connection terminated unexpectedly" errors
 
-### **2. Networx Webhook Debug Logging** ✅
+### **2. Secure-processor Webhook Debug Logging** ✅
 ```typescript
-// app/api/webhooks/networx/route.ts
+// app/api/webhooks/secure-processor/route.ts
 console.log('RAW BODY:', JSON.stringify(body, null, 2));
 ```
 
@@ -143,18 +143,18 @@ Error: No matching signature found
 Status: Requires WEBHOOK_SECRET update in Vercel
 ```
 
-#### **2. Networx Webhook URL Wrong**
+#### **2. Secure-processor Webhook URL Wrong**
 ```
 Current: .../payment/success (page, not webhook!)
-Required: .../api/webhooks/networx (webhook endpoint)
-Status: Requires NETWORX_WEBHOOK_URL update in Vercel
+Required: .../api/webhooks/secure-processor (webhook endpoint)
+Status: Requires SECURE_PROCESSOR_WEBHOOK_URL update in Vercel
 ```
 
 #### **3. Environment Variables Missing/Wrong**
 ```
 WEBHOOK_SECRET - Must match Clerk Signing Secret
-NETWORX_WEBHOOK_URL - Must point to webhook endpoint
-NETWORX_RETURN_URL - Should use www.nerbixa.com
+SECURE_PROCESSOR_WEBHOOK_URL - Must point to webhook endpoint
+SECURE_PROCESSOR_RETURN_URL - Should use www.nerbixa.com
 ```
 
 ---
@@ -166,11 +166,11 @@ NETWORX_RETURN_URL - Should use www.nerbixa.com
 #### **1. Update Vercel Environment Variables:**
 ```
 WEBHOOK_SECRET = [Get from Clerk Dashboard]
-NETWORX_WEBHOOK_URL = https://www.nerbixa.com/api/webhooks/networx
-NETWORX_RETURN_URL = https://www.nerbixa.com/payment/success
-NETWORX_SECRET_KEY = dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950
-NETWORX_SHOP_ID = 29959
-NETWORX_TEST_MODE = true
+SECURE_PROCESSOR_WEBHOOK_URL = https://www.nerbixa.com/api/webhooks/secure-processor
+SECURE_PROCESSOR_RETURN_URL = https://www.nerbixa.com/payment/success
+SECURE_PROCESSOR_SECRET_KEY = dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950
+SECURE_PROCESSOR_SHOP_ID = 29959
+SECURE_PROCESSOR_TEST_MODE = true
 ```
 
 #### **2. Redeploy:**
@@ -215,7 +215,7 @@ npm run user:create
 ### **Expected Results After Fixes:**
 ```
 ✅ Clerk webhooks: 200 OK, users created with 20 credits
-✅ Networx webhooks: Full payload visible, transactions created
+✅ Secure-processor webhooks: Full payload visible, transactions created
 ✅ Database: Stable connections, no timeouts
 ✅ Payments: Credits added automatically
 ```

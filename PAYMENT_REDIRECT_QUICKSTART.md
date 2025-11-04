@@ -17,7 +17,7 @@
 ### User Flow
 
 1. **User clicks "Buy Tokens"** in the Pro Modal
-2. **Enters payment details** on Networx hosted page
+2. **Enters payment details** on Secure-processor hosted page
 3. **Completes payment** successfully
 4. **Redirected to success page** (`/payment/success?order_id=xxx`)
 5. **Balance verification starts** automatically (polling every 2 seconds)
@@ -47,8 +47,8 @@ Payment Complete → Webhook Updates Balance → Success Page Polls API
 
 ### Modified Files
 - `/app/(dashboard)/payment/success/page.tsx` - Added polling and redirect logic
-- `/app/api/payment/networx/route.ts` - Updated to use userId as tracking_id
-- `/components/networx-payment-widget.tsx` - Added userId prop
+- `/app/api/payment/secure-processor/route.ts` - Updated to use userId as tracking_id
+- `/components/secure-processor-payment-widget.tsx` - Added userId prop
 - `/components/pro-modal.tsx` - Pass userId to widget
 - `/app/(dashboard)/payment/test/page.tsx` - Updated test page
 
@@ -71,7 +71,7 @@ Payment Complete → Webhook Updates Balance → Success Page Polls API
    - Select token amount and proceed to payment
 
 4. **Complete test payment**
-   - Use Networx test card details
+   - Use Secure-processor test card details
    - Complete the payment
 
 5. **Observe the redirect flow**
@@ -98,10 +98,10 @@ npm test -- --coverage
 
 ```env
 # Already configured (from existing setup)
-NETWORX_SHOP_ID=29959
-NETWORX_SECRET_KEY=your_secret_key
-NETWORX_RETURN_URL=https://nerbixa.com/payment/success
-NETWORX_WEBHOOK_URL=https://nerbixa.com/api/webhooks/payment
+SECURE_PROCESSOR_SHOP_ID=29959
+SECURE_PROCESSOR_SECRET_KEY=your_secret_key
+SECURE_PROCESSOR_RETURN_URL=https://nerbixa.com/payment/success
+SECURE_PROCESSOR_WEBHOOK_URL=https://nerbixa.com/api/webhooks/payment
 
 # Clerk (already configured)
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_key

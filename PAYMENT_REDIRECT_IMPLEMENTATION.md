@@ -43,7 +43,7 @@ This document describes the implementation of automatic dashboard redirect after
   - Manual redirect button available
 
 #### User Experience Flow:
-1. User completes payment on Networx hosted page
+1. User completes payment on Secure-processor hosted page
 2. User redirected to `/payment/success?order_id=xxx`
 3. Page fetches transaction details
 4. Page polls balance verification endpoint
@@ -56,12 +56,12 @@ This document describes the implementation of automatic dashboard redirect after
    - Balance will be available (webhook may still be processing)
 
 ### 3. Updated Payment Flow
-- **Payment API**: `/app/api/payment/networx/route.ts`
+- **Payment API**: `/app/api/payment/secure-processor/route.ts`
   - Now requires `userId` parameter
   - Uses `userId` as `tracking_id` (matches webhook expectation)
   - Passes `orderId` in return URL for reference
   
-- **Widget Component**: `components/networx-payment-widget.tsx`
+- **Widget Component**: `components/secure-processor-payment-widget.tsx`
   - Accepts `userId` prop
   - Passes `userId` to payment API
 
@@ -201,11 +201,11 @@ model Transaction {
 ## API Flow Diagram
 
 ```
-User → Payment Widget → Payment API → Networx
+User → Payment Widget → Payment API → Secure-processor
                           ↓
                      (tracking_id = userId)
                           ↓
-Webhook ← Networx Payment Gateway
+Webhook ← Secure-processor Payment Gateway
   ↓
 Update User Balance
   ↓
@@ -226,11 +226,11 @@ User → Success Page → Poll Verify Balance API
 
 Required environment variables:
 ```env
-# Networx Payment Gateway
-NETWORX_SHOP_ID=your_shop_id
-NETWORX_SECRET_KEY=your_secret_key
-NETWORX_RETURN_URL=https://nerbixa.com/payment/success
-NETWORX_WEBHOOK_URL=https://nerbixa.com/api/webhooks/payment
+# Secure-processor Payment Gateway
+SECURE_PROCESSOR_SHOP_ID=your_shop_id
+SECURE_PROCESSOR_SECRET_KEY=your_secret_key
+SECURE_PROCESSOR_RETURN_URL=https://nerbixa.com/payment/success
+SECURE_PROCESSOR_WEBHOOK_URL=https://nerbixa.com/api/webhooks/payment
 
 # Database
 DATABASE_URL=your_database_url
@@ -246,7 +246,7 @@ CLERK_SECRET_KEY=your_secret
 - [ ] Database migrations applied
 - [ ] Tests passing
 - [ ] Webhook endpoint accessible
-- [ ] Return URL configured in Networx dashboard
+- [ ] Return URL configured in Secure-processor dashboard
 - [ ] SSL certificate valid
 - [ ] CORS headers configured (if needed)
 - [ ] Rate limiting configured

@@ -15,34 +15,34 @@
 
 **Добавьте ДВЕ обязательные переменные:**
 
-#### 1️⃣ NETWORX_SHOP_ID
+#### 1️⃣ SECURE_PROCESSOR_SHOP_ID
 ```
-Name: NETWORX_SHOP_ID
-Value: [ваш Shop ID от Networx]
+Name: SECURE_PROCESSOR_SHOP_ID
+Value: [ваш Shop ID от Secure-processor]
 Environment: ✅ Production ✅ Preview ✅ Development
 ```
 
-#### 2️⃣ NETWORX_SECRET_KEY  
+#### 2️⃣ SECURE_PROCESSOR_SECRET_KEY  
 ```
-Name: NETWORX_SECRET_KEY
-Value: [ваш Secret Key от Networx]
+Name: SECURE_PROCESSOR_SECRET_KEY
+Value: [ваш Secret Key от Secure-processor]
 Environment: ✅ Production ✅ Preview ✅ Development
 ```
 
 ### Где взять эти данные?
 
-**Вариант A: У вас есть реальный Networx аккаунт**
-1. Откройте https://dashboard.networxpay.com
+**Вариант A: У вас есть реальный Secure-processor аккаунт**
+1. Откройте https://dashboard.secure-processorpay.com
 2. Settings → API Credentials
 3. Скопируйте Shop ID и Secret Key
 
 **Вариант B: Используйте тестовые данные**
-- Если нет аккаунта, напишите в Networx Support
-- Email: support@networxpay.com
+- Если нет аккаунта, напишите в Secure-processor Support
+- Email: support@secure-processorpay.com
 - Запросите тестовые credentials
 
 **Вариант C: Временно протестировать без реальных платежей**
-- Добавьте переменную: `NETWORX_TEST_MODE=true`
+- Добавьте переменную: `SECURE_PROCESSOR_TEST_MODE=true`
 - Это активирует mock mode (но всё равно нужны Shop ID и Secret Key)
 
 ### Шаг 2: Перезапустить Deployment
@@ -63,7 +63,7 @@ Environment: ✅ Production ✅ Preview ✅ Development
 **Если успешно, увидите:**
 ```
 ✅ Environment variables: { shopId: '29959***', secretKey: '***key' }
-✅ Networx API Success Response received
+✅ Secure-processor API Success Response received
 ✅ Payment checkout created successfully
 ```
 
@@ -71,7 +71,7 @@ Environment: ✅ Production ✅ Preview ✅ Development
 ```
 🔒 ACCESS DENIED - Possible causes:
 1. Invalid Shop ID or Secret Key
-2. Account not activated in Networx Dashboard
+2. Account not activated in Secure-processor Dashboard
 ```
 
 ## 📚 Подробная документация
@@ -79,20 +79,20 @@ Environment: ✅ Production ✅ Preview ✅ Development
 Если нужны детали, смотрите:
 
 1. **VERCEL_ENV_SETUP.md** - Полная инструкция по настройке Vercel
-2. **NETWORX_AUTH_FIX.md** - Troubleshooting проблем с Networx
+2. **SECURE_PROCESSOR_AUTH_FIX.md** - Troubleshooting проблем с Secure-processor
 3. **DEPLOYMENT_FIX.md** - История предыдущих исправлений
 
 ## 🆘 Если не работает
 
 ### Проблема 1: "Payment gateway not configured"
 **Причина:** Переменные не добавлены в Vercel  
-**Решение:** Добавьте NETWORX_SHOP_ID и NETWORX_SECRET_KEY
+**Решение:** Добавьте SECURE_PROCESSOR_SHOP_ID и SECURE_PROCESSOR_SECRET_KEY
 
 ### Проблема 2: "Access denied" продолжается
 **Причина:** Неверные credentials или аккаунт не активирован  
 **Решение:** 
-- Проверьте credentials в Networx Dashboard
-- Свяжитесь с Networx Support
+- Проверьте credentials в Secure-processor Dashboard
+- Свяжитесь с Secure-processor Support
 - Убедитесь, что API доступ включен
 
 ### Проблема 3: Переменные не применяются
@@ -114,7 +114,7 @@ git push
 
 **Commits на GitHub:**
 ```
-e9919d1 - fix: improve Networx payment API error handling
+e9919d1 - fix: improve Secure-processor payment API error handling
 99bed30 - fix: correct Clerk auth import path for deployment  
 c501b8d - feat: implement automatic dashboard redirect after payment
 ```
@@ -127,7 +127,7 @@ c501b8d - feat: implement automatic dashboard redirect after payment
 
 ## 🎯 Главное
 
-**Без правильных NETWORX_SHOP_ID и NETWORX_SECRET_KEY платежи работать не будут!**
+**Без правильных SECURE_PROCESSOR_SHOP_ID и SECURE_PROCESSOR_SECRET_KEY платежи работать не будут!**
 
 1. Добавьте переменные в Vercel
 2. Перезапустите deployment
@@ -139,7 +139,7 @@ c501b8d - feat: implement automatic dashboard redirect after payment
 
 **Нужна помощь?**
 - Проверьте VERCEL_ENV_SETUP.md для детальной инструкции
-- Напишите в Networx Support для получения credentials
+- Напишите в Secure-processor Support для получения credentials
 - Проверьте логи deployment для диагностики
 
 **Дата:** Октябрь 24, 2025  

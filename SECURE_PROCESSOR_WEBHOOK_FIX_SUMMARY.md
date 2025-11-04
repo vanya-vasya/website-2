@@ -7,12 +7,12 @@
 
 ## 🎯 **PROBLEMS IDENTIFIED**
 
-### Problem #1: Networx Webhook Not Processing Payments
+### Problem #1: Secure-processor Webhook Not Processing Payments
 **Root Cause:** Code was parsing webhook data incorrectly
 
 #### What was happening:
 ```
-RAW BODY (от Networx):
+RAW BODY (от Secure-processor):
 {
   "transaction": {           ← Данные внутри объекта!
     "uid": "1134bdda-...",
@@ -65,9 +65,9 @@ await client.query(
 
 ## 🔧 **FIXES IMPLEMENTED**
 
-### Fix #1: Correct Networx Webhook Payload Parsing
+### Fix #1: Correct Secure-processor Webhook Payload Parsing
 
-**File:** `app/api/webhooks/networx/route.ts`
+**File:** `app/api/webhooks/secure-processor/route.ts`
 
 #### Changes:
 1. **Extract data from `body.transaction` object**
@@ -76,7 +76,7 @@ await client.query(
    const transaction = body.transaction;
    const { 
      status, 
-     uid,              // Networx uses "uid", not "transaction_id"
+     uid,              // Secure-processor uses "uid", not "transaction_id"
      amount, 
      currency, 
      tracking_id,
@@ -87,7 +87,7 @@ await client.query(
    const customer_email = customer?.email;
    ```
 
-2. **Get signature from headers** (Networx sends as `X-Signature` header)
+2. **Get signature from headers** (Secure-processor sends as `X-Signature` header)
    ```typescript
    const signature = request.headers.get('x-signature') || request.headers.get('X-Signature');
    ```
@@ -117,7 +117,7 @@ await client.query(
 
 ### Fix #2: Correct Balance Calculation
 
-**File:** `app/api/webhooks/networx/route.ts`
+**File:** `app/api/webhooks/secure-processor/route.ts`
 
 #### Changes:
 ```typescript
@@ -197,13 +197,13 @@ await client.query(
       "exp_month": 12,
       "exp_year": 2031
     },
-    "receipt_url": "https://backoffice.networxpay.com/customer/transactions/..."
+    "receipt_url": "https://backoffice.secure-processorpay.com/customer/transactions/..."
   }
 }
 ```
 
 ### Key Fields Mapping:
-| Networx Field | Our Field | Notes |
+| Secure-processor Field | Our Field | Notes |
 |--------------|-----------|-------|
 | `transaction.uid` | `transaction_id` | Unique transaction ID |
 | `transaction.tracking_id` | `userId` | User's Clerk ID |
@@ -218,12 +218,12 @@ await client.query(
 
 ### User Flow:
 1. **User clicks "Buy 50 tokens"**
-   - `app/api/payment/networx/route.ts` creates checkout
-   - User redirected to Networx payment page
+   - `app/api/payment/secure-processor/route.ts` creates checkout
+   - User redirected to Secure-processor payment page
 
 2. **User completes payment**
-   - Networx processes payment
-   - Networx sends webhook to `https://www.nerbixa.com/api/webhooks/networx`
+   - Secure-processor processes payment
+   - Secure-processor sends webhook to `https://www.nerbixa.com/api/webhooks/secure-processor`
 
 3. **Webhook handler processes payment**
    - ✅ Parse `body.transaction` correctly
@@ -246,11 +246,11 @@ await client.query(
    - Get from Clerk Dashboard → Webhooks → Signing Secret
    - ⚠️ MUST match exactly (case-sensitive)
 
-2. **`NETWORX_WEBHOOK_URL`**
-   - ✅ CORRECT: `https://www.nerbixa.com/api/webhooks/networx`
+2. **`SECURE_PROCESSOR_WEBHOOK_URL`**
+   - ✅ CORRECT: `https://www.nerbixa.com/api/webhooks/secure-processor`
    - ❌ WRONG: `https://www.nerbixa.com/payment/success`
 
-3. **`NETWORX_RETURN_URL`**
+3. **`SECURE_PROCESSOR_RETURN_URL`**
    - ✅ CORRECT: `https://www.nerbixa.com/payment/success`
 
 4. **Redeploy** after updating environment variables
@@ -265,10 +265,10 @@ await client.query(
 - [ ] Verify user created in DB with 20 credits
 - [ ] Verify Transaction record created for signup bonus
 
-### Test Networx Payment:
+### Test Secure-processor Payment:
 - [ ] Login as existing user
 - [ ] Buy 50 tokens (use test card: 4012 0000 0000 1006, 12/31, 123)
-- [ ] Complete payment on Networx page
+- [ ] Complete payment on Secure-processor page
 - [ ] ✅ Should redirect to dashboard immediately (no countdown)
 - [ ] Check Vercel logs for webhook
 - [ ] Verify Transaction record created
@@ -276,8 +276,8 @@ await client.query(
 
 ### Expected Vercel Logs:
 ```
-📥 Networx Webhook Received - RAW BODY: { transaction: { uid: "...", status: "successful", amount: 250, tracking_id: "user_..." } }
-📥 Networx Webhook Parsed Data:
+📥 Secure-processor Webhook Received - RAW BODY: { transaction: { uid: "...", status: "successful", amount: 250, tracking_id: "user_..." } }
+📥 Secure-processor Webhook Parsed Data:
    Transaction ID (uid): 1134bdda-...
    Status: successful
    Amount: 250 EUR
@@ -296,7 +296,7 @@ await client.query(
 
 ## 📝 **FILES MODIFIED**
 
-1. **`app/api/webhooks/networx/route.ts`**
+1. **`app/api/webhooks/secure-processor/route.ts`**
    - Fixed webhook payload parsing (extract from `body.transaction`)
    - Fixed balance calculation logic
    - Added test transaction signature bypass
@@ -311,7 +311,7 @@ await client.query(
 ## 🎉 **EXPECTED OUTCOME**
 
 ### After Deploy:
-1. ✅ **Networx webhooks process correctly**
+1. ✅ **Secure-processor webhooks process correctly**
    - Transaction records created
    - User balance updated
 
@@ -341,14 +341,14 @@ await client.query(
 1. **Commit changes to Git**
    ```bash
    git add .
-   git commit -m "Fix Networx webhook parsing and instant payment redirect"
+   git commit -m "Fix Secure-processor webhook parsing and instant payment redirect"
    git push origin feature/policy-dates-cleanup-2025
    ```
 
 2. **Update Vercel Environment Variables**
    - `WEBHOOK_SECRET` (from Clerk)
-   - `NETWORX_WEBHOOK_URL` = `https://www.nerbixa.com/api/webhooks/networx`
-   - `NETWORX_RETURN_URL` = `https://www.nerbixa.com/payment/success`
+   - `SECURE_PROCESSOR_WEBHOOK_URL` = `https://www.nerbixa.com/api/webhooks/secure-processor`
+   - `SECURE_PROCESSOR_RETURN_URL` = `https://www.nerbixa.com/payment/success`
 
 3. **Redeploy on Vercel**
    - Triggers automatic deployment from GitHub

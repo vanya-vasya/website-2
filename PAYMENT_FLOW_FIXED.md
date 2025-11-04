@@ -17,7 +17,7 @@
                                 ▼
                     ┌────────────────────────┐
                     │ POST /api/payment/     │
-                    │      networx           │
+                    │      secure-processor           │
                     │                        │
                     │ • Creates checkout     │
                     │ • Gets payment_url     │
@@ -27,7 +27,7 @@
                                 │
                                 ▼
                     ┌────────────────────────┐
-                    │  Redirect to Networx   │
+                    │  Redirect to Secure-processor   │
                     │  Hosted Payment Page   │
                     └───────────┬────────────┘
                                 │
@@ -47,7 +47,7 @@
          ▼                    ▼
 ┌─────────────────────┐   ┌──────────────────────────┐
 │ POST /api/webhooks/ │   │ GET /payment/success     │
-│      networx        │   │     ?order_id=xxx        │
+│      secure-processor        │   │     ?order_id=xxx        │
 │                     │   │                          │
 │ ✅ FIXED:           │   │ Shows:                   │
 │ 1. Verify signature │   │ • Transaction details    │
@@ -208,8 +208,8 @@ await prismadb.$transaction(async (tx) => {
 ## Timing
 
 ```
-T+0s:   User completes payment on Networx
-T+0.5s: Networx sends webhook → Our server
+T+0s:   User completes payment on Secure-processor
+T+0.5s: Secure-processor sends webhook → Our server
 T+0.5s: Webhook handler processes (< 500ms)
 T+1s:   Database updated ✅
 T+1s:   User lands on success page
@@ -245,7 +245,7 @@ Webhook → Verify signature ✅ → Find user → Not found ❌
 Webhook → Start transaction → Create record ✅ → Update user ❌ (error)
 → Prisma rollback both operations
 → No partial data
-→ Webhook will be retried by Networx
+→ Webhook will be retried by Secure-processor
 ```
 
 ### Scenario: Invalid Description
@@ -280,8 +280,8 @@ Webhook → Verify signature ✅ → Extract tokens → No match ❌
 ## Production Checklist
 
 Before deploying:
-- [ ] Verify NETWORX_SECRET_KEY is set
-- [ ] Verify NETWORX_WEBHOOK_URL is correct
+- [ ] Verify SECURE_PROCESSOR_SECRET_KEY is set
+- [ ] Verify SECURE_PROCESSOR_WEBHOOK_URL is correct
 - [ ] Test webhook signature verification
 - [ ] Run integration tests
 - [ ] Deploy to staging first
@@ -302,13 +302,13 @@ After deploying:
 
 ### Check if webhook is working
 ```bash
-curl https://nerbixa.com/api/webhooks/networx
-# Expected: {"message":"Networx webhook endpoint is active",...}
+curl https://nerbixa.com/api/webhooks/secure-processor
+# Expected: {"message":"Secure-processor webhook endpoint is active",...}
 ```
 
 ### Monitor webhook processing
 ```bash
-vercel logs --follow | grep "Networx Webhook"
+vercel logs --follow | grep "Secure-processor Webhook"
 ```
 
 ### Check recent transactions

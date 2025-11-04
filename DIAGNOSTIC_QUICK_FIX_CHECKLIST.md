@@ -108,7 +108,7 @@
 - [ ] Repeat steps from Task 2.1
 
 ### Task 2.5: Update Test File #5
-- [ ] Open `__tests__/integration/networx-webhook.integration.test.ts`
+- [ ] Open `__tests__/integration/secure-processor-webhook.integration.test.ts`
 - [ ] Repeat steps from Task 2.1
 
 ### Task 2.6: Update Test File #6
@@ -136,7 +136,7 @@
 ### Task 3.2: Check Logs
 - [ ] Check terminal logs for:
   ```
-  ✓ "📥 Networx Webhook Received"
+  ✓ "📥 Secure-processor Webhook Received"
   ✓ "✅ Webhook signature verified"
   ✓ "✅ User found"
   ✓ "✅ Transaction record created"
@@ -236,8 +236,8 @@
   - `WEBHOOK_SECRET`
   - `CLERK_SECRET_KEY`
   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
-  - `NETWORX_SHOP_ID`
-  - `NETWORX_SECRET_KEY`
+  - `SECURE_PROCESSOR_SHOP_ID`
+  - `SECURE_PROCESSOR_SECRET_KEY`
 
 ---
 

@@ -7,15 +7,15 @@
  */
 
 import { NextRequest } from 'next/server';
-import { POST as paymentAPI } from '@/app/api/payment/networx/route';
+import { POST as paymentAPI } from '@/app/api/payment/secure-processor/route';
 
 describe('E2E: Payment to Dashboard Redirect Flow', () => {
   const mockEnv = {
-    NETWORX_SHOP_ID: 'test_shop_id',
-    NETWORX_SECRET_KEY: 'test_secret_key',
-    NETWORX_TEST_MODE: 'true',
-    NETWORX_RETURN_URL: 'https://www.nerbixa.com/dashboard',
-    NETWORX_WEBHOOK_URL: 'https://www.nerbixa.com/api/webhooks/networx',
+    SECURE_PROCESSOR_SHOP_ID: 'test_shop_id',
+    SECURE_PROCESSOR_SECRET_KEY: 'test_secret_key',
+    SECURE_PROCESSOR_TEST_MODE: 'true',
+    SECURE_PROCESSOR_RETURN_URL: 'https://www.nerbixa.com/dashboard',
+    SECURE_PROCESSOR_WEBHOOK_URL: 'https://www.nerbixa.com/api/webhooks/secure-processor',
   };
 
   beforeAll(() => {
@@ -64,17 +64,17 @@ describe('E2E: Payment to Dashboard Redirect Flow', () => {
       userId,
     };
 
-    const request = new NextRequest('http://localhost:3000/api/payment/networx', {
+    const request = new NextRequest('http://localhost:3000/api/payment/secure-processor', {
       method: 'POST',
       body: JSON.stringify(requestBody),
     });
 
-    // Mock Networx API response
+    // Mock Secure-processor API response
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
       json: async () => ({
         checkout: {
-          redirect_url: `https://checkout.networxpay.com/widget/hpp.html?token=test_token_${orderId}`,
+          redirect_url: `https://checkout.secure-processorpay.com/widget/hpp.html?token=test_token_${orderId}`,
         },
       }),
     });
@@ -90,14 +90,14 @@ describe('E2E: Payment to Dashboard Redirect Flow', () => {
     // Verify token creation
     expect(response.status).toBe(200);
     expect(tokenData.success).toBe(true);
-    expect(tokenData.payment_url).toContain('checkout.networxpay.com');
+    expect(tokenData.payment_url).toContain('checkout.secure-processorpay.com');
 
     // Step 3: Extract return URL from API call
     console.log('🔍 Step 3: Verifying return URL configuration...');
     
     const fetchCall = (global.fetch as jest.Mock).mock.calls[0];
-    const networxRequestBody = JSON.parse(fetchCall[1].body);
-    const returnUrl = networxRequestBody.checkout.settings.return_url;
+    const secureProcessorRequestBody = JSON.parse(fetchCall[1].body);
+    const returnUrl = secureProcessorRequestBody.checkout.settings.return_url;
 
     console.log('   Return URL:', returnUrl);
     console.log('');
@@ -112,8 +112,8 @@ describe('E2E: Payment to Dashboard Redirect Flow', () => {
     console.log('   ✅ Return URL correctly configured for dashboard');
     console.log('');
 
-    // Step 4: Simulate user completing payment on Networx hosted page
-    console.log('💳 Step 4: User completes payment on Networx...');
+    // Step 4: Simulate user completing payment on Secure-processor hosted page
+    console.log('💳 Step 4: User completes payment on Secure-processor...');
     console.log('   (User enters card details and confirms)');
     console.log('   ✅ Payment successful');
     console.log('');
@@ -194,17 +194,17 @@ describe('E2E: Payment to Dashboard Redirect Flow', () => {
     const environments = [
       {
         name: 'Production',
-        NETWORX_RETURN_URL: 'https://www.nerbixa.com/dashboard',
+        SECURE_PROCESSOR_RETURN_URL: 'https://www.nerbixa.com/dashboard',
         expectedDomain: 'www.nerbixa.com',
       },
       {
         name: 'Staging',
-        NETWORX_RETURN_URL: 'https://staging.nerbixa.com/dashboard',
+        SECURE_PROCESSOR_RETURN_URL: 'https://staging.nerbixa.com/dashboard',
         expectedDomain: 'staging.nerbixa.com',
       },
       {
         name: 'Development',
-        NETWORX_RETURN_URL: 'http://localhost:3000/dashboard',
+        SECURE_PROCESSOR_RETURN_URL: 'http://localhost:3000/dashboard',
         expectedDomain: 'localhost:3000',
       },
     ];
@@ -212,9 +212,9 @@ describe('E2E: Payment to Dashboard Redirect Flow', () => {
     for (const env of environments) {
       console.log(`\nTesting ${env.name} environment...`);
       
-      process.env.NETWORX_RETURN_URL = env.NETWORX_RETURN_URL;
+      process.env.SECURE_PROCESSOR_RETURN_URL = env.SECURE_PROCESSOR_RETURN_URL;
 
-      const request = new NextRequest('http://localhost:3000/api/payment/networx', {
+      const request = new NextRequest('http://localhost:3000/api/payment/secure-processor', {
         method: 'POST',
         body: JSON.stringify({
           amount: 10,
@@ -230,7 +230,7 @@ describe('E2E: Payment to Dashboard Redirect Flow', () => {
         ok: true,
         json: async () => ({
           checkout: {
-            redirect_url: 'https://checkout.networxpay.com/widget/hpp.html?token=test',
+            redirect_url: 'https://checkout.secure-processorpay.com/widget/hpp.html?token=test',
           },
         }),
       });
@@ -252,13 +252,13 @@ describe('E2E: Payment to Dashboard Redirect Flow', () => {
     }
 
     // Restore original
-    process.env.NETWORX_RETURN_URL = mockEnv.NETWORX_RETURN_URL;
+    process.env.SECURE_PROCESSOR_RETURN_URL = mockEnv.SECURE_PROCESSOR_RETURN_URL;
   });
 
   it('should include all required parameters in return URL', async () => {
     const orderId = 'test_params_123';
 
-    const request = new NextRequest('http://localhost:3000/api/payment/networx', {
+    const request = new NextRequest('http://localhost:3000/api/payment/secure-processor', {
       method: 'POST',
       body: JSON.stringify({
         amount: 5,
@@ -309,7 +309,7 @@ describe('E2E: Payment to Dashboard Redirect Flow', () => {
       '',
     ];
 
-    const request = new NextRequest('http://localhost:3000/api/payment/networx', {
+    const request = new NextRequest('http://localhost:3000/api/payment/secure-processor', {
       method: 'POST',
       body: JSON.stringify({
         amount: 10,
@@ -350,6 +350,7 @@ describe('E2E: Payment to Dashboard Redirect Flow', () => {
     console.log('   Actual redirect path:', url.pathname);
   });
 });
+
 
 
 

@@ -127,7 +127,7 @@ All requirements from the integration task have been successfully implemented.
 ## 📊 System Features
 
 ### Core Functionality
-✅ Token purchase via NetworkX Pay  
+✅ Token purchase via SecureProcessor Pay  
 ✅ Multi-currency support (15+ currencies)  
 ✅ Automated PDF receipt generation  
 ✅ Email confirmations with attachments  
@@ -169,7 +169,7 @@ nerbixa/
 │   └── actions/
 │       └── user.actions.ts                  [MODIFIED - Added createOrGetUser]
 │
-├── app/api/webhooks/networx/
+├── app/api/webhooks/secure-processor/
 │   └── route.ts                             [MODIFIED - Enhanced idempotency, receipt, email]
 │
 ├── constants/
@@ -202,7 +202,7 @@ nerbixa/
 ├── config/
 │   └── nodemailer.ts                        [EXISTS - Email configuration]
 │
-└── app/api/payment/networx/
+└── app/api/payment/secure-processor/
     └── route.ts                             [EXISTS - Payment API]
 ```
 
@@ -283,12 +283,12 @@ nerbixa/
 
 ### Environment Variables (Required)
 ```bash
-# NetworkX Pay
-NETWORX_SHOP_ID=your_shop_id
-NETWORX_SECRET_KEY=your_secret_key
-NETWORX_TEST_MODE=true
-NETWORX_RETURN_URL=https://nerbixa.com/dashboard
-NETWORX_WEBHOOK_URL=https://nerbixa.com/api/webhooks/networx
+# SecureProcessor Pay
+SECURE_PROCESSOR_SHOP_ID=your_shop_id
+SECURE_PROCESSOR_SECRET_KEY=your_secret_key
+SECURE_PROCESSOR_TEST_MODE=true
+SECURE_PROCESSOR_RETURN_URL=https://nerbixa.com/dashboard
+SECURE_PROCESSOR_WEBHOOK_URL=https://nerbixa.com/api/webhooks/secure-processor
 
 # Email (Titan)
 OUTBOX_EMAIL=noreply@nerbixa.com
@@ -302,7 +302,7 @@ DATABASE_URL=postgresql://...
 ### Pre-deployment Steps
 1. Run database migration: `npx prisma migrate deploy`
 2. Set production environment variables
-3. Configure NetworkX webhooks in dashboard
+3. Configure SecureProcessor webhooks in dashboard
 4. Test payment flow in staging
 5. Verify email sending works
 6. Monitor initial transactions

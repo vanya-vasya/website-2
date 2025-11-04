@@ -78,7 +78,7 @@ import db from '@/lib/db';
 - `__tests__/webhooks/clerk.test.ts`
 - `__tests__/unit/verify-balance.unit.test.ts`
 - `__tests__/integration/payment-redirect.integration.test.ts`
-- `__tests__/integration/networx-webhook.integration.test.ts`
+- `__tests__/integration/secure-processor-webhook.integration.test.ts`
 - `__tests__/integration/clerk-webhook.integration.test.ts`
 
 ---

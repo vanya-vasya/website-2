@@ -107,16 +107,16 @@ VALUES ($1, $2, $3, 20, 'credit', 'signup bonus', 'completed', $4, NOW())
 ```
 Payment Initiated
     ↓
-POST /api/payment/networx
+POST /api/payment/secure-processor
     ├─ Validates userId, amount, orderId
     ├─ Creates payment token
     └─ Sends tracking_id = userId
     ↓
 User Completes Payment
     ↓
-Networx Gateway
+Secure-processor Gateway
     ↓
-Webhook → POST /api/webhooks/networx
+Webhook → POST /api/webhooks/secure-processor
     ↓
 Verify HMAC SHA256 Signature
     ↓
@@ -132,7 +132,7 @@ COMMIT
 ```
 
 #### Code Implementation
-**File:** `app/api/webhooks/networx/route.ts`
+**File:** `app/api/webhooks/secure-processor/route.ts`
 
 **Critical Dependencies:**
 - ✅ Uses native `pg` client (`lib/db.ts`)
@@ -251,7 +251,7 @@ postgresql://neondb_owner:npg_htMKUEqkQ4A0@ep-floral-hill-a2w6wrew-pooler.eu-cen
 2. `__tests__/webhooks/clerk.test.ts`
 3. `__tests__/unit/verify-balance.unit.test.ts`
 4. `__tests__/integration/payment-redirect.integration.test.ts`
-5. `__tests__/integration/networx-webhook.integration.test.ts`
+5. `__tests__/integration/secure-processor-webhook.integration.test.ts`
 6. `__tests__/integration/clerk-webhook.integration.test.ts`
 
 #### Schema Deployment Status
@@ -297,8 +297,8 @@ OPENAI_API_KEY=sk-test-dummy-key-for-build ⚠️ (dummy)
 **Missing Variables:**
 ```bash
 WEBHOOK_SECRET=*** ❌ CRITICAL - Required for Clerk webhook
-NETWORX_SHOP_ID=*** ⚠️ (has default in code)
-NETWORX_SECRET_KEY=*** ⚠️ (has default in code)
+SECURE_PROCESSOR_SHOP_ID=*** ⚠️ (has default in code)
+SECURE_PROCESSOR_SECRET_KEY=*** ⚠️ (has default in code)
 ```
 
 #### Production Environment (Vercel)
@@ -309,12 +309,12 @@ NETWORX_SECRET_KEY=*** ⚠️ (has default in code)
 - WEBHOOK_SECRET ← **CRITICAL**
 - NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 - CLERK_SECRET_KEY
-- NETWORX_SHOP_ID
-- NETWORX_SECRET_KEY
-- NETWORX_TEST_MODE
-- NETWORX_RETURN_URL
-- NETWORX_WEBHOOK_URL
-- NEXT_PUBLIC_NETWORX_SHOP_ID
+- SECURE_PROCESSOR_SHOP_ID
+- SECURE_PROCESSOR_SECRET_KEY
+- SECURE_PROCESSOR_TEST_MODE
+- SECURE_PROCESSOR_RETURN_URL
+- SECURE_PROCESSOR_WEBHOOK_URL
+- NEXT_PUBLIC_SECURE_PROCESSOR_SHOP_ID
 
 **Status:** Cannot verify without Vercel access
 
@@ -335,10 +335,10 @@ console.log(`[Clerk Webhook] Webhook event marked as processed`)
 console.log(`[Clerk Webhook] Transaction completed successfully`)
 ```
 
-**Networx Webhook Logs:**
+**Secure-processor Webhook Logs:**
 ```typescript
 console.log('═══════════════════════════════════════════════════════')
-console.log('📥 Networx Webhook Received')
+console.log('📥 Secure-processor Webhook Received')
 console.log('Transaction ID:', transaction_id)
 console.log('✅ Webhook signature verified')
 console.log('✅ Transaction record created in Transaction table')
@@ -445,7 +445,7 @@ if (existingEventResult.rows.length > 0 && existingEventResult.rows[0].processed
 - Returns existing user on duplicate webhook
 - Prevents double-crediting
 
-#### Networx Webhook Idempotency
+#### Secure-processor Webhook Idempotency
 ```typescript
 // Check via webhookEventId (Lines 123-136)
 const existingTransaction = await db.query(
@@ -494,7 +494,7 @@ try {
 - ❌ No explicit email format validation
 - ❌ No explicit image_url validation
 
-#### Networx Webhook Validation
+#### Secure-processor Webhook Validation
 ```typescript
 // Signature validation (Lines 100-117)
 if (!signature) {
@@ -556,7 +556,7 @@ connectionTimeoutMillis: 10000, // 10s connection timeout
 **Webhooks:** No explicit rate limit in code
 **Expected:** Clerk has internal rate limits per plan
 
-#### Networx Rate Limits  
+#### Secure-processor Rate Limits  
 **Webhooks:** No explicit rate limit in code
 **Expected:** Payment gateway has internal rate limits
 
@@ -568,7 +568,7 @@ connectionTimeoutMillis: 10000, // 10s connection timeout
 **Application Level:**
 - ✅ Console.log() in all critical paths
 - ✅ Error stack traces logged
-- ✅ Transaction timing logged (Networx webhook)
+- ✅ Transaction timing logged (Secure-processor webhook)
 - ❌ No structured logging service (e.g., Datadog, LogDNA)
 - ❌ No APM (Application Performance Monitoring)
 - ❌ No error tracking service (e.g., Sentry)
@@ -581,7 +581,7 @@ connectionTimeoutMillis: 10000, // 10s connection timeout
 
 **Webhook Level:**
 - ⚠️ Clerk Dashboard has webhook logs (external)
-- ⚠️ Networx Dashboard has webhook logs (external)
+- ⚠️ Secure-processor Dashboard has webhook logs (external)
 - ❌ No internal webhook monitoring
 
 #### Recommended Metrics
@@ -657,7 +657,7 @@ __tests__/integration/user-insert.integration.test.ts
 __tests__/webhooks/clerk.test.ts
 __tests__/unit/verify-balance.unit.test.ts
 __tests__/integration/payment-redirect.integration.test.ts
-__tests__/integration/networx-webhook.integration.test.ts
+__tests__/integration/secure-processor-webhook.integration.test.ts
 __tests__/integration/clerk-webhook.integration.test.ts
 ```
 
@@ -999,7 +999,7 @@ export async function getConnectionPoolStats() {
 ### Before Applying Fixes
 - [ ] Backup current database (`pg_dump`)
 - [ ] Document current Vercel environment variables
-- [ ] Export webhook logs from Clerk/Networx dashboards
+- [ ] Export webhook logs from Clerk/Secure-processor dashboards
 - [ ] Create test branch in Neon (if available)
 
 ### After Applying Fix 1 (WEBHOOK_SECRET)
@@ -1113,7 +1113,7 @@ Error: Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local
 
 **Prerequisites:**
 - Existing user in database
-- Valid Networx credentials configured
+- Valid Secure-processor credentials configured
 - Payment webhook configured
 
 **Steps:**
@@ -1124,7 +1124,7 @@ Error: Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local
 
 **Potential Errors:**
 1. **User not found:** If tracking_id doesn't match existing clerkId
-2. **Signature invalid:** If NETWORX_SECRET_KEY incorrect
+2. **Signature invalid:** If SECURE_PROCESSOR_SECRET_KEY incorrect
 3. **Duplicate transaction:** If webhook delivered twice
 
 **Verification:**

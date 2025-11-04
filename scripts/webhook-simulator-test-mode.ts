@@ -2,7 +2,7 @@
 /**
  * Webhook Simulator for Test Mode Payments
  * 
- * Simulates Networx webhook calls to test payment processing locally
+ * Simulates Secure-processor webhook calls to test payment processing locally
  * without needing to make actual payments.
  */
 
@@ -35,10 +35,10 @@ class WebhookSimulator {
 
   constructor() {
     // Default to localhost, can be overridden
-    this.webhookUrl = process.env.WEBHOOK_TEST_URL || 'http://localhost:3001/api/webhooks/networx';
+    this.webhookUrl = process.env.WEBHOOK_TEST_URL || 'http://localhost:3001/api/webhooks/secure-processor';
     
     console.log('═══════════════════════════════════════════════════════');
-    console.log('🧪 Networx Webhook Simulator - Test Mode');
+    console.log('🧪 Secure-processor Webhook Simulator - Test Mode');
     console.log('═══════════════════════════════════════════════════════\n');
     console.log(`Target URL: ${this.webhookUrl}\n`);
   }
@@ -359,6 +359,7 @@ main().catch(error => {
   console.error('Fatal error:', error);
   process.exit(1);
 });
+
 
 
 

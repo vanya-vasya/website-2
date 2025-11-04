@@ -8,7 +8,7 @@ User clicks "Create Payment Token"
          ↓
 Token created (500ms)
          ↓
-Auto-redirect to Networx payment page
+Auto-redirect to Secure-processor payment page
          ↓
 User completes payment
          ↓
@@ -35,9 +35,9 @@ Auto-redirect to /dashboard
 Clerk Sign Up → Clerk Webhook → Create User + Initial 20 Credits
 ```
 
-### Payment Processing (Networx)
+### Payment Processing (Secure-processor)
 ```
-Payment Complete → Networx Webhook → Create Transaction + Update Balance
+Payment Complete → Secure-processor Webhook → Create Transaction + Update Balance
 ```
 
 ---
@@ -62,18 +62,18 @@ Payment Complete → Networx Webhook → Create Transaction + Update Balance
 ## Key Files
 
 ### Payment Widget
-**File:** `components/networx-payment-widget.tsx`
+**File:** `components/secure-processor-payment-widget.tsx`
 - Handles token creation
 - Auto-redirects to payment page
 - Shows inline errors
 
 ### Payment API
-**File:** `app/api/payment/networx/route.ts`
+**File:** `app/api/payment/secure-processor/route.ts`
 - Creates payment tokens
 - Returns payment URL for redirect
 
 ### Webhook Handler
-**File:** `app/api/webhooks/networx/route.ts`
+**File:** `app/api/webhooks/secure-processor/route.ts`
 - Processes payment notifications
 - Updates user balance
 - Creates transaction records
@@ -90,12 +90,12 @@ Payment Complete → Networx Webhook → Create Transaction + Update Balance
 ## Environment Variables Required
 
 ```env
-# Networx Payment Gateway
-NETWORX_SHOP_ID=your_shop_id
-NETWORX_SECRET_KEY=your_secret_key
-NETWORX_TEST_MODE=true  # Set to false for production
-NETWORX_RETURN_URL=https://nerbixa.com/payment/success
-NETWORX_WEBHOOK_URL=https://nerbixa.com/api/webhooks/networx
+# Secure-processor Payment Gateway
+SECURE_PROCESSOR_SHOP_ID=your_shop_id
+SECURE_PROCESSOR_SECRET_KEY=your_secret_key
+SECURE_PROCESSOR_TEST_MODE=true  # Set to false for production
+SECURE_PROCESSOR_RETURN_URL=https://nerbixa.com/payment/success
+SECURE_PROCESSOR_WEBHOOK_URL=https://nerbixa.com/api/webhooks/secure-processor
 
 # Clerk Authentication
 WEBHOOK_SECRET=your_clerk_webhook_secret
@@ -110,7 +110,7 @@ DATABASE_URL=your_postgresql_connection_string
 
 ### Payment not processing?
 1. Check webhook logs in console
-2. Verify `NETWORX_SECRET_KEY` is correct
+2. Verify `SECURE_PROCESSOR_SECRET_KEY` is correct
 3. Ensure user exists (created via Clerk)
 4. Check `Transaction.webhookEventId` for duplicates
 
@@ -154,13 +154,14 @@ DATABASE_URL=your_postgresql_connection_string
 
 For issues or questions:
 1. Check console logs for error messages
-2. Review webhook delivery in Networx dashboard
+2. Review webhook delivery in Secure-processor dashboard
 3. Verify environment variables are set correctly
 4. Check database for transaction records
 
 ---
 
 **Last Updated:** October 24, 2025
+
 
 
 

@@ -34,8 +34,8 @@ npm run payment:diagnose
 # Step 2: Test webhook manually
 npm run payment:webhook-sim success <your-clerk-user-id> 100
 
-# Step 3: If manual test works, check Networx webhook configuration
-# - URL: https://nerbixa.com/api/webhooks/networx
+# Step 3: If manual test works, check Secure-processor webhook configuration
+# - URL: https://nerbixa.com/api/webhooks/secure-processor
 # - Test webhooks: ENABLED
 ```
 
@@ -47,11 +47,11 @@ npm run payment:webhook-sim success <your-clerk-user-id> 100
 npm run payment:diagnose
 
 # Should show:
-# NETWORX_TEST_MODE: true  ✅
+# SECURE_PROCESSOR_TEST_MODE: true  ✅
 # DATABASE_URL: Set  ✅
 
 # If not, add to .env.local:
-# NETWORX_TEST_MODE=true
+# SECURE_PROCESSOR_TEST_MODE=true
 ```
 
 ### Issue: Webhook not firing
@@ -63,7 +63,7 @@ npm run payment:webhook-sim success <userId> 100
 
 # If local works, check:
 # 1. Vercel logs: vercel logs --follow
-# 2. Networx dashboard webhook config
+# 2. Secure-processor dashboard webhook config
 # 3. Webhook URL accessibility
 ```
 
@@ -91,7 +91,7 @@ npm run payment:webhook-sim success <userId> <tokens>
 npm run payment:webhook-sim all <userId>
 ```
 **Does:**
-- ✅ Simulates Networx webhooks
+- ✅ Simulates Secure-processor webhooks
 - ✅ Tests locally without real payment
 - ✅ Validates entire flow
 - ✅ No signature required in test mode
@@ -141,7 +141,7 @@ psql $DATABASE_URL -c "SELECT email, availableGenerations FROM \"User\" WHERE cl
 ### Production Testing
 ```bash
 # 1. Set test mode in Vercel
-NETWORX_TEST_MODE=true
+SECURE_PROCESSOR_TEST_MODE=true
 
 # 2. Make test payment
 
@@ -191,9 +191,9 @@ OR
 ```bash
 # .env.local
 DATABASE_URL=postgresql://user:pass@host/database
-NETWORX_SHOP_ID=29959
-NETWORX_SECRET_KEY=dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950
-NETWORX_TEST_MODE=true  # IMPORTANT FOR TEST PAYMENTS
+SECURE_PROCESSOR_SHOP_ID=29959
+SECURE_PROCESSOR_SECRET_KEY=dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950
+SECURE_PROCESSOR_TEST_MODE=true  # IMPORTANT FOR TEST PAYMENTS
 ```
 
 ### Verify Setup
@@ -202,9 +202,9 @@ npm run payment:diagnose
 
 # Should show:
 # DATABASE_URL: ✅ Set
-# NETWORX_SHOP_ID: ✅ Set (29959)
-# NETWORX_SECRET_KEY: ✅ Set (***8950)
-# NETWORX_TEST_MODE: true
+# SECURE_PROCESSOR_SHOP_ID: ✅ Set (29959)
+# SECURE_PROCESSOR_SECRET_KEY: ✅ Set (***8950)
+# SECURE_PROCESSOR_TEST_MODE: true
 ```
 
 ---
@@ -277,6 +277,7 @@ For detailed information, see:
 ---
 
 **Last Updated:** October 31, 2025
+
 
 
 

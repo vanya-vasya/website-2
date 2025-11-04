@@ -26,7 +26,7 @@ WebhookVerificationError
 
 ---
 
-### ✅ **PROBLEM 2: Networx Webhook URL Wrong - NEEDS USER ACTION**
+### ✅ **PROBLEM 2: Secure-processor Webhook URL Wrong - NEEDS USER ACTION**
 
 **Issue:**
 ```
@@ -34,14 +34,14 @@ notification_url: 'https://website-2-fl3pjwurp.../payment/success'
 ❌ This is a PAGE, not a WEBHOOK!
 ```
 
-**Root Cause:** `NETWORX_WEBHOOK_URL` in Vercel points to wrong endpoint
+**Root Cause:** `SECURE_PROCESSOR_WEBHOOK_URL` in Vercel points to wrong endpoint
 
 **Status:** ⚠️ **USER MUST FIX IN VERCEL**
 
 **Action Required:**
 ```
-WRONG: NETWORX_WEBHOOK_URL = .../payment/success
-RIGHT: NETWORX_WEBHOOK_URL = https://www.nerbixa.com/api/webhooks/networx
+WRONG: SECURE_PROCESSOR_WEBHOOK_URL = .../payment/success
+RIGHT: SECURE_PROCESSOR_WEBHOOK_URL = https://www.nerbixa.com/api/webhooks/secure-processor
 ```
 
 ---
@@ -72,11 +72,11 @@ Connection terminated unexpectedly
 **Issue:** Couldn't see raw webhook payload in logs
 
 **Fix Applied:** ✅ **DEPLOYED IN THIS COMMIT**
-- Added RAW BODY logging for Networx webhooks
+- Added RAW BODY logging for Secure-processor webhooks
 - Shows complete payload structure
 - Helps debug future issues
 
-**File:** `app/api/webhooks/networx/route.ts`
+**File:** `app/api/webhooks/secure-processor/route.ts`
 
 ---
 
@@ -89,7 +89,7 @@ Connection terminated unexpectedly
    - Added keepAlive for better connection stability
    - Optimized for Neon serverless
 
-2. ✅ `app/api/webhooks/networx/route.ts`
+2. ✅ `app/api/webhooks/secure-processor/route.ts`
    - Added RAW body logging
    - Better webhook debugging
 
@@ -117,16 +117,16 @@ Value: whsec_[YOUR_ACTUAL_SECRET_FROM_CLERK]
 
 ---
 
-### **ACTION 2: Fix Networx Environment Variables**
+### **ACTION 2: Fix Secure-processor Environment Variables**
 
 ```bash
 # Update these in Vercel → Environment Variables:
 
-NETWORX_WEBHOOK_URL = https://www.nerbixa.com/api/webhooks/networx
-NETWORX_RETURN_URL = https://www.nerbixa.com/payment/success
-NETWORX_SHOP_ID = 29959
-NETWORX_SECRET_KEY = dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950
-NETWORX_TEST_MODE = true
+SECURE_PROCESSOR_WEBHOOK_URL = https://www.nerbixa.com/api/webhooks/secure-processor
+SECURE_PROCESSOR_RETURN_URL = https://www.nerbixa.com/payment/success
+SECURE_PROCESSOR_SHOP_ID = 29959
+SECURE_PROCESSOR_SECRET_KEY = dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950
+SECURE_PROCESSOR_TEST_MODE = true
 ```
 
 **Time:** 5 minutes
@@ -175,7 +175,7 @@ https://www.nerbixa.com/sign-up
 Expected: User created with 20 credits
 ```
 
-#### **2. Test Networx Payment**
+#### **2. Test Secure-processor Payment**
 
 ```bash
 # A) Buy 50 tokens
@@ -183,11 +183,11 @@ https://www.nerbixa.com/dashboard
 Expected: Payment checkout created
 
 # B) Complete payment
-Use test card on Networx page
+Use test card on Secure-processor page
 Expected: Webhook received, transaction created, credits added
 
 # C) Check logs
-Vercel → Functions → /api/webhooks/networx
+Vercel → Functions → /api/webhooks/secure-processor
 Expected: See RAW BODY with all payment data
 ```
 
@@ -209,7 +209,7 @@ Expected:
 ### **Before Fix:**
 ```
 ❌ Clerk webhooks: 401 Signature verification failed
-❌ Networx webhooks: Empty payload, missing signature
+❌ Secure-processor webhooks: Empty payload, missing signature
 ❌ Database: Connection timeouts
 ❌ Users: Not created automatically
 ❌ Payments: No transaction records
@@ -218,7 +218,7 @@ Expected:
 ### **After Fix:**
 ```
 ✅ Clerk webhooks: 200 OK, users created with 20 credits
-✅ Networx webhooks: Full payload logged, signatures verified
+✅ Secure-processor webhooks: Full payload logged, signatures verified
 ✅ Database: Stable connections, no timeouts
 ✅ Users: Created automatically on Sign Up
 ✅ Payments: Transaction records created, credits added
@@ -235,8 +235,8 @@ Settings → Environment Variables
 
 Required:
 - WEBHOOK_SECRET (from Clerk)
-- NETWORX_WEBHOOK_URL = .../api/webhooks/networx
-- NETWORX_RETURN_URL = .../payment/success
+- SECURE_PROCESSOR_WEBHOOK_URL = .../api/webhooks/secure-processor
+- SECURE_PROCESSOR_RETURN_URL = .../payment/success
 - DATABASE_URL (already set)
 ```
 
@@ -244,10 +244,10 @@ Required:
 ```bash
 # Vercel Dashboard → Functions
 /api/webhooks/clerk  - Clerk user creation
-/api/webhooks/networx - Networx payments
+/api/webhooks/secure-processor - Secure-processor payments
 
 Look for:
-- "RAW BODY" (Networx)
+- "RAW BODY" (Secure-processor)
 - Signature verification status
 - Database operation results
 ```
@@ -274,11 +274,11 @@ Shows:
 - No quotes
 - Copy directly from Clerk Dashboard
 
-### **Issue: Networx webhook still empty**
+### **Issue: Secure-processor webhook still empty**
 
-**Solution:** NETWORX_WEBHOOK_URL must be webhook endpoint, not page
+**Solution:** SECURE_PROCESSOR_WEBHOOK_URL must be webhook endpoint, not page
 - Wrong: `.../payment/success`
-- Right: `.../api/webhooks/networx`
+- Right: `.../api/webhooks/secure-processor`
 
 ### **Issue: Database timeouts persist**
 
@@ -325,7 +325,7 @@ After completing all actions:
 
 1. ✅ Code fixes deployed (this commit)
 2. ⚠️ Update WEBHOOK_SECRET in Vercel (user action)
-3. ⚠️ Update NETWORX_WEBHOOK_URL in Vercel (user action)
+3. ⚠️ Update SECURE_PROCESSOR_WEBHOOK_URL in Vercel (user action)
 4. ⚠️ Redeploy (user action)
 5. 🧪 Test everything
 

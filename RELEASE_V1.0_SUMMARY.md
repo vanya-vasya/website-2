@@ -117,7 +117,7 @@ git ls-remote --heads origin | grep release
 4. ✅ IMPLEMENTATION_SUMMARY_REDIRECT.md
 5. ✅ PAYMENT_FLOW_DIAGRAM.md
 6. ✅ VERCEL_ENV_SETUP.md
-7. ✅ NETWORX_AUTH_FIX.md
+7. ✅ SECURE_PROCESSOR_AUTH_FIX.md
 8. ✅ QUICK_FIX_SUMMARY.md
 9. ✅ DEPLOYMENT_FIX.md
 10. ✅ DEPLOYMENT_MIGRATION_FIX.md
@@ -127,8 +127,8 @@ git ls-remote --heads origin | grep release
 14. ✅ WEBHOOK_FLOW_DIAGRAM.md
 15. ✅ WEBHOOK_QUICK_REFERENCE.md
 16. ✅ PAYMENT_INTEGRATION_STATUS.md
-17. ✅ NETWORX_ENV_SETUP.md
-18. ✅ NETWORX_SETUP_LOCALHOST.md
+17. ✅ SECURE_PROCESSOR_ENV_SETUP.md
+18. ✅ SECURE_PROCESSOR_SETUP_LOCALHOST.md
 19. ✅ README.md
 
 ### Key Directories
@@ -149,8 +149,8 @@ git ls-remote --heads origin | grep release
 
 ```
 cd57bae - docs: add final deployment summary and complete documentation
-7830400 - docs: add quick fix summary for Networx Access Denied issue
-e9919d1 - fix: improve Networx payment API error handling and authentication
+7830400 - docs: add quick fix summary for Secure-processor Access Denied issue
+e9919d1 - fix: improve Secure-processor payment API error handling and authentication
 99bed30 - fix: correct Clerk auth import path for deployment
 c501b8d - feat: implement automatic dashboard redirect after payment
 ```
@@ -163,7 +163,7 @@ c501b8d - feat: implement automatic dashboard redirect after payment
 
 ### Core Features
 ✅ **Payment System**
-- Networx payment gateway integration
+- Secure-processor payment gateway integration
 - Automatic dashboard redirect after payment
 - Balance verification API
 - Polling mechanism for balance updates
@@ -227,12 +227,12 @@ DATABASE_URL=your_database_url
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_key
 CLERK_SECRET_KEY=your_secret
 
-# Networx Payment Gateway
-NETWORX_SHOP_ID=29959
-NETWORX_SECRET_KEY=your_secret_key
-NETWORX_TEST_MODE=true/false
-NETWORX_RETURN_URL=your_return_url
-NETWORX_WEBHOOK_URL=your_webhook_url
+# Secure-processor Payment Gateway
+SECURE_PROCESSOR_SHOP_ID=29959
+SECURE_PROCESSOR_SECRET_KEY=your_secret_key
+SECURE_PROCESSOR_TEST_MODE=true/false
+SECURE_PROCESSOR_RETURN_URL=your_return_url
+SECURE_PROCESSOR_WEBHOOK_URL=your_webhook_url
 
 # OpenAI (for AI features)
 OPENAI_API_KEY=your_api_key
@@ -321,7 +321,7 @@ git push origin v1.0.0
 
 ### For Payment Issues
 - Read: `QUICK_FIX_SUMMARY.md`
-- Read: `NETWORX_AUTH_FIX.md`
+- Read: `SECURE_PROCESSOR_AUTH_FIX.md`
 
 ### For Development
 - Read: `PAYMENT_REDIRECT_QUICKSTART.md`

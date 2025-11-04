@@ -24,7 +24,7 @@ DATABASE    TEST MODE
   ERROR      NOT SET
     │           │
     │           ▼
-    │      Set NETWORX_
+    │      Set SECURE_PROCESSOR_
     │      TEST_MODE=true
     │           │
     │           ▼
@@ -61,7 +61,7 @@ FIRING      AGAIN
     │
     ▼
 ┌─────────────────────┐
-│ Check Networx       │
+│ Check Secure-processor       │
 │ Dashboard:          │
 │ - Webhook URL       │
 │ - Test webhooks on  │
@@ -111,7 +111,7 @@ npm run payment:diagnose
 
 # If NO transactions:
 #   → Webhook not firing
-#   → Check Networx dashboard config
+#   → Check Secure-processor dashboard config
 
 # If HAS transactions:
 #   → Proceed to step 2
@@ -121,7 +121,7 @@ npm run payment:webhook-sim success <userId> 100
 
 # If local works:
 #   → Webhook URL issue or not configured
-#   → Fix Networx dashboard
+#   → Fix Secure-processor dashboard
 
 # If local fails:
 #   → Code issue or environment issue
@@ -143,10 +143,10 @@ npm run payment:reconcile interactive --live
 ```bash
 # 1. Check environment (30s)
 npm run payment:diagnose
-# Look for: NETWORX_TEST_MODE
+# Look for: SECURE_PROCESSOR_TEST_MODE
 
 # If not "true":
-#   → Set NETWORX_TEST_MODE=true
+#   → Set SECURE_PROCESSOR_TEST_MODE=true
 #   → Redeploy
 
 # If "true":
@@ -165,17 +165,17 @@ npm run payment:webhook-sim success <userId> 100
 npm run payment:webhook-sim success <userId> 100
 
 # If works locally:
-#   → Networx config issue
+#   → Secure-processor config issue
 
-# 2. Check Networx Dashboard:
-✓ Webhook URL: https://nerbixa.com/api/webhooks/networx
+# 2. Check Secure-processor Dashboard:
+✓ Webhook URL: https://nerbixa.com/api/webhooks/secure-processor
 ✓ Test webhooks: ENABLED
 ✓ Shop ID: 29959
 ✓ Endpoint: Active
 
 # 3. Test webhook endpoint (30s)
-curl https://nerbixa.com/api/webhooks/networx
-# Should return: "Networx webhook endpoint is active"
+curl https://nerbixa.com/api/webhooks/secure-processor
+# Should return: "Secure-processor webhook endpoint is active"
 
 # 4. Check Vercel logs (realtime)
 vercel logs --follow
@@ -190,7 +190,7 @@ vercel logs --follow
 
 ```
 ═══════════════════════════════════════════════════════
-📥 Networx Webhook Received - RAW BODY:
+📥 Secure-processor Webhook Received - RAW BODY:
 ═══════════════════════════════════════════════════════
 ↓
 🧪 TEST MODE TRANSACTION DETECTED
@@ -224,7 +224,7 @@ vercel logs --follow
 ```
 ❌ Missing transaction object in webhook payload
 → Webhook payload format incorrect
-→ Check Networx API version
+→ Check Secure-processor API version
 ```
 
 **Pattern 2: User Not Found**
@@ -256,7 +256,7 @@ vercel logs --follow
 OR
 ❌ Invalid webhook signature
 → Signature required in production
-→ Check NETWORX_SECRET_KEY
+→ Check SECURE_PROCESSOR_SECRET_KEY
 → For test mode: set transaction.test = true
 ```
 
@@ -281,7 +281,7 @@ npm run payment:reconcile interactive --live  # Apply fixes
 
 # === VERIFICATION ===
 vercel logs --follow                         # Watch logs
-curl https://nerbixa.com/api/webhooks/networx  # Test endpoint
+curl https://nerbixa.com/api/webhooks/secure-processor  # Test endpoint
 npm run test:integration payment-test-mode   # Run tests
 ```
 
@@ -331,7 +331,7 @@ Escalate to team lead if:
 - [ ] Diagnostic fails after fixing environment
 - [ ] Local webhook test fails consistently
 - [ ] Database schema is corrupted
-- [ ] Networx API not responding
+- [ ] Secure-processor API not responding
 - [ ] Multiple orphaned transactions daily
 - [ ] Data integrity issues detected
 
@@ -349,7 +349,7 @@ Copy and paste this for each investigation:
 [ ] Checked for orphaned transactions
 [ ] Result: _______________
 [ ] Verified environment variables
-[ ] Checked Networx dashboard configuration
+[ ] Checked Secure-processor dashboard configuration
 [ ] Monitored Vercel logs
 [ ] Applied fixes (if any): _______________
 [ ] Reconciled missing payments (if needed)
@@ -370,6 +370,7 @@ Copy and paste this for each investigation:
 ---
 
 **Last Updated:** October 31, 2025
+
 
 
 

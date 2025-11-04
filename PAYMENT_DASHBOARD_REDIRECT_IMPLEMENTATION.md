@@ -13,20 +13,20 @@ Implemented complete redirect flow from successful payment to Dashboard page acr
 
 ### 1. **Payment Return URL Configuration**
 
-**File:** `app/api/payment/networx/route.ts`
+**File:** `app/api/payment/secure-processor/route.ts`
 
 **Changes:**
 ```typescript
 // Before: Incorrect default
-const returnUrl = process.env.NETWORX_RETURN_URL || 'https://nerbixa.com/dashboard';
+const returnUrl = process.env.SECURE_PROCESSOR_RETURN_URL || 'https://nerbixa.com/dashboard';
 
 // After: Correct default to success page
-const returnUrl = process.env.NETWORX_RETURN_URL || 'https://nerbixa.com/payment/success';
+const returnUrl = process.env.SECURE_PROCESSOR_RETURN_URL || 'https://nerbixa.com/payment/success';
 ```
 
 **Flow:**
-1. User completes payment on NetworkX hosted page
-2. NetworkX redirects to: `https://nerbixa.com/payment/success?order_id=xxx`
+1. User completes payment on SecureProcessor hosted page
+2. SecureProcessor redirects to: `https://nerbixa.com/payment/success?order_id=xxx`
 3. Success page loads and verifies balance
 4. User clicks Continue or auto-redirects to `/dashboard`
 
@@ -107,12 +107,12 @@ useEffect(() => {
    ↓
 2. Payment API creates checkout token
    ↓
-3. User redirected to NetworkX hosted page
-   https://checkout.networxpay.com/widget/hpp.html?token=xxx
+3. User redirected to SecureProcessor hosted page
+   https://checkout.secure-processorpay.com/widget/hpp.html?token=xxx
    ↓
 4. User completes payment
    ↓
-5. NetworkX redirects to return URL
+5. SecureProcessor redirects to return URL
    https://nerbixa.com/payment/success?order_id=xxx
    ↓
 6. Success page loads
@@ -192,7 +192,7 @@ useEffect(() => {
 **File:** `__tests__/e2e/payment-dashboard-redirect.e2e.test.ts`
 
 **Test Coverage:**
-- ✅ NetworkX return URL configuration
+- ✅ SecureProcessor return URL configuration
 - ✅ Continue button redirect to /dashboard
 - ✅ Auto-redirect after balance verification
 - ✅ Countdown timer functionality
@@ -257,17 +257,17 @@ npm test payment-dashboard-redirect
 
 ### Production
 ```env
-NETWORX_RETURN_URL=https://nerbixa.com/payment/success
+SECURE_PROCESSOR_RETURN_URL=https://nerbixa.com/payment/success
 ```
 
 ### Development
 ```env
-NETWORX_RETURN_URL=http://localhost:3000/payment/success
+SECURE_PROCESSOR_RETURN_URL=http://localhost:3000/payment/success
 ```
 
 ### Staging
 ```env
-NETWORX_RETURN_URL=https://staging.nerbixa.com/payment/success
+SECURE_PROCESSOR_RETURN_URL=https://staging.nerbixa.com/payment/success
 ```
 
 **Note:** If not set, defaults to `https://nerbixa.com/payment/success`
@@ -279,7 +279,7 @@ NETWORX_RETURN_URL=https://staging.nerbixa.com/payment/success
 ### Payment Success Page
 
 **Query Parameters:**
-- `order_id` - Transaction order ID from NetworkX (required)
+- `order_id` - Transaction order ID from SecureProcessor (required)
 - `token` - Alternative: Payment token (optional)
 
 **Example URLs:**
@@ -304,7 +304,7 @@ https://nerbixa.com/dashboard?payment_success=true
 
 ### Files Modified
 
-1. **app/api/payment/networx/route.ts**
+1. **app/api/payment/secure-processor/route.ts**
    - Fixed default return URL
    - Updated logging messages
    - Cleaned up return URL construction

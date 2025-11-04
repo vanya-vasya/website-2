@@ -41,7 +41,7 @@ All files updated to use new `db` client:
 - ✅ `lib/api-limit.ts` - Credit/generation management
 - ✅ `lib/actions/user.actions.ts` - User CRUD operations
 - ✅ `app/api/webhooks/clerk/route.ts` - User signup webhook
-- ✅ `app/api/webhooks/networx/route.ts` - Payment webhook
+- ✅ `app/api/webhooks/secure-processor/route.ts` - Payment webhook
 - ✅ `app/api/payment/verify-balance/route.ts` - Balance verification
 - ✅ `app/api/generations/route.ts` - Generation API
 

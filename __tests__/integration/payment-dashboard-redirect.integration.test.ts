@@ -11,15 +11,15 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { POST as paymentAPI } from '@/app/api/payment/networx/route';
+import { POST as paymentAPI } from '@/app/api/payment/secure-processor/route';
 
 // Mock environment variables
 const mockEnv = {
-  NETWORX_SHOP_ID: 'test_shop_id',
-  NETWORX_SECRET_KEY: 'test_secret_key',
-  NETWORX_TEST_MODE: 'true',
-  NETWORX_RETURN_URL: 'https://nerbixa.com/dashboard',
-  NETWORX_WEBHOOK_URL: 'https://nerbixa.com/api/webhooks/networx',
+  SECURE_PROCESSOR_SHOP_ID: 'test_shop_id',
+  SECURE_PROCESSOR_SECRET_KEY: 'test_secret_key',
+  SECURE_PROCESSOR_TEST_MODE: 'true',
+  SECURE_PROCESSOR_RETURN_URL: 'https://nerbixa.com/dashboard',
+  SECURE_PROCESSOR_WEBHOOK_URL: 'https://nerbixa.com/api/webhooks/networx',
 };
 
 describe('Payment Dashboard Redirect Integration', () => {
@@ -48,7 +48,7 @@ describe('Payment Dashboard Redirect Integration', () => {
         userId: 'user_test123',
       };
 
-      const request = new NextRequest('http://localhost:3000/api/payment/networx', {
+      const request = new NextRequest('http://localhost:3000/api/payment/secure-processor', {
         method: 'POST',
         body: JSON.stringify(requestBody),
       });
@@ -58,7 +58,7 @@ describe('Payment Dashboard Redirect Integration', () => {
         ok: true,
         json: async () => ({
           checkout: {
-            redirect_url: 'https://checkout.networxpay.com/widget/hpp.html?token=test_token',
+            redirect_url: 'https://checkout.secure-processorpay.com/widget/hpp.html?token=test_token',
           },
         }),
       });
@@ -68,7 +68,7 @@ describe('Payment Dashboard Redirect Integration', () => {
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(data.payment_url).toContain('checkout.networxpay.com');
+      expect(data.payment_url).toContain('checkout.secure-processorpay.com');
 
       // Verify the mock was called with correct return URL
       const fetchCall = (global.fetch as jest.Mock).mock.calls[0];
@@ -81,7 +81,7 @@ describe('Payment Dashboard Redirect Integration', () => {
 
     it('should use environment variable for return URL', async () => {
       const customReturnUrl = 'https://custom.nerbixa.com/dashboard';
-      process.env.NETWORX_RETURN_URL = customReturnUrl;
+      process.env.SECURE_PROCESSOR_RETURN_URL = customReturnUrl;
 
       const requestBody = {
         amount: 5.00,
@@ -92,7 +92,7 @@ describe('Payment Dashboard Redirect Integration', () => {
         userId: 'user_custom456',
       };
 
-      const request = new NextRequest('http://localhost:3000/api/payment/networx', {
+      const request = new NextRequest('http://localhost:3000/api/payment/secure-processor', {
         method: 'POST',
         body: JSON.stringify(requestBody),
       });
@@ -101,7 +101,7 @@ describe('Payment Dashboard Redirect Integration', () => {
         ok: true,
         json: async () => ({
           checkout: {
-            redirect_url: 'https://checkout.networxpay.com/widget/hpp.html?token=custom_token',
+            redirect_url: 'https://checkout.secure-processorpay.com/widget/hpp.html?token=custom_token',
           },
         }),
       });
@@ -119,7 +119,7 @@ describe('Payment Dashboard Redirect Integration', () => {
       expect(requestData.checkout.settings.return_url).toContain('payment=success');
 
       // Restore original env
-      process.env.NETWORX_RETURN_URL = mockEnv.NETWORX_RETURN_URL;
+      process.env.SECURE_PROCESSOR_RETURN_URL = mockEnv.NETWORX_RETURN_URL;
     });
 
     it('should include order_id in return URL', async () => {
@@ -134,7 +134,7 @@ describe('Payment Dashboard Redirect Integration', () => {
         userId: 'user_order123',
       };
 
-      const request = new NextRequest('http://localhost:3000/api/payment/networx', {
+      const request = new NextRequest('http://localhost:3000/api/payment/secure-processor', {
         method: 'POST',
         body: JSON.stringify(requestBody),
       });
@@ -143,7 +143,7 @@ describe('Payment Dashboard Redirect Integration', () => {
         ok: true,
         json: async () => ({
           checkout: {
-            redirect_url: 'https://checkout.networxpay.com/widget/hpp.html?token=order_token',
+            redirect_url: 'https://checkout.secure-processorpay.com/widget/hpp.html?token=order_token',
           },
         }),
       });
@@ -281,11 +281,11 @@ describe('Payment Dashboard Redirect Integration', () => {
   describe('Error Cases', () => {
     it('should handle missing environment variables gracefully', async () => {
       // Temporarily remove env vars
-      const tempShopId = process.env.NETWORX_SHOP_ID;
-      const tempSecretKey = process.env.NETWORX_SECRET_KEY;
+      const tempShopId = process.env.SECURE_PROCESSOR_SHOP_ID;
+      const tempSecretKey = process.env.SECURE_PROCESSOR_SECRET_KEY;
       
-      delete process.env.NETWORX_SHOP_ID;
-      delete process.env.NETWORX_SECRET_KEY;
+      delete process.env.SECURE_PROCESSOR_SHOP_ID;
+      delete process.env.SECURE_PROCESSOR_SECRET_KEY;
 
       const requestBody = {
         amount: 10.00,
@@ -296,7 +296,7 @@ describe('Payment Dashboard Redirect Integration', () => {
         userId: 'user_error123',
       };
 
-      const request = new NextRequest('http://localhost:3000/api/payment/networx', {
+      const request = new NextRequest('http://localhost:3000/api/payment/secure-processor', {
         method: 'POST',
         body: JSON.stringify(requestBody),
       });
@@ -305,8 +305,8 @@ describe('Payment Dashboard Redirect Integration', () => {
       expect(response.status).toBe(500);
 
       // Restore env vars
-      process.env.NETWORX_SHOP_ID = tempShopId;
-      process.env.NETWORX_SECRET_KEY = tempSecretKey;
+      process.env.SECURE_PROCESSOR_SHOP_ID = tempShopId;
+      process.env.SECURE_PROCESSOR_SECRET_KEY = tempSecretKey;
     });
 
     it('should handle malformed return URLs', () => {
@@ -437,6 +437,7 @@ describe('Dashboard Component Behavior', () => {
     });
   });
 });
+
 
 
 

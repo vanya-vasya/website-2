@@ -14,9 +14,9 @@ Fixed critical issue where users were not receiving credits after successful pay
 
 ## Changes Implemented
 
-### 1. Fixed Networx Webhook Handler ✅
+### 1. Fixed Secure-processor Webhook Handler ✅
 
-**File:** `/app/api/webhooks/networx/route.ts`
+**File:** `/app/api/webhooks/secure-processor/route.ts`
 
 **Before:**
 ```typescript
@@ -93,7 +93,7 @@ Added structured logging for monitoring:
 
 ```typescript
 console.log('═══════════════════════════════════════════════════════');
-console.log('📥 Networx Webhook Received');
+console.log('📥 Secure-processor Webhook Received');
 console.log('Timestamp:', new Date().toISOString());
 console.log('Transaction ID:', transaction_id);
 console.log('Order ID:', order_id);
@@ -128,7 +128,7 @@ Implemented handlers for all payment statuses:
 
 ### 5. Integration Tests ✅
 
-**File:** `/__tests__/integration/networx-webhook.integration.test.ts`
+**File:** `/__tests__/integration/secure-processor-webhook.integration.test.ts`
 
 **Test Coverage (18 test cases):**
 
@@ -168,8 +168,8 @@ Implemented handlers for all payment statuses:
 **Status:** Already working correctly
 
 The payment success flow:
-1. User completes payment on Networx hosted page
-2. Networx webhook updates database ✅ FIXED
+1. User completes payment on Secure-processor hosted page
+2. Secure-processor webhook updates database ✅ FIXED
 3. User redirected to `/payment/success?order_id=xxx` ✅ Working
 4. Success page polls `/api/payment/verify-balance` ✅ Working
 5. When balance verified, countdown timer starts ✅ Working
@@ -200,8 +200,8 @@ useEffect(() => {
 
 ## Files Modified
 
-1. `/app/api/webhooks/networx/route.ts` - Complete rewrite of webhook handler
-2. `/__tests__/integration/networx-webhook.integration.test.ts` - New test file
+1. `/app/api/webhooks/secure-processor/route.ts` - Complete rewrite of webhook handler
+2. `/__tests__/integration/secure-processor-webhook.integration.test.ts` - New test file
 
 ## Files Created
 
@@ -252,7 +252,7 @@ model Transaction {
 
 **Command:**
 ```bash
-npm test -- networx-webhook.integration.test.ts
+npm test -- secure-processor-webhook.integration.test.ts
 ```
 
 **Expected Results:**
@@ -263,7 +263,7 @@ npm test -- networx-webhook.integration.test.ts
 ### Manual Testing Checklist
 
 - [ ] Initiate payment from Pro Modal
-- [ ] Complete payment on Networx hosted page
+- [ ] Complete payment on Secure-processor hosted page
 - [ ] Verify webhook receives POST request
 - [ ] Check transaction record created in database
 - [ ] Verify user credits updated correctly
@@ -300,16 +300,16 @@ ORDER BY t."createdAt" DESC;
 
 1. **Environment Variables** (verify in production):
 ```bash
-NETWORX_SHOP_ID=your_shop_id
-NETWORX_SECRET_KEY=your_secret_key
-NETWORX_RETURN_URL=https://nerbixa.com/payment/success
-NETWORX_WEBHOOK_URL=https://nerbixa.com/api/webhooks/networx
-NETWORX_TEST_MODE=false
+SECURE_PROCESSOR_SHOP_ID=your_shop_id
+SECURE_PROCESSOR_SECRET_KEY=your_secret_key
+SECURE_PROCESSOR_RETURN_URL=https://nerbixa.com/payment/success
+SECURE_PROCESSOR_WEBHOOK_URL=https://nerbixa.com/api/webhooks/secure-processor
+SECURE_PROCESSOR_TEST_MODE=false
 DATABASE_URL=postgresql://...
 ```
 
-2. **Networx Dashboard Configuration**:
-   - Webhook URL: `https://nerbixa.com/api/webhooks/networx`
+2. **Secure-processor Dashboard Configuration**:
+   - Webhook URL: `https://nerbixa.com/api/webhooks/secure-processor`
    - Events: `payment.success`, `payment.failed`, `payment.refunded`
    - Signature verification: Enabled
 
@@ -323,12 +323,12 @@ git pull
 vercel --prod --scope=your-team
 
 # Test webhook
-curl -X GET https://nerbixa-staging.vercel.app/api/webhooks/networx
-# Expected: {"message":"Networx webhook endpoint is active","timestamp":"..."}
+curl -X GET https://nerbixa-staging.vercel.app/api/webhooks/secure-processor
+# Expected: {"message":"Secure-processor webhook endpoint is active","timestamp":"..."}
 ```
 
 2. **Test on Staging**
-   - Initiate test payment (NETWORX_TEST_MODE=true)
+   - Initiate test payment (SECURE_PROCESSOR_TEST_MODE=true)
    - Verify webhook processing in logs
    - Check database updates
    - Verify redirect flow
@@ -336,14 +336,14 @@ curl -X GET https://nerbixa-staging.vercel.app/api/webhooks/networx
 3. **Deploy to Production**
 ```bash
 # Set production env vars
-vercel env add NETWORX_TEST_MODE
+vercel env add SECURE_PROCESSOR_TEST_MODE
 # Enter: false
 
 # Deploy
 vercel --prod
 
 # Verify deployment
-curl https://nerbixa.com/api/webhooks/networx
+curl https://nerbixa.com/api/webhooks/secure-processor
 ```
 
 4. **Monitor First Transactions**

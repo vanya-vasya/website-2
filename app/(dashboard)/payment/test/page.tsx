@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { NetworkPaymentWidget } from '@/components/networx-payment-widget';
+import { SecureProcessorPaymentWidget } from '@/components/secure-processor-payment-widget';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,7 +18,7 @@ const PaymentTestPage = () => {
     amount: 10.00,
     currency: 'USD',
     orderId: `order_${Date.now()}`,
-    description: 'Test payment via Networx Payment Gateway',
+    description: 'Test payment via Secure-processor Payment Gateway',
     customerEmail: 'test@example.com',
   });
 
@@ -56,7 +56,7 @@ const PaymentTestPage = () => {
       amount: 10.00,
       currency: 'USD',
       orderId: `order_${Date.now()}`,
-      description: 'Test payment via Networx Payment Gateway',
+      description: 'Test payment via Secure-processor Payment Gateway',
       customerEmail: 'test@example.com',
     });
     setShowWidget(false);
@@ -66,9 +66,9 @@ const PaymentTestPage = () => {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Networx Payment Gateway Testing</h1>
+        <h1 className="text-3xl font-bold mb-2">Secure-processor Payment Gateway Testing</h1>
         <p className="text-gray-600">
-          This page is designed for testing integration with the Networx payment system.
+          This page is designed for testing integration with the Secure-processor payment system.
         </p>
         <Badge variant="default" className="mt-2">
           Production Mode
@@ -166,7 +166,7 @@ const PaymentTestPage = () => {
         {/* Виджет платежа или результат */}
         <div className="space-y-6">
           {showWidget ? (
-            <NetworkPaymentWidget
+            <SecureProcessorPaymentWidget
               amount={paymentConfig.amount}
               currency={paymentConfig.currency}
               orderId={paymentConfig.orderId}

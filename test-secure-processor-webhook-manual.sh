@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Test Networx Webhook Endpoint Manually
-# This simulates what Networx should send to our webhook
+# Test Secure-processor Webhook Endpoint Manually
+# This simulates what Secure-processor should send to our webhook
 
 echo "═══════════════════════════════════════════════════════"
-echo "🧪 Testing Networx Webhook Endpoint"
+echo "🧪 Testing Secure-processor Webhook Endpoint"
 echo "═══════════════════════════════════════════════════════"
 echo ""
 
@@ -33,7 +33,7 @@ PAYLOAD='{
 
 echo "📤 Sending test webhook to production endpoint..."
 echo ""
-echo "URL: https://www.nerbixa.com/api/webhooks/networx"
+echo "URL: https://www.nerbixa.com/api/webhooks/secure-processor"
 echo ""
 
 # Send test webhook
@@ -43,7 +43,7 @@ RESPONSE=$(curl -X POST \
   -d "$PAYLOAD" \
   -w "\n\nHTTP Status: %{http_code}\n" \
   -s \
-  https://www.nerbixa.com/api/webhooks/networx)
+  https://www.nerbixa.com/api/webhooks/secure-processor)
 
 echo "📥 Response:"
 echo "$RESPONSE"
@@ -54,7 +54,7 @@ echo "✅ If you see 'status: ok' and HTTP 200, the endpoint works!"
 echo "⚠️  Now check Vercel logs for the webhook processing"
 echo ""
 echo "🔍 Expected in Vercel logs:"
-echo "   - 📥 Networx Webhook Received - RAW BODY"
+echo "   - 📥 Secure-processor Webhook Received - RAW BODY"
 echo "   - Transaction ID (uid): test-1134bdda-..."
 echo "   - Status: successful"
 echo "   - ✅ User found: vladimir.serushko@gmail.com"

@@ -19,9 +19,9 @@ dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 interface DiagnosticResults {
   environment: {
     databaseUrl: boolean;
-    networxShopId: boolean;
-    networxSecretKey: boolean;
-    networxTestMode: string | undefined;
+    secure-processorShopId: boolean;
+    secure-processorSecretKey: boolean;
+    secure-processorTestMode: string | undefined;
     nodeEnv: string;
   };
   database: {
@@ -45,9 +45,9 @@ class PaymentFlowDiagnostic {
   private results: DiagnosticResults = {
     environment: {
       databaseUrl: false,
-      networxShopId: false,
-      networxSecretKey: false,
-      networxTestMode: undefined,
+      secure-processorShopId: false,
+      secure-processorSecretKey: false,
+      secure-processorTestMode: undefined,
       nodeEnv: process.env.NODE_ENV || 'development',
     },
     database: {
@@ -109,19 +109,19 @@ class PaymentFlowDiagnostic {
       this.results.recommendations.push('Set DATABASE_URL in .env.local file');
     }
 
-    // Check Networx credentials
-    this.results.environment.networxShopId = !!process.env.NETWORX_SHOP_ID;
-    console.log(`\nNETWORX_SHOP_ID: ${this.results.environment.networxShopId ? '✅ Set (' + process.env.NETWORX_SHOP_ID + ')' : '❌ Missing'}`);
+    // Check Secure-processor credentials
+    this.results.environment.secure-processorShopId = !!process.env.SECURE_PROCESSOR_SHOP_ID;
+    console.log(`\nSECURE_PROCESSOR_SHOP_ID: ${this.results.environment.secure-processorShopId ? '✅ Set (' + process.env.SECURE_PROCESSOR_SHOP_ID + ')' : '❌ Missing'}`);
     
-    this.results.environment.networxSecretKey = !!process.env.NETWORX_SECRET_KEY;
-    console.log(`NETWORX_SECRET_KEY: ${this.results.environment.networxSecretKey ? '✅ Set (***' + process.env.NETWORX_SECRET_KEY?.slice(-4) + ')' : '❌ Missing'}`);
+    this.results.environment.secure-processorSecretKey = !!process.env.SECURE_PROCESSOR_SECRET_KEY;
+    console.log(`SECURE_PROCESSOR_SECRET_KEY: ${this.results.environment.secure-processorSecretKey ? '✅ Set (***' + process.env.SECURE_PROCESSOR_SECRET_KEY?.slice(-4) + ')' : '❌ Missing'}`);
 
     // Check test mode
-    this.results.environment.networxTestMode = process.env.NETWORX_TEST_MODE;
-    console.log(`NETWORX_TEST_MODE: ${this.results.environment.networxTestMode || 'not set'}`);
-    if (this.results.environment.networxTestMode !== 'true') {
-      this.results.issues.push('NETWORX_TEST_MODE is not set to "true" - test payments might not work correctly');
-      this.results.recommendations.push('Set NETWORX_TEST_MODE=true in .env.local for test payments');
+    this.results.environment.secure-processorTestMode = process.env.SECURE_PROCESSOR_TEST_MODE;
+    console.log(`SECURE_PROCESSOR_TEST_MODE: ${this.results.environment.secure-processorTestMode || 'not set'}`);
+    if (this.results.environment.secure-processorTestMode !== 'true') {
+      this.results.issues.push('SECURE_PROCESSOR_TEST_MODE is not set to "true" - test payments might not work correctly');
+      this.results.recommendations.push('Set SECURE_PROCESSOR_TEST_MODE=true in .env.local for test payments');
     }
 
     console.log(`\nNODE_ENV: ${this.results.environment.nodeEnv}`);
@@ -366,7 +366,7 @@ class PaymentFlowDiagnostic {
         } else {
           console.log('\nNo recent transactions found (last 7 days)');
           this.results.issues.push('No recent transactions found - webhooks might not be firing');
-          this.results.recommendations.push('Check webhook configuration in Networx dashboard');
+          this.results.recommendations.push('Check webhook configuration in Secure-processor dashboard');
           this.results.recommendations.push('Verify webhook URL is publicly accessible');
         }
       }
@@ -386,7 +386,7 @@ class PaymentFlowDiagnostic {
     // Check for common issues
 
     // 1. Test mode not enabled
-    if (this.results.environment.networxTestMode !== 'true') {
+    if (this.results.environment.secure-processorTestMode !== 'true') {
       this.results.issues.push('Test mode not enabled in environment variables');
     }
 
@@ -435,7 +435,7 @@ class PaymentFlowDiagnostic {
     console.log('🎯 SUMMARY\n');
     console.log(`Environment: ${this.results.environment.nodeEnv}`);
     console.log(`Database Connected: ${this.results.database.connected ? '✅ Yes' : '❌ No'}`);
-    console.log(`Test Mode Enabled: ${this.results.environment.networxTestMode === 'true' ? '✅ Yes' : '❌ No'}`);
+    console.log(`Test Mode Enabled: ${this.results.environment.secure-processorTestMode === 'true' ? '✅ Yes' : '❌ No'}`);
     console.log(`Users in DB: ${this.results.database.userCount}`);
     console.log(`Transactions in DB: ${this.results.database.transactionCount}`);
     console.log(`Recent Transactions (7d): ${this.results.testData.testTransactions.length}`);
@@ -462,7 +462,7 @@ class PaymentFlowDiagnostic {
     console.log('\n🔧 NEXT STEPS:\n');
     console.log('  1. Run webhook simulator: npm run test:webhook-simulator');
     console.log('  2. Check server logs for webhook calls');
-    console.log('  3. Verify Networx dashboard webhook configuration');
+    console.log('  3. Verify Secure-processor dashboard webhook configuration');
     console.log('  4. Test payment flow end-to-end');
     console.log('  5. Enable detailed logging in webhook handler');
 
@@ -476,6 +476,7 @@ diagnostic.run().catch(error => {
   console.error('Fatal error:', error);
   process.exit(1);
 });
+
 
 
 

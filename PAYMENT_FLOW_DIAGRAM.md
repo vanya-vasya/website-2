@@ -11,7 +11,7 @@
 ┌─────────────────────────────────────────────────────────────────────┐
 │  User clicks "Buy Tokens" in Pro Modal                              │
 │  → Modal shows NetworkPaymentWidget                                 │
-│  → Widget calls: POST /api/payment/networx                          │
+│  → Widget calls: POST /api/payment/secure-processor                          │
 │     Body: { amount, currency, orderId, userId, customerEmail }      │
 └─────────────────────────────────────────────────────────────────────┘
                                     │
@@ -22,15 +22,15 @@
 │  → Creates requestData with:                                        │
 │     • tracking_id: userId (for webhook matching)                    │
 │     • return_url: /payment/success?order_id={orderId}              │
-│  → Sends to Networx Payment Gateway                                 │
+│  → Sends to Secure-processor Payment Gateway                                 │
 │  → Returns: { token, payment_url }                                  │
 └─────────────────────────────────────────────────────────────────────┘
                                     │
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│  User Redirected to Networx Hosted Payment Page                     │
+│  User Redirected to Secure-processor Hosted Payment Page                     │
 │  → User enters card details                                         │
-│  → Networx processes payment                                        │
+│  → Secure-processor processes payment                                        │
 │  → 3D Secure verification (if required)                             │
 └─────────────────────────────────────────────────────────────────────┘
                                     │
@@ -60,7 +60,7 @@
         ▼                      ▼
 ┌──────────────────────────┐  ┌────────────────────────────┐
 │ Webhook Processing       │  │ Fetch Transaction Details  │
-│ POST /api/webhooks/      │  │ GET /api/payment/networx?  │
+│ POST /api/webhooks/      │  │ GET /api/payment/secure-processor?  │
 │      payment/route       │  │     token={token}          │
 │                          │  └────────────────────────────┘
 │ 1. Verify signature      │              │
@@ -334,7 +334,7 @@ Time (seconds)
 ## Data Flow - Webhook to Client
 
 ```
-Networx Gateway                                         Client
+Secure-processor Gateway                                         Client
       │                                                   │
       ▼                                                   │
 ┌──────────┐                                             │

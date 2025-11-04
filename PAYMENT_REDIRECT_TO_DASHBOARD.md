@@ -29,7 +29,7 @@ Updated the post-payment flow to redirect users directly to the Dashboard after 
 ```
 User Completes Payment
         ↓
-Networx Redirects to /payment/callback?order_id=xxx&status=successful
+Secure-processor Redirects to /payment/callback?order_id=xxx&status=successful
         ↓
 Callback Page Verifies:
   • Payment status = successful
@@ -54,15 +54,15 @@ User sees Dashboard with updated credits
 
 ### 2. Updated Payment Return URL ✅
 
-**File:** `/app/api/payment/networx/route.ts`
+**File:** `/app/api/payment/secure-processor/route.ts`
 
 **Change:**
 ```typescript
 // BEFORE
-const returnUrl = process.env.NETWORX_RETURN_URL || 'https://nerbixa.com/payment/success';
+const returnUrl = process.env.SECURE_PROCESSOR_RETURN_URL || 'https://nerbixa.com/payment/success';
 
 // AFTER
-const returnUrl = process.env.NETWORX_RETURN_URL || 'https://nerbixa.com/payment/callback';
+const returnUrl = process.env.SECURE_PROCESSOR_RETURN_URL || 'https://nerbixa.com/payment/callback';
 ```
 
 **Impact:**
@@ -179,26 +179,26 @@ if (status && status !== 'successful' && status !== 'success') {
 ### Required Configuration
 
 ```bash
-# Networx Return URL - Updated to callback page
-NETWORX_RETURN_URL=https://nerbixa.com/payment/callback
+# Secure-processor Return URL - Updated to callback page
+SECURE_PROCESSOR_RETURN_URL=https://nerbixa.com/payment/callback
 
 # Production
-NETWORX_RETURN_URL=https://nerbixa.com/payment/callback
+SECURE_PROCESSOR_RETURN_URL=https://nerbixa.com/payment/callback
 
 # Staging
-NETWORX_RETURN_URL=https://staging.nerbixa.com/payment/callback
+SECURE_PROCESSOR_RETURN_URL=https://staging.nerbixa.com/payment/callback
 
 # Local Development
-NETWORX_RETURN_URL=http://localhost:3000/payment/callback
+SECURE_PROCESSOR_RETURN_URL=http://localhost:3000/payment/callback
 ```
 
-### Other Networx Variables (unchanged)
+### Other Secure-processor Variables (unchanged)
 
 ```bash
-NETWORX_SHOP_ID=your_shop_id
-NETWORX_SECRET_KEY=your_secret_key
-NETWORX_WEBHOOK_URL=https://nerbixa.com/api/webhooks/networx
-NETWORX_TEST_MODE=false
+SECURE_PROCESSOR_SHOP_ID=your_shop_id
+SECURE_PROCESSOR_SECRET_KEY=your_secret_key
+SECURE_PROCESSOR_WEBHOOK_URL=https://nerbixa.com/api/webhooks/secure-processor
+SECURE_PROCESSOR_TEST_MODE=false
 ```
 
 ---
@@ -272,7 +272,7 @@ http://localhost:3000/payment/callback
 # Full payment flow test
 1. Go to /dashboard
 2. Click "Buy Tokens" in Pro Modal
-3. Complete payment on Networx hosted page
+3. Complete payment on Secure-processor hosted page
 4. Verify redirect to /payment/callback
 5. Verify verification process
 6. Verify redirect to /dashboard
@@ -341,8 +341,8 @@ vercel --prod
 
 2. **Update Environment Variables:**
 ```bash
-# Update NETWORX_RETURN_URL in Vercel dashboard or via CLI
-vercel env add NETWORX_RETURN_URL production
+# Update SECURE_PROCESSOR_RETURN_URL in Vercel dashboard or via CLI
+vercel env add SECURE_PROCESSOR_RETURN_URL production
 # Enter: https://nerbixa.com/payment/callback
 ```
 
@@ -355,8 +355,8 @@ curl https://nerbixa.com/payment/callback
 curl https://nerbixa.com/payment/callback?order_id=test&status=successful
 ```
 
-4. **Update Networx Dashboard (if needed):**
-   - Log into Networx merchant dashboard
+4. **Update Secure-processor Dashboard (if needed):**
+   - Log into Secure-processor merchant dashboard
    - Verify return URL matches: `https://nerbixa.com/payment/callback`
    - (Usually set via API, not dashboard)
 
@@ -367,8 +367,8 @@ If issues occur:
 1. **Quick Rollback:**
 ```bash
 # Revert environment variable
-vercel env rm NETWORX_RETURN_URL production
-vercel env add NETWORX_RETURN_URL production
+vercel env rm SECURE_PROCESSOR_RETURN_URL production
+vercel env add SECURE_PROCESSOR_RETURN_URL production
 # Enter: https://nerbixa.com/payment/success
 ```
 
@@ -432,14 +432,14 @@ vercel rollback
 ## Related Files
 
 ### Modified:
-- `/app/api/payment/networx/route.ts` - Updated return URL
+- `/app/api/payment/secure-processor/route.ts` - Updated return URL
 
 ### Created:
 - `/app/(dashboard)/payment/callback/page.tsx` - New callback page
 
 ### Unchanged (Still Functional):
 - `/app/(dashboard)/payment/success/page.tsx` - Old success page
-- `/app/api/webhooks/networx/route.ts` - Webhook handler
+- `/app/api/webhooks/secure-processor/route.ts` - Webhook handler
 - `/app/api/payment/verify-balance/route.ts` - Balance verification API
 
 ---
@@ -469,7 +469,7 @@ vercel rollback
 ### Contact
 
 - Technical Issues: Check logs and webhook processing
-- User Reports: Verify payment in Networx dashboard
+- User Reports: Verify payment in Secure-processor dashboard
 - Integration Help: Review documentation files
 
 ---

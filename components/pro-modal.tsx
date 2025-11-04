@@ -28,7 +28,7 @@ import { z } from "zod";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { NetworkPaymentWidget } from "@/components/networx-payment-widget";
+import { SecureProcessorPaymentWidget } from "@/components/secure-processor-payment-widget";
 import {
   Checkbox,
   Field,
@@ -194,7 +194,7 @@ export const ProModal = () => {
               </div>
             </div>
             
-            <NetworkPaymentWidget
+            <SecureProcessorPaymentWidget
               amount={watch("generations") * generationPrice}
               currency={watch("currency")}
               orderId={`gen_${userId}_${Date.now()}`}

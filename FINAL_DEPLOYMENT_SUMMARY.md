@@ -20,7 +20,7 @@
 ### ✅ Исправлено
 
 1. **Clerk import path** - исправлен для deployment
-2. **Networx authentication** - улучшена обработка ошибок
+2. **Secure-processor authentication** - улучшена обработка ошибок
 3. **Environment variables** - убраны hardcoded credentials
 4. **Error messages** - добавлены понятные сообщения
 
@@ -49,8 +49,8 @@
 ## 📝 Commit History
 
 ```
-7830400 - docs: add quick fix summary for Networx Access Denied issue
-e9919d1 - fix: improve Networx payment API error handling and authentication  
+7830400 - docs: add quick fix summary for Secure-processor Access Denied issue
+e9919d1 - fix: improve Secure-processor payment API error handling and authentication  
 99bed30 - fix: correct Clerk auth import path for deployment
 c501b8d - feat: implement automatic dashboard redirect after payment
 ```
@@ -68,20 +68,20 @@ c501b8d - feat: implement automatic dashboard redirect after payment
 ### ✅ Вы указали credentials:
 
 ```
-NETWORX_SHOP_ID = 29959
-NETWORX_SECRET_KEY = dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950
+SECURE_PROCESSOR_SHOP_ID = 29959
+SECURE_PROCESSOR_SECRET_KEY = dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950
 ```
 
 ### ✅ Убедитесь, что в Vercel настроены:
 
 **Обязательные переменные:**
-1. `NETWORX_SHOP_ID` = `29959`
-2. `NETWORX_SECRET_KEY` = `dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950`
+1. `SECURE_PROCESSOR_SHOP_ID` = `29959`
+2. `SECURE_PROCESSOR_SECRET_KEY` = `dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950`
 
 **Опциональные переменные:**
-3. `NETWORX_TEST_MODE` = `true` (для тестирования) или `false` (для продакшена)
-4. `NETWORX_RETURN_URL` = `https://your-domain.vercel.app/payment/success`
-5. `NETWORX_WEBHOOK_URL` = `https://your-domain.vercel.app/api/webhooks/networx`
+3. `SECURE_PROCESSOR_TEST_MODE` = `true` (для тестирования) или `false` (для продакшена)
+4. `SECURE_PROCESSOR_RETURN_URL` = `https://your-domain.vercel.app/payment/success`
+5. `SECURE_PROCESSOR_WEBHOOK_URL` = `https://your-domain.vercel.app/api/webhooks/secure-processor`
 
 ### Как проверить в Vercel:
 
@@ -103,7 +103,7 @@ NETWORX_SECRET_KEY = dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d523
 
 ### Troubleshooting
 5. **VERCEL_ENV_SETUP.md** - Настройка Vercel переменных
-6. **NETWORX_AUTH_FIX.md** - Решение проблем с Networx
+6. **SECURE_PROCESSOR_AUTH_FIX.md** - Решение проблем с Secure-processor
 7. **DEPLOYMENT_FIX.md** - История исправлений
 8. **PAYMENT_FLOW_DIAGRAM.md** - Визуальные диаграммы
 
@@ -167,7 +167,7 @@ npm test -- --coverage
 **✅ Успешный запуск:**
 ```
 ✅ Environment variables: { shopId: '29959***', secretKey: '***950' }
-✅ Networx API Success Response received
+✅ Secure-processor API Success Response received
 ✅ Payment checkout created successfully
 ```
 
@@ -183,8 +183,8 @@ npm test -- --coverage
 ## 🎯 Следующие шаги
 
 ### Шаг 1: Проверить Vercel Environment Variables
-- [ ] NETWORX_SHOP_ID установлен
-- [ ] NETWORX_SECRET_KEY установлен
+- [ ] SECURE_PROCESSOR_SHOP_ID установлен
+- [ ] SECURE_PROCESSOR_SECRET_KEY установлен
 - [ ] Variables applied to Production environment
 
 ### Шаг 2: Проверить Deployment
@@ -342,7 +342,7 @@ npm test -- --watch
 ## 🆘 Если что-то не работает
 
 ### 1. "Access denied" в логах
-- Проверьте NETWORX_SHOP_ID и NETWORX_SECRET_KEY в Vercel
+- Проверьте SECURE_PROCESSOR_SHOP_ID и SECURE_PROCESSOR_SECRET_KEY в Vercel
 - Убедитесь, что они установлены для Production environment
 - Сделайте Redeploy после изменения
 
@@ -359,15 +359,15 @@ npm test -- --watch
 ### 4. Полная документация
 - Читайте QUICK_FIX_SUMMARY.md
 - Проверьте VERCEL_ENV_SETUP.md
-- Смотрите NETWORX_AUTH_FIX.md
+- Смотрите SECURE_PROCESSOR_AUTH_FIX.md
 
 ---
 
 ## 📞 Поддержка
 
-**Networx Support:**
-- Email: support@networxpay.com
-- Dashboard: https://dashboard.networxpay.com
+**Secure-processor Support:**
+- Email: support@secure-processorpay.com
+- Dashboard: https://dashboard.secure-processorpay.com
 
 **Vercel Support:**
 - Dashboard: https://vercel.com/support

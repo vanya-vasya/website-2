@@ -5,9 +5,6 @@
   "functions": {
     "app/**/*.{js,ts,tsx}": {
       "maxDuration": 300
-    },
-    "api/**/*.{js,ts,tsx}": {
-      "maxDuration": 300
     }
   }
 }

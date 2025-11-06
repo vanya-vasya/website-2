@@ -38,14 +38,6 @@ const testimonials = [
     color: "from-orange-500 to-red-600",
   },
   {
-    name: "David Campbell",
-    role: "Independent Filmmaker",
-    image: "/images/testimonials/testimonials-5.png",
-    content:
-      "AI Voiceover has been a game-changer for my indie films. I can create professional-quality narration that perfectly matches the tone of each scene",
-    color: "from-indigo-600 to-blue-500",
-  },
-  {
     name: "Antonio Torres",
     role: "Digital Illustrator",
     image: "/images/testimonials/testimonials-6.png",

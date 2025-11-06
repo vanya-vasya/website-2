@@ -237,16 +237,6 @@ export const tools = [
     href: "https://nerbixa.com/dashboard/video?toolId=video-creation",
     professions: ["video"],
   },
-  {
-    id: "video-voiceover",
-    label: "AI Voiceover",
-    icon: Mic2,
-    description: "Deliver broadcast-quality narration and voiceovers for every video",
-    color: "text-violet-500",
-    bgColor: "bg-violet-500/10",
-    href: "https://nerbixa.com/dashboard/speech?toolId=video-voiceover",
-    professions: ["video"],
-  },
 
   // Design Partners
   {
@@ -345,17 +335,6 @@ export const tools = [
     color: "text-indigo-500",
     bgColor: "bg-indigo-500/10",
     href: "https://nerbixa.com/dashboard/music?toolId=sound-effects",
-    professions: ["music"],
-  },
-  {
-    id: "voice-melody",
-    label: "Melody Maker",
-    icon: Mic,
-    description:
-      "Generate vocal melodies and harmonies for your musical compositions",
-    color: "text-blue-400",
-    bgColor: "bg-blue-400/10",
-    href: "https://nerbixa.com/dashboard/speech?toolId=voice-melody",
     professions: ["music"],
   },
 

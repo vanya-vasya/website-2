@@ -5,7 +5,6 @@ import Link from "next/link";
 import { 
   Clapperboard, 
   Video, 
-  Mic2, 
   Palette, 
   Paintbrush, 
   Expand, 
@@ -14,7 +13,6 @@ import {
   Disc, 
   Music, 
   Volume2, 
-  Mic, 
   Lightbulb, 
   Share2, 
   Calendar, 
@@ -32,11 +30,6 @@ const creatorTools = [
   {
     icon: Video,
     title: "Video Maker",
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-  {
-    icon: Mic2,
-    title: "AI Voiceover",
     color: "from-cyan-400 via-blue-500 to-indigo-600",
   },
   // Digital Artist
@@ -79,11 +72,6 @@ const creatorTools = [
   {
     icon: Volume2,
     title: "SFX Generator",
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-  {
-    icon: Mic,
-    title: "Melody Maker",
     color: "from-cyan-400 via-blue-500 to-indigo-600",
   },
   // Content Creator

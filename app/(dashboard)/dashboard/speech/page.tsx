@@ -30,22 +30,6 @@ const toolConfigs = {
     iconColor: 'text-fuchsia-600',
     bgColor: 'bg-fuchsia-600/10',
     placeholder: 'Text to be read aloud...'
-  },
-  'video-voiceover': {
-    title: 'AI Voiceover',
-    description: `Deliver broadcast-quality voiceovers for every video\nPrice: ${MODEL_GENERATIONS_PRICE.speecGeneration} credits`,
-    iconName: 'Mic2',
-    iconColor: 'text-violet-500',
-    bgColor: 'bg-violet-500/10',
-    placeholder: 'Welcome to my YouTube channel! Today we are exploring the fascinating world of AI...'
-  },
-  'voice-melody': {
-    title: 'Melody Maker',
-    description: `Generate vocal melodies and harmonies for your musical compositions\nPrice: ${MODEL_GENERATIONS_PRICE.speecGeneration} credits`,
-    iconName: 'Mic',
-    iconColor: 'text-blue-400',
-    bgColor: 'bg-blue-400/10',
-    placeholder: 'Sing these lyrics with a gentle melody: "Beneath the stars, we find our way"'
   }
 };
 

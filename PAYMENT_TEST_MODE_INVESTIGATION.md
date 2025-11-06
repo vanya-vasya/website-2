@@ -23,9 +23,9 @@ The codebase **already has proper implementation** for test mode payments with:
 
 The issue is **NOT in the code** but likely due to:
 
-1. **Webhook Not Firing** - Networx may not be configured to send webhooks for test transactions
-2. **Environment Configuration** - `NETWORX_TEST_MODE` may not be set correctly
-3. **Webhook URL** - Public webhook URL may not be accessible or configured in Networx dashboard
+1. **Webhook Not Firing** - Secure-processor may not be configured to send webhooks for test transactions
+2. **Environment Configuration** - `SECURE_PROCESSOR_TEST_MODE` may not be set correctly
+3. **Webhook URL** - Public webhook URL may not be accessible or configured in Secure-processor dashboard
 4. **Database Connection** - Connection issues with Neon serverless database
 
 ---
@@ -34,13 +34,13 @@ The issue is **NOT in the code** but likely due to:
 
 ### 1. End-to-End Trace ✅
 
-**Payment Creation API** (`/api/payment/networx`)
+**Payment Creation API** (`/api/payment/secure-processor`)
 ```typescript
 // Line 110: Test mode is set from environment variable
-test: useTestMode, // NETWORX_TEST_MODE === 'true'
+test: useTestMode, // SECURE_PROCESSOR_TEST_MODE === 'true'
 ```
 
-**Webhook Handler** (`/api/webhooks/networx`)
+**Webhook Handler** (`/api/webhooks/secure-processor`)
 ```typescript
 // Line 114: Test mode detection
 const isTestTransaction = transaction.test === true;
@@ -109,15 +109,15 @@ const pool = new Pool({
 Required variables for test mode:
 ```bash
 # Payment provider
-NETWORX_SHOP_ID=29959
-NETWORX_SECRET_KEY=dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950
-NETWORX_TEST_MODE=true  # CRITICAL for test payments
+SECURE_PROCESSOR_SHOP_ID=29959
+SECURE_PROCESSOR_SECRET_KEY=dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950
+SECURE_PROCESSOR_TEST_MODE=true  # CRITICAL for test payments
 
 # Database
 DATABASE_URL=postgresql://...  # Neon connection string
 
 # URLs
-NETWORX_WEBHOOK_URL=https://nerbixa.com/api/webhooks/networx  # Must be publicly accessible
+SECURE_PROCESSOR_WEBHOOK_URL=https://nerbixa.com/api/webhooks/secure-processor  # Must be publicly accessible
 ```
 
 ---
@@ -134,7 +134,7 @@ npm run payment:diagnose
 ```
 
 **What it checks:**
-- Environment variables (DATABASE_URL, NETWORX_*, test mode)
+- Environment variables (DATABASE_URL, SECURE_PROCESSOR_*, test mode)
 - Database connection and schema
 - User and Transaction table existence and structure
 - Recent transactions and test data
@@ -184,7 +184,7 @@ npm run payment:webhook-sim success user_2abc123xyz 100
 ```
 
 **What it does:**
-- Simulates Networx webhook calls locally
+- Simulates Secure-processor webhook calls locally
 - Tests all payment statuses (success, failed, pending, refunded)
 - Tests idempotency (duplicate webhooks)
 - Tests error cases (missing user, invalid description)
@@ -310,7 +310,7 @@ npm run test:integration payment-test-mode
 ### Issue 1: Webhook Not Received
 
 **Symptoms:**
-- Payment successful in Networx dashboard
+- Payment successful in Secure-processor dashboard
 - No logs in server console
 - No transaction records in database
 
@@ -320,7 +320,7 @@ npm run payment:diagnose
 ```
 
 **Solutions:**
-1. Check Networx dashboard webhook configuration
+1. Check Secure-processor dashboard webhook configuration
 2. Verify webhook URL is publicly accessible
 3. Test webhook manually:
    ```bash
@@ -342,7 +342,7 @@ npm run payment:diagnose
 ```
 
 **Solutions:**
-1. Set `NETWORX_TEST_MODE=true` in environment
+1. Set `SECURE_PROCESSOR_TEST_MODE=true` in environment
 2. Verify in payment creation API logs:
    ```
    🔧 Payment API Configuration
@@ -416,7 +416,7 @@ Purchase (500 Token)
 **Successful Test Payment Flow:**
 ```
 ═══════════════════════════════════════════════════════
-📥 Networx Webhook Received - RAW BODY:
+📥 Secure-processor Webhook Received - RAW BODY:
 {
   "transaction": {
     "test": true,
@@ -539,12 +539,12 @@ WHERE
 ### Production Testing (Vercel)
 
 1. **Set environment variables in Vercel:**
-   - `NETWORX_TEST_MODE=true`
+   - `SECURE_PROCESSOR_TEST_MODE=true`
    - `DATABASE_URL=<neon-connection-string>`
-   - All NETWORX_* variables
+   - All SECURE_PROCESSOR_* variables
 
-2. **Configure webhook in Networx dashboard:**
-   - URL: `https://nerbixa.com/api/webhooks/networx`
+2. **Configure webhook in Secure-processor dashboard:**
+   - URL: `https://nerbixa.com/api/webhooks/secure-processor`
    - Enable test mode webhooks
 
 3. **Make test payment:**
@@ -581,7 +581,7 @@ npm run payment:diagnose
 
 **If diagnostic fails:**
 - Database not connected → Check DATABASE_URL
-- Test mode not enabled → Set NETWORX_TEST_MODE=true
+- Test mode not enabled → Set SECURE_PROCESSOR_TEST_MODE=true
 - Tables missing → Run `psql $DATABASE_URL -f db/schema.sql`
 
 ### Step 2: Test Webhook Locally (2-3 minutes)
@@ -645,12 +645,12 @@ If local works but production doesn't:
    vercel logs --follow
    ```
 
-3. **Verify Networx webhook configuration:**
-   - URL: `https://nerbixa.com/api/webhooks/networx`
+3. **Verify Secure-processor webhook configuration:**
+   - URL: `https://nerbixa.com/api/webhooks/secure-processor`
    - Test webhooks enabled
    - Correct shop ID
 
-4. **Test webhook from Networx:**
+4. **Test webhook from Secure-processor:**
    - Send test webhook from dashboard
    - Monitor Vercel logs in real-time
 
@@ -683,7 +683,7 @@ npm run payment:reconcile interactive --live
 
 ### Production
 
-1. **Enable test mode** for testing: `NETWORX_TEST_MODE=true`
+1. **Enable test mode** for testing: `SECURE_PROCESSOR_TEST_MODE=true`
 2. **Monitor Vercel logs** during test payments
 3. **Set up alerts** for webhook failures
 4. **Regular reconciliation** checks (daily or weekly)
@@ -704,8 +704,8 @@ npm run payment:reconcile interactive --live
 - `PAYMENT_FLOW_FIXED.md` - Previous payment flow fixes
 - `PAYMENT_FIXES_COMPLETE.md` - Complete fix documentation
 - `POST_TRANSACTION_FIX_SUMMARY.md` - Transaction processing fixes
-- `NETWORX_WEBHOOK_FIX_SUMMARY.md` - Webhook configuration
-- `NETWORX_ENV_SETUP.md` - Environment variables
+- `SECURE_PROCESSOR_WEBHOOK_FIX_SUMMARY.md` - Webhook configuration
+- `SECURE_PROCESSOR_ENV_SETUP.md` - Environment variables
 - `db/schema.sql` - Database schema
 
 ---
@@ -756,6 +756,11 @@ Before marking as resolved:
 **Status:** ✅ Complete with tools and documentation
 
 All diagnostic tools, fixes, tests, and documentation are now in place. The payment flow should work correctly in test mode with comprehensive logging and error handling.
+
+
+
+
+
 
 
 

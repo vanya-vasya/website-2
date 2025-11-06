@@ -35,12 +35,12 @@ https://www.nerbixa.com/dashboard?payment=success&order_id=...
 ## Changes Made
 
 ### 1. Payment API Configuration
-**File:** `app/api/payment/networx/route.ts`
+**File:** `app/api/payment/secure-processor/route.ts`
 
 **Changed:**
 ```typescript
 // OLD
-const returnUrl = process.env.NETWORX_RETURN_URL || 'https://nerbixa.com/payment/callback';
+const returnUrl = process.env.SECURE_PROCESSOR_RETURN_URL || 'https://nerbixa.com/payment/callback';
 
 settings: {
   return_url: `${returnUrl}?order_id=${orderId}`,
@@ -50,7 +50,7 @@ settings: {
 **To:**
 ```typescript
 // NEW
-const returnUrl = process.env.NETWORX_RETURN_URL || 'https://nerbixa.com/dashboard';
+const returnUrl = process.env.SECURE_PROCESSOR_RETURN_URL || 'https://nerbixa.com/dashboard';
 
 settings: {
   return_url: `${returnUrl}?payment=success&order_id=${orderId}`,
@@ -139,7 +139,7 @@ useEffect(() => {
 
 ### Before (Broken)
 ```
-1. User completes payment on Networx
+1. User completes payment on Secure-processor
 2. Redirected to: /payment/success?order_id=...
 3. ❌ 404 Page Not Found
 4. ❌ User confused and frustrated
@@ -147,7 +147,7 @@ useEffect(() => {
 
 ### After (Fixed)
 ```
-1. User completes payment on Networx
+1. User completes payment on Secure-processor
 2. Redirected to: /dashboard?payment=success&order_id=...
 3. ✅ Dashboard loads successfully
 4. ✅ Success notification appears: "Payment successful! 🎉"
@@ -161,17 +161,17 @@ useEffect(() => {
 
 ### Production
 ```bash
-NETWORX_RETURN_URL=https://www.nerbixa.com/dashboard
+SECURE_PROCESSOR_RETURN_URL=https://www.nerbixa.com/dashboard
 ```
 
 ### Development
 ```bash
-NETWORX_RETURN_URL=http://localhost:3000/dashboard
+SECURE_PROCESSOR_RETURN_URL=http://localhost:3000/dashboard
 ```
 
 ### Staging
 ```bash
-NETWORX_RETURN_URL=https://staging.nerbixa.com/dashboard
+SECURE_PROCESSOR_RETURN_URL=https://staging.nerbixa.com/dashboard
 ```
 
 **Note:** If not set, defaults to `https://nerbixa.com/dashboard`
@@ -189,13 +189,13 @@ https://www.nerbixa.com/dashboard?payment=success&order_id=gen_user_123_12345678
 - `payment=success` - Triggers success notification
 - `order_id=...` - Order reference for logging
 
-**Additional Parameters from Networx (cleaned up):**
+**Additional Parameters from Secure-processor (cleaned up):**
 - `token` - Payment token
 - `status` - Transaction status
 - `uid` - Transaction UID
 
 ### Failed/Canceled Payments
-Networx handles these with their own error pages. Our dashboard handler will NOT show success notification for:
+Secure-processor handles these with their own error pages. Our dashboard handler will NOT show success notification for:
 - `payment=failed`
 - `payment=canceled`
 - `payment=pending`
@@ -337,7 +337,7 @@ Shown        in DB
 
 ## Files Modified
 
-1. ✅ `app/api/payment/networx/route.ts`
+1. ✅ `app/api/payment/secure-processor/route.ts`
    - Changed default return URL to `/dashboard`
    - Added `payment=success` parameter
 
@@ -364,7 +364,7 @@ Shown        in DB
 - [x] Test locally
 
 ### During Deployment
-- [ ] Set `NETWORX_RETURN_URL` in Vercel environment variables
+- [ ] Set `SECURE_PROCESSOR_RETURN_URL` in Vercel environment variables
 - [ ] Deploy to production
 - [ ] Verify environment variable is set
 
@@ -382,7 +382,7 @@ Shown        in DB
 ### Via Vercel Dashboard
 1. Go to: https://vercel.com/vanya-vasya/website-2/settings/environment-variables
 2. Add new variable:
-   - **Name:** `NETWORX_RETURN_URL`
+   - **Name:** `SECURE_PROCESSOR_RETURN_URL`
    - **Value:** `https://www.nerbixa.com/dashboard`
    - **Environment:** Production, Preview, Development
 3. Save and redeploy
@@ -390,15 +390,15 @@ Shown        in DB
 ### Via Vercel CLI
 ```bash
 # Production
-vercel env add NETWORX_RETURN_URL production
+vercel env add SECURE_PROCESSOR_RETURN_URL production
 # Enter: https://www.nerbixa.com/dashboard
 
 # Preview
-vercel env add NETWORX_RETURN_URL preview
+vercel env add SECURE_PROCESSOR_RETURN_URL preview
 # Enter: https://www.nerbixa.com/dashboard
 
 # Development
-vercel env add NETWORX_RETURN_URL development
+vercel env add SECURE_PROCESSOR_RETURN_URL development
 # Enter: http://localhost:3000/dashboard
 ```
 
@@ -418,10 +418,10 @@ vercel env add NETWORX_RETURN_URL development
 3. Check that useEffect is running
 
 ### Still redirecting to old /payment/success?
-1. Check `NETWORX_RETURN_URL` environment variable
+1. Check `SECURE_PROCESSOR_RETURN_URL` environment variable
 2. Verify deployment picked up new code
 3. Clear browser cache
-4. Check Networx dashboard configuration
+4. Check Secure-processor dashboard configuration
 
 ---
 
@@ -456,6 +456,11 @@ If someone has an old payment link bookmarked, they'll see a 404. This is accept
 **Status:** ✅ Implemented and tested
 **Ready for Deployment:** Yes
 **Breaking Changes:** None (webhook processing unchanged)
+
+
+
+
+
 
 
 

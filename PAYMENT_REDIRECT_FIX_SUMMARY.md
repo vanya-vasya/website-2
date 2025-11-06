@@ -31,15 +31,15 @@ Redirected to: /dashboard?payment=success&order_id=...
 ## Changes Implemented
 
 ### 1. Payment API Return URL
-**File:** `app/api/payment/networx/route.ts`
+**File:** `app/api/payment/secure-processor/route.ts`
 
 ```typescript
 // Changed from:
-const returnUrl = process.env.NETWORX_RETURN_URL || 'https://nerbixa.com/payment/callback';
+const returnUrl = process.env.SECURE_PROCESSOR_RETURN_URL || 'https://nerbixa.com/payment/callback';
 return_url: `${returnUrl}?order_id=${orderId}`
 
 // To:
-const returnUrl = process.env.NETWORX_RETURN_URL || 'https://nerbixa.com/dashboard';
+const returnUrl = process.env.SECURE_PROCESSOR_RETURN_URL || 'https://nerbixa.com/dashboard';
 return_url: `${returnUrl}?payment=success&order_id=${orderId}`
 ```
 
@@ -113,7 +113,7 @@ useEffect(() => {
 5 files changed, 1048 insertions(+), 3 deletions(-)
 
 Modified:
-✅ app/api/payment/networx/route.ts
+✅ app/api/payment/secure-processor/route.ts
 ✅ app/(dashboard)/dashboard/page.tsx
 
 Created:
@@ -128,16 +128,16 @@ Created:
 
 ### For Vercel Deployment
 
-**Variable:** `NETWORX_RETURN_URL`
+**Variable:** `SECURE_PROCESSOR_RETURN_URL`
 
 **Production:**
 ```bash
-NETWORX_RETURN_URL=https://www.nerbixa.com/dashboard
+SECURE_PROCESSOR_RETURN_URL=https://www.nerbixa.com/dashboard
 ```
 
 **Development:**
 ```bash
-NETWORX_RETURN_URL=http://localhost:3000/dashboard
+SECURE_PROCESSOR_RETURN_URL=http://localhost:3000/dashboard
 ```
 
 **Default (if not set):**
@@ -244,7 +244,7 @@ Toast
 - [x] Committed and pushed to main
 
 ### Vercel Deployment
-- [ ] Set `NETWORX_RETURN_URL` environment variable
+- [ ] Set `SECURE_PROCESSOR_RETURN_URL` environment variable
 - [ ] Deploy to production
 - [ ] Verify environment variable is active
 
@@ -301,7 +301,7 @@ Toast
 3. Verify toast provider is configured
 
 ### Still redirecting to old page?
-1. Check `NETWORX_RETURN_URL` in Vercel
+1. Check `SECURE_PROCESSOR_RETURN_URL` in Vercel
 2. Clear browser cache
 3. Verify deployment picked up changes
 
@@ -316,7 +316,7 @@ Toast
 
 1. **Deploy to Vercel**
    - Push triggers automatic deployment
-   - Set `NETWORX_RETURN_URL` environment variable
+   - Set `SECURE_PROCESSOR_RETURN_URL` environment variable
 
 2. **Test in Production**
    - Use test mode payment
@@ -356,6 +356,11 @@ Toast
 **Commit:** 88a1548
 **Date:** October 24, 2025
 **Author:** Payment Flow Improvements Team
+
+
+
+
+
 
 
 

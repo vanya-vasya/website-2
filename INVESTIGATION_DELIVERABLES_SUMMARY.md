@@ -28,11 +28,11 @@ The investigation revealed that the **webhook handler and payment processing cod
 
 The problem is **NOT in the code** but likely due to:
 
-1. **Webhook Not Configured** in Networx dashboard for test transactions
-2. **Environment Variable** `NETWORX_TEST_MODE` not set to `true`
+1. **Webhook Not Configured** in Secure-processor dashboard for test transactions
+2. **Environment Variable** `SECURE_PROCESSOR_TEST_MODE` not set to `true`
 3. **Webhook URL** not publicly accessible or incorrectly configured
 4. **Database Connection Issues** with Neon serverless
-5. **Test Webhooks Disabled** in Networx merchant settings
+5. **Test Webhooks Disabled** in Secure-processor merchant settings
 
 ---
 
@@ -66,8 +66,8 @@ npm run payment:diagnose
 
 📋 Step 1: Checking Environment Variables
 DATABASE_URL: ✅ Set
-NETWORX_SHOP_ID: ✅ Set (29959)
-NETWORX_TEST_MODE: true
+SECURE_PROCESSOR_SHOP_ID: ✅ Set (29959)
+SECURE_PROCESSOR_TEST_MODE: true
 
 📋 Step 2: Checking Database Connection and Schema
 ✅ Database connection successful
@@ -92,7 +92,7 @@ Test Mode Enabled: ✅ Yes
 **Purpose:** Local testing of payment webhooks without making real payments
 
 **Features:**
-- ✅ Simulates Networx webhook payloads
+- ✅ Simulates Secure-processor webhook payloads
 - ✅ Tests successful payments
 - ✅ Tests failed payments
 - ✅ Tests pending payments
@@ -169,7 +169,7 @@ npm run payment:reconcile add txn_123 user_abc 10.00 USD 100 "Token Top-up (100 
 
 ### 1. Enhanced Logging for Test Mode ✅
 
-**File:** `app/api/webhooks/networx/route.ts`
+**File:** `app/api/webhooks/secure-processor/route.ts`
 
 **Changes:**
 - Added prominent test mode detection logging
@@ -354,9 +354,9 @@ npm run test:ci
 ### Environment Check
 ```
 ✅ DATABASE_URL: Set and valid
-✅ NETWORX_SHOP_ID: 29959
-✅ NETWORX_SECRET_KEY: Configured
-✅ NETWORX_TEST_MODE: true
+✅ SECURE_PROCESSOR_SHOP_ID: 29959
+✅ SECURE_PROCESSOR_SECRET_KEY: Configured
+✅ SECURE_PROCESSOR_TEST_MODE: true
 ✅ NODE_ENV: development/production
 ```
 
@@ -444,14 +444,14 @@ npm run payment:diagnose
 npm run payment:webhook-sim success user_2abc123xyz 100
 
 # If local works:
-# 2. Check Networx dashboard
-#    - Webhook URL: https://nerbixa.com/api/webhooks/networx
+# 2. Check Secure-processor dashboard
+#    - Webhook URL: https://nerbixa.com/api/webhooks/secure-processor
 #    - Test webhooks: ENABLED
 
 # 3. Check Vercel logs
 vercel logs --follow
 
-# 4. Test webhook from Networx dashboard
+# 4. Test webhook from Secure-processor dashboard
 # (Send test webhook button)
 
 # 5. Check firewall/security settings
@@ -472,8 +472,8 @@ vercel logs --follow
 ### Recommendations
 
 #### Immediate Actions
-1. ✅ Set `NETWORX_TEST_MODE=true` in environment
-2. ✅ Configure webhook URL in Networx dashboard
+1. ✅ Set `SECURE_PROCESSOR_TEST_MODE=true` in environment
+2. ✅ Configure webhook URL in Secure-processor dashboard
 3. ✅ Enable test webhooks in merchant settings
 4. ✅ Verify DATABASE_URL is correct
 5. ✅ Test locally with webhook simulator
@@ -547,7 +547,7 @@ vercel logs --follow
 
 ### Modified Files (2)
 1. `package.json` - Added npm scripts for diagnostic tools
-2. `app/api/webhooks/networx/route.ts` - Enhanced logging for test mode
+2. `app/api/webhooks/secure-processor/route.ts` - Enhanced logging for test mode
 
 ### Total Lines of Code
 - **Scripts:** ~1,500 lines
@@ -563,8 +563,8 @@ vercel logs --follow
 ### For Developers
 
 **Understanding the Flow:**
-1. Payment created → Networx API → Payment gateway
-2. User completes payment → Networx sends webhook → Your server
+1. Payment created → Secure-processor API → Payment gateway
+2. User completes payment → Secure-processor sends webhook → Your server
 3. Webhook handler → Validates → Creates transaction → Updates balance
 4. User sees updated balance in dashboard
 
@@ -585,9 +585,9 @@ vercel logs --follow
 
 **Environment Setup:**
 ```bash
-NETWORX_TEST_MODE=true          # Enable test mode
+SECURE_PROCESSOR_TEST_MODE=true          # Enable test mode
 DATABASE_URL=postgresql://...   # Neon connection
-NETWORX_WEBHOOK_URL=https://... # Public webhook URL
+SECURE_PROCESSOR_WEBHOOK_URL=https://... # Public webhook URL
 ```
 
 **Monitoring:**
@@ -633,7 +633,7 @@ vercel logs --follow | grep "TEST MODE"
 1. Run diagnostic on production: `npm run payment:diagnose`
 2. Test webhook simulator locally
 3. Verify environment variables
-4. Configure Networx webhook settings
+4. Configure Secure-processor webhook settings
 5. Make test payment and monitor logs
 
 ### Short Term (This Week)
@@ -692,6 +692,11 @@ The payment flow code is **already correct** and handles test mode properly. Any
 **Tests:** Passing
 
 **Ready for deployment and use! 🚀**
+
+
+
+
+
 
 
 

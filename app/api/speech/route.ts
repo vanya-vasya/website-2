@@ -9,7 +9,7 @@ const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN!,
 });
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 export async function POST(req: Request) {
   try {

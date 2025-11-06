@@ -51,7 +51,7 @@ async function verifyRecaptchaToken(token: string): Promise<boolean> {
   return response.data.success;
 }
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 export async function POST(req: Request): Promise<NextResponse> {
   if (req.method === "POST") {

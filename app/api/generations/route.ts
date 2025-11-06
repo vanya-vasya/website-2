@@ -9,7 +9,7 @@ interface RequestBody {
   generationsCount: number;
 }
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 export async function POST(req: Request): Promise<NextResponse> {
   try {

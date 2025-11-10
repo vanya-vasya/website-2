@@ -1,4 +1,4 @@
-import { Building, FileText, Mail, MapPin } from "lucide-react";
+import { Building, FileText, Mail, MapPin, Instagram } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -156,6 +156,19 @@ const Footer = () => {
                       </li>
                     ))}
                   </ul>
+                  <div className="mt-6">
+                    <a
+                      href="https://www.instagram.com/nerbixa.ai?igsh=aGx1aDBjZnFoMjU0"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Instagram"
+                      title="Instagram"
+                      className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 text-white hover:opacity-90 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+                      tabIndex={0}
+                    >
+                      <Instagram className="w-5 h-5" />
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>

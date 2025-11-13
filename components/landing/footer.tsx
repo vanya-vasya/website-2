@@ -1,4 +1,4 @@
-import { Building, FileText, Mail, MapPin, Instagram } from "lucide-react";
+import { Building, FileText, Mail, MapPin, Instagram, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -48,6 +48,10 @@ const companyDetails = [
   {
     name: "Company Number: 15982295",
     icon: FileText,
+  },
+  {
+    name: "Phone Number: +44 7537167307",
+    icon: Phone,
   },
   {
     name: "support@nerbixa.com",

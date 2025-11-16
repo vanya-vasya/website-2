@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
         test: useTestMode, // Use environment variable to control test mode
         transaction_type: "payment",
         order: {
-          amount: amount * 100, // Amount in cents (EUR 2.50 = 250)
+          amount: Math.round(amount * 100), // Amount in cents as integer (EUR 2.50 = 250)
           currency: currency,
           description: description || 'Payment for order',
           tracking_id: userId // Use userId for tracking to match user in webhook

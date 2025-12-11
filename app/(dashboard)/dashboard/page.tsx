@@ -295,7 +295,11 @@ export default function HomePage() {
                 className={cn("h-5 w-5", profession.iconColor)}
               />
               <span className={cn("text-sm", profession.textColor)}>
-                {profession.label}
+                {profession.id === "video" ? t("professions.coDirector") :
+                 profession.id === "art" ? t("professions.designPartner") :
+                 profession.id === "music" ? t("professions.coComposer") :
+                 profession.id === "content" ? t("professions.creativePartner") :
+                 profession.label}
               </span>
             </button>
           ))}

@@ -4,6 +4,7 @@ import * as React from "react";
 import { Progress } from "@/components/ui/progress";
 import { useProModal } from "@/hooks/use-pro-modal";
 import { Sparkles } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface UsageProgressProps {
   initialUsedGenerations: number;
@@ -14,6 +15,7 @@ export function UsageProgress({
   initialUsedGenerations,
   initialAvailableGenerations,
 }: UsageProgressProps) {
+  const t = useTranslations();
   const [usedGenerations, setUsedGenerations] = React.useState<number>(
     initialUsedGenerations
   );
@@ -39,7 +41,7 @@ export function UsageProgress({
                 <Sparkles className="w-3 h-3 text-white" />
               </div>
             </div>
-            <span className="font-medium">Credits</span>
+            <span className="font-medium">{t("common.credits")}</span>
           </div>
           <span className="font-bold text-black">
             {usedGenerations}/{availableGenerations}
@@ -54,9 +56,9 @@ export function UsageProgress({
         </div>
 
         <div className="flex justify-between text-[10px] text-black">
-          <span className="font-medium">{Math.round(usagePercentage) || 0}% Used</span>
+          <span className="font-medium">{t("common.percentUsed", { percent: Math.round(usagePercentage) || 0 })}</span>
           <span className="font-medium">
-            Click to upgrade
+            {t("common.clickToUpgrade")}
           </span>
         </div>
       </div>

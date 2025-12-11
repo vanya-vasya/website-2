@@ -69,6 +69,39 @@ export function MainNav({
 }) {
   const t = useTranslations();
 
+  // Helper function to convert kebab-case tool ID to camelCase translation key
+  // Maps to keys in messages/en.json and messages/tr.json under "tools" section
+  const getToolTranslationKey = (toolId: string): string => {
+    const idMap: Record<string, string> = {
+      "video-script": "videoScript",
+      "video-creation": "videoCreation",
+      "digital-painting": "paintingEnhance",
+      "canvas-expansion": "canvasExpand",
+      "art-reference": "referenceCleanup",
+      "thumbnail-optimizer": "thumbnailOptimizer",
+      "song-lyrics": "lyricWriter",
+      "album-cover": "coverArt",
+      "music-composition": "composeAssist",
+      "sound-effects": "sfxGenerator",
+      "blog-ideas": "blogIdeas",
+      "social-graphics": "socialGraphics",
+      "content-calendar": "contentPlanner",
+      "caption-generator": "captionGenerator",
+      "chat-assistant": "chatAssistant",
+      "image-generation": "imageGeneration",
+      "image-restore": "imageRestore",
+      "image-background-removal": "imageBackgroundRemoval",
+      "image-generative-fill": "imageGenerativeFill",
+      "image-object-recolor": "imageObjectRecolor",
+      "image-object-remove": "imageObjectRemove",
+      "video-generation": "videoGeneration",
+      "music-generation": "musicGeneration",
+      "speech-generation": "speechGeneration",
+      "concept-art": "designPartner",
+    };
+    return idMap[toolId] || toolId;
+  };
+
   return (
     <div className="flex items-center justify-between w-full bg-white">
       <div className="flex items-center gap-8">
@@ -92,11 +125,11 @@ export function MainNav({
                     <ListItem
                       key={item.id}
                       id={item.id}
-                      title={item.label}
+                      title={t(`tools.${getToolTranslationKey(item.id)}.label`, { defaultValue: item.label })}
                       href={item.href}
                       icon={item.icon}
                     >
-                      {item.description}
+                      {t(`tools.${getToolTranslationKey(item.id)}.description`, { defaultValue: item.description })}
                     </ListItem>
                   ))}
                 </ul>
@@ -114,11 +147,11 @@ export function MainNav({
                     <ListItem
                       key={item.id}
                       id={item.id}
-                      title={item.label}
+                      title={t(`tools.${getToolTranslationKey(item.id)}.label`, { defaultValue: item.label })}
                       href={item.href}
                       icon={item.icon}
                     >
-                      {item.description}
+                      {t(`tools.${getToolTranslationKey(item.id)}.description`, { defaultValue: item.description })}
                     </ListItem>
                   ))}
                 </ul>
@@ -136,11 +169,11 @@ export function MainNav({
                     <ListItem
                       key={item.id}
                       id={item.id}
-                      title={item.label}
+                      title={t(`tools.${getToolTranslationKey(item.id)}.label`, { defaultValue: item.label })}
                       href={item.href}
                       icon={item.icon}
                     >
-                      {item.description}
+                      {t(`tools.${getToolTranslationKey(item.id)}.description`, { defaultValue: item.description })}
                     </ListItem>
                   ))}
                 </ul>
@@ -158,11 +191,11 @@ export function MainNav({
                     <ListItem
                       key={item.id}
                       id={item.id}
-                      title={item.label}
+                      title={t(`tools.${getToolTranslationKey(item.id)}.label`, { defaultValue: item.label })}
                       href={item.href}
                       icon={item.icon}
                     >
-                      {item.description}
+                      {t(`tools.${getToolTranslationKey(item.id)}.description`, { defaultValue: item.description })}
                     </ListItem>
                   ))}
                 </ul>

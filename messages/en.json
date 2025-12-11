@@ -14,6 +14,7 @@
     "availableGenerations": "Available Generations",
     "price": "Price",
     "chooseOption": "Choose generations option",
+    "paymentSuccess": "Generations added successfully!",
     "buyGenerations": "Buy Generations",
     "iAgree": "I agree to the",
     "termsOfService": "Terms of Service",
@@ -442,6 +443,12 @@
       "title": "Reference Cleanup",
       "description": "Clean up and prepare reference images for your artistic creations",
       "placeholder": "Describe your reference image and what you need help with - remove distractions, enhance details, fix lighting, or get composition advice...",
+      "priceLabel": "credits"
+    },
+    "canvasExpansion": {
+      "title": "Canvas Expand",
+      "description": "Expand your canvas and extend images with AI-powered content generation",
+      "placeholder": "Upload an image and describe how you want to expand the canvas - add more sky, extend the background, or create additional elements...",
       "priceLabel": "credits"
     },
     "emptyState": "No conversation started.",

@@ -14,6 +14,7 @@
     "availableGenerations": "Kullanılabilir Üretimler",
     "price": "Fiyat",
     "chooseOption": "Üretim seçeneği seçin",
+    "paymentSuccess": "Üretimler başarıyla eklendi!",
     "buyGenerations": "Üretim Satın Al",
     "iAgree": "Kabul ediyorum:",
     "termsOfService": "Hizmet Şartları",
@@ -442,6 +443,12 @@
       "title": "Referans Temizleme",
       "description": "Sanatsal yaratımlarınız için referans görsellerini temizleyin ve hazırlayın",
       "placeholder": "Referans görselinizi açıklayın ve ne konuda yardıma ihtiyacınız olduğunu belirtin - dikkat dağıtıcıları kaldırın, detayları geliştirin, aydınlatmayı düzeltin veya kompozisyon tavsiyesi alın...",
+      "priceLabel": "kredi"
+    },
+    "canvasExpansion": {
+      "title": "Tuval Genişletme",
+      "description": "Tuvallerinizi genişletin ve yapay zeka destekli içerik üretimi ile görselleri uzatın",
+      "placeholder": "Bir görsel yükleyin ve tuvali nasıl genişletmek istediğinizi açıklayın - daha fazla gökyüzü ekleyin, arka planı uzatın veya ek öğeler oluşturun...",
       "priceLabel": "kredi"
     },
     "emptyState": "Henüz konuşma başlatılmadı.",

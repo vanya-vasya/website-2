@@ -128,7 +128,7 @@ export const ProModal = () => {
     proModal.onClose();
     setShowPaymentWidget(false);
     router.refresh();
-    toast.success(t("dashboard.paymentSuccess"));
+    toast.success(t("common.paymentSuccess"));
   };
 
   const handlePaymentError = (error: any) => {

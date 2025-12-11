@@ -202,9 +202,9 @@ export async function POST(request: NextRequest) {
       const secureProcessorResult = await secureProcessorResponse.json();
       console.log('✅ Secure-processor API Success Response received');
       console.log('Checkout created:', {
-        hasToken: !!secure-processorResult.checkout?.token,
-        hasRedirectUrl: !!secure-processorResult.checkout?.redirect_url,
-        testMode: secure-processorResult.checkout?.test
+        hasToken: !!secureProcessorResult.checkout?.token,
+        hasRedirectUrl: !!secureProcessorResult.checkout?.redirect_url,
+        testMode: secureProcessorResult.checkout?.test
       });
 
       // Проверяем успешность ответа от Secure-processor hosted payment page

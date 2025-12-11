@@ -30,42 +30,7 @@ import { cn } from "@/lib/utils";
 
 import { formSchema, resolutionOptions } from "./constants";
 import { MODEL_GENERATIONS_PRICE } from "@/constants";
-
-// Конфигурация для разных типов инструментов
-const toolConfigs = {
-  'image-generation': {
-    title: 'Image Generation',
-    description: `Turn your prompt into an image using our advanced AI model\nPrice: ${MODEL_GENERATIONS_PRICE.imageGeneration} credits`,
-    iconName: 'Image',
-    iconColor: 'text-orange-700',
-    bgColor: 'bg-orange-700/10',
-    placeholder: 'A picture of a horse in Swiss alps'
-  },
-  'concept-art': {
-    title: 'Design Partner',
-    description: `Create stunning concept art and illustrations for your projects\nPrice: ${MODEL_GENERATIONS_PRICE.imageGeneration} credits`,
-    iconName: 'Palette',
-    iconColor: 'text-pink-600',
-    bgColor: 'bg-pink-600/10',
-    placeholder: 'A sci-fi character design for a futuristic warrior'
-  },
-  'social-graphics': {
-    title: 'Social Graphics',
-    description: `Create eye-catching graphics for your social media platforms\nPrice: ${MODEL_GENERATIONS_PRICE.imageGeneration} credits`,
-    iconName: 'Share2',
-    iconColor: 'text-green-600',
-    bgColor: 'bg-green-600/10',
-    placeholder: 'Promotional banner for summer sale with bright colors and modern design'
-  },
-  'album-cover': {
-    title: 'Cover Art',
-    description: `Design professional album covers and music artwork\nPrice: ${MODEL_GENERATIONS_PRICE.imageGeneration} credits`,
-    iconName: 'Disc',
-    iconColor: 'text-indigo-600',
-    bgColor: 'bg-indigo-600/10',
-    placeholder: 'Create stunning album artwork for your music release'
-  }
-};
+import { useTranslations } from "next-intl";
 
 const PhotoPage = () => {
   const proModal = useProModal();
@@ -73,6 +38,43 @@ const PhotoPage = () => {
   const searchParams = useSearchParams();
   const toolId = searchParams.get('toolId') || 'image-generation';
   const [photos, setPhotos] = useState<string[]>([]);
+  const t = useTranslations();
+
+  // Конфигурация для разных типов инструментов
+  const toolConfigs = {
+    'image-generation': {
+      title: t("dashboardTools.imageGeneration.title"),
+      description: `${t("dashboardTools.imageGeneration.description")}\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.imageGeneration} ${t("dashboardTools.imageGeneration.priceLabel")}`,
+      iconName: 'Image',
+      iconColor: 'text-orange-700',
+      bgColor: 'bg-orange-700/10',
+      placeholder: t("dashboardTools.imageGeneration.placeholder")
+    },
+    'concept-art': {
+      title: t("dashboardTools.conceptArt.title"),
+      description: `${t("dashboardTools.conceptArt.description")}\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.imageGeneration} ${t("dashboardTools.conceptArt.priceLabel")}`,
+      iconName: 'Palette',
+      iconColor: 'text-pink-600',
+      bgColor: 'bg-pink-600/10',
+      placeholder: t("dashboardTools.conceptArt.placeholder")
+    },
+    'social-graphics': {
+      title: t("dashboardTools.socialGraphics.title"),
+      description: `${t("dashboardTools.socialGraphics.description")}\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.imageGeneration} ${t("dashboardTools.socialGraphics.priceLabel")}`,
+      iconName: 'Share2',
+      iconColor: 'text-green-600',
+      bgColor: 'bg-green-600/10',
+      placeholder: t("dashboardTools.socialGraphics.placeholder")
+    },
+    'album-cover': {
+      title: t("dashboardTools.albumCover.title"),
+      description: `${t("dashboardTools.albumCover.description")}\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.imageGeneration} ${t("dashboardTools.albumCover.priceLabel")}`,
+      iconName: 'Disc',
+      iconColor: 'text-indigo-600',
+      bgColor: 'bg-indigo-600/10',
+      placeholder: t("dashboardTools.albumCover.placeholder")
+    }
+  };
 
   // Получаем конфигурацию для текущего инструмента
   const currentTool = toolConfigs[toolId as keyof typeof toolConfigs] || toolConfigs['image-generation'];
@@ -102,7 +104,7 @@ const PhotoPage = () => {
       if (error?.response?.status === 403) {
         proModal.onOpen();
       } else {
-        toast.error("Something went wrong.");
+        toast.error(t("dashboardTools.error"));
       }
     } finally {
       router.refresh();
@@ -154,7 +156,7 @@ const PhotoPage = () => {
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue defaultValue={field.value} />
+                        <SelectValue placeholder={t("dashboardTools.selectResolution")} defaultValue={field.value} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -177,7 +179,7 @@ const PhotoPage = () => {
               disabled={isLoading}
               size="icon"
             >
-              Generate
+              {isLoading ? t("dashboardTools.generating") : t("dashboardTools.generate")}
             </Button>
           </form>
         </Form>
@@ -188,7 +190,7 @@ const PhotoPage = () => {
             </div>
           )}
           {photos.length === 0 && !isLoading && (
-            <Empty label="No results yet" />
+            <Empty label={t("dashboardTools.noResults")} />
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {photos.map((src) => (
@@ -202,7 +204,7 @@ const PhotoPage = () => {
                     className={cn(buttonStyles.secondary, "w-full")}
                   >
                     <Download className="h-4 w-4 mr-2" />
-                    Download
+                    {t("dashboardTools.download")}
                   </Button>
                 </CardFooter>
               </Card>

@@ -35,6 +35,7 @@ import {
 import Image from "next/image";
 import { UsageProgress } from "./usage-progress";
 import { tools } from "@/constants";
+import { useTranslations } from "next-intl";
 
 // Инструменты для видео-креаторов
 const videoCreatorTools = tools.filter((tool) =>
@@ -66,6 +67,8 @@ export function MainNav({
   initialUsedGenerations: number;
   initialAvailableGenerations: number;
 }) {
+  const t = useTranslations();
+
   return (
     <div className="flex items-center justify-between w-full bg-white">
       <div className="flex items-center gap-8">
@@ -81,7 +84,7 @@ export function MainNav({
             <NavigationMenuItem>
               <NavigationMenuTrigger className="nav-link bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent">
                 <Video className="mr-2 h-4 w-4 text-blue-600" />
-                Co-Director
+                {t("professions.coDirector")}
               </NavigationMenuTrigger>
               <NavigationMenuContent className="bg-white backdrop-blur-xl border border-violet-300 rounded-xl overflow-hidden shadow-lg">
                 <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
@@ -103,7 +106,7 @@ export function MainNav({
             <NavigationMenuItem>
               <NavigationMenuTrigger className="nav-link bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent">
                 <Palette className="mr-2 h-4 w-4 text-blue-600" />
-                Design Partner
+                {t("professions.designPartner")}
               </NavigationMenuTrigger>
               <NavigationMenuContent className="bg-white backdrop-blur-xl border border-pink-300 rounded-xl overflow-hidden shadow-lg">
                 <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
@@ -125,7 +128,7 @@ export function MainNav({
             <NavigationMenuItem>
               <NavigationMenuTrigger className="nav-link bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent">
                 <Music className="mr-2 h-4 w-4 text-blue-600" />
-                Co-Composer
+                {t("professions.coComposer")}
               </NavigationMenuTrigger>
               <NavigationMenuContent className="bg-white backdrop-blur-xl border border-blue-300 rounded-xl overflow-hidden shadow-lg">
                 <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
@@ -147,7 +150,7 @@ export function MainNav({
             <NavigationMenuItem>
               <NavigationMenuTrigger className="nav-link bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent">
                 <Lightbulb className="mr-2 h-4 w-4 text-blue-600" />
-                Creative Partner
+                {t("professions.creativePartner")}
               </NavigationMenuTrigger>
               <NavigationMenuContent className="bg-white backdrop-blur-xl border border-emerald-300 rounded-xl overflow-hidden shadow-lg">
                 <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
@@ -170,7 +173,7 @@ export function MainNav({
               <Link href={"/dashboard/billing/payment-history"}>
                 <div className="nav-link cursor-pointer group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 group bg-transparent">
                   <Banknote className="mr-2 h-4 w-4 text-blue-600" />
-                  Payments
+                  {t("dashboardNav.payments")}
                 </div>
               </Link>
             </NavigationMenuItem>

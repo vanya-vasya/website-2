@@ -27,34 +27,7 @@ import { cn } from "@/lib/utils";
 
 import { duration, formSchema } from "./constants";
 import { MODEL_GENERATIONS_PRICE } from "@/constants";
-
-// Конфигурация для разных типов инструментов
-const toolConfigs = {
-  'music-generation': {
-    title: 'Music Generation',
-    description: `Turn your prompt into music. Generation can take from 1 to 5 minutes\nPrice: ${MODEL_GENERATIONS_PRICE.musicGeneration} credits`,
-    iconName: 'Music',
-    iconColor: 'text-violet-500',
-    bgColor: 'bg-violet-500/10',
-    placeholder: 'Piano solo'
-  },
-  'music-composition': {
-    title: 'Compose Assist',
-    description: `Get AI assistance composing melodies, chord progressions, and full arrangements\nPrice: ${MODEL_GENERATIONS_PRICE.musicGeneration} credits`,
-    iconName: 'Music',
-    iconColor: 'text-blue-500',
-    bgColor: 'bg-blue-500/10',
-    placeholder: 'Dramatic orchestral composition featuring strings and percussion'
-  },
-  'sound-effects': {
-    title: 'SFX Generator',
-    description: `Create unique sound effects for your music tracks and productions\nPrice: ${MODEL_GENERATIONS_PRICE.musicGeneration} credits`,
-    iconName: 'Volume2',
-    iconColor: 'text-indigo-500',
-    bgColor: 'bg-indigo-500/10',
-    placeholder: 'Epic spaceship engine roar'
-  }
-};
+import { useTranslations } from "next-intl";
 
 const MusicPage = () => {
   const proModal = useProModal();
@@ -62,6 +35,35 @@ const MusicPage = () => {
   const searchParams = useSearchParams();
   const toolId = searchParams.get('toolId') || 'music-generation';
   const [musicList, setListMusic] = useState<string[]>([]);
+  const t = useTranslations();
+
+  // Конфигурация для разных типов инструментов
+  const toolConfigs = {
+    'music-generation': {
+      title: t("dashboardTools.musicGeneration.title"),
+      description: `${t("dashboardTools.musicGeneration.description")}\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.musicGeneration} ${t("dashboardTools.musicGeneration.priceLabel")}`,
+      iconName: 'Music',
+      iconColor: 'text-violet-500',
+      bgColor: 'bg-violet-500/10',
+      placeholder: t("dashboardTools.musicGeneration.placeholder")
+    },
+    'music-composition': {
+      title: t("dashboardTools.composeAssist.title"),
+      description: `${t("dashboardTools.composeAssist.description")}\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.musicGeneration} ${t("dashboardTools.composeAssist.priceLabel")}`,
+      iconName: 'Music',
+      iconColor: 'text-blue-500',
+      bgColor: 'bg-blue-500/10',
+      placeholder: t("dashboardTools.composeAssist.placeholder")
+    },
+    'sound-effects': {
+      title: t("dashboardTools.sfxGenerator.title"),
+      description: `${t("dashboardTools.sfxGenerator.description")}\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.musicGeneration} ${t("dashboardTools.sfxGenerator.priceLabel")}`,
+      iconName: 'Volume2',
+      iconColor: 'text-indigo-500',
+      bgColor: 'bg-indigo-500/10',
+      placeholder: t("dashboardTools.sfxGenerator.placeholder")
+    }
+  };
 
   // Получаем конфигурацию для текущего инструмента
   const currentTool = toolConfigs[toolId as keyof typeof toolConfigs] || toolConfigs['music-generation'];
@@ -90,7 +92,7 @@ const MusicPage = () => {
       if (error?.response?.status === 403) {
         proModal.onOpen();
       } else {
-        toast.error("Something went wrong.");
+        toast.error(t("dashboardTools.error"));
       }
     } finally {
       router.refresh();
@@ -165,7 +167,7 @@ const MusicPage = () => {
               disabled={isLoading}
               size="icon"
             >
-              Generate
+              {isLoading ? t("dashboardTools.generating") : t("dashboardTools.generate")}
             </Button>
           </form>
         </Form>
@@ -176,7 +178,7 @@ const MusicPage = () => {
             </div>
           )}
           {musicList.length === 0 && !isLoading && (
-            <Empty label="No results yet" />
+            <Empty label={t("dashboardTools.noResults")} />
           )}
           <div className="space-y-4">
             {musicList.map((music, index) => (

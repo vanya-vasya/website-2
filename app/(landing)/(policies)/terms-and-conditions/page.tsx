@@ -1,6 +1,11 @@
+"use client";
+
 import CTA from "@/components/landing/cta";
+import { useTranslations } from "next-intl";
 
 const TermsAndConditions = () => {
+  const t = useTranslations("policies.termsAndConditions");
+
   return (
     <div style={{ fontFamily: 'Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', backgroundColor: 'white', color: 'black', minHeight: '100vh' }}>
       <section className="page-title" style={{ backgroundColor: 'white', position: 'relative' }}>
@@ -26,13 +31,13 @@ const TermsAndConditions = () => {
         <div className="container">
           <div className="page-title__inner" style={{ padding: '60px 0 40px' }}>
             <div className="page-title__title-box">
-              <h3 className="page-title__title" style={{ color: 'black', fontSize: '32px', marginBottom: '20px' }}>Terms and Conditions</h3>
+              <h3 className="page-title__title" style={{ color: 'black', fontSize: '32px', marginBottom: '20px' }}>{t("title")}</h3>
             </div>
             <p className="page-title__text" style={{ color: 'black' }}>
-              Updated: 25 October 2025
+              {t("updated")}
             </p>
             <p className="page-title__text" style={{ color: 'black', marginTop: '10px' }}>
-              These Terms and Conditions outline the key rules and requirements for using our services. We encourage you to read them carefully.
+              {t("intro")}
             </p>
           </div>
         </div>
@@ -45,155 +50,145 @@ const TermsAndConditions = () => {
                 <div className="career-page-top__content-box-two">
 
                   <p className="career-page-top__text-1 pt-8" style={{ color: 'black' }}>
-                    Welcome to nerbixa.com! These Terms and Conditions (&quot;Terms&quot;) represent a legal agreement between you (&quot;User&quot;) and GUΑRΑΝТЕЕD GRЕΑТ SЕRVIСЕ LТD (&quot;Company&quot;). By accessing or using our website and the AI-powered content generation services we provide, you agree to comply with and be bound by these Terms.
+                    {t("welcome")}
                   </p>
                   <p className="career-page-top__text-1 pt-8" style={{ color: 'black' }}>
-                    By accessing our site and using our services, you agree to comply with these Terms. If you do not agree to these Terms, please refrain from using our services.
+                    {t("agree")}
                   </p>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
-                    1. Use of Services
+                    {t("useOfServices")}
                   </h4>
-                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>Eligibility</h4>
+                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>{t("eligibility")}</h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    You must be at least 18 years old and legally capable of entering into a binding agreement to use our services.
+                    {t("eligibilityDesc")}
                   </p>
-                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>Registration</h4>
+                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>{t("registration")}</h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    To access our AI content generation services, you must first create an account. During the registration process, you agree to provide accurate, current, and complete information. You are solely responsible for safeguarding your account credentials and for any actions or activities carried out under your account.
-                  </p>
-                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
-                    2. AI Generations
-                  </h4>
-                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>Free Generations</h4>
-                  <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    Upon registration, you will receive a limited number of free generations. These free generations are provided at our discretion and may be subject to change.
+                    {t("registrationDesc")}
                   </p>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
-                    AI Generation Models
+                    {t("aiGenerations")}
+                  </h4>
+                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>{t("freeGenerations")}</h4>
+                  <p className="career-page-top__text-1" style={{ color: 'black' }}>
+                    {t("freeGenerationsDesc")}
+                  </p>
+                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
+                    {t("aiGenerationModels")}
                   </h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    We offer various AI generation models, each requiring a specific number of generations to create content. The available models and their requirements are as follows:
+                    {t("aiGenerationModelsDesc")}
                   </p>
                   <ul className="career-page-top__points-list list-unstyled">
                     <li className="mt-[26px]">
                       <div className="career-page-top__points-shape"></div>
-                      <p style={{ color: 'black' }}>AI Chat Assistant: 1 generation per interaction</p>
+                      <p style={{ color: 'black' }}>{t("chatAssistant")}</p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
-                      <p style={{ color: 'black' }}>Image Generation: 14 generations per image</p>
+                      <p style={{ color: 'black' }}>{t("imageGeneration")}</p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
-                      <p style={{ color: 'black' }}>Video Generation: 20 generations per video</p>
+                      <p style={{ color: 'black' }}>{t("videoGeneration")}</p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
-                      <p style={{ color: 'black' }}>Music Generation: 11 generations per music piece</p>
+                      <p style={{ color: 'black' }}>{t("musicGeneration")}</p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
-                      <p style={{ color: 'black' }}>Speech Generation: 13 generations per speech piece</p>
+                      <p style={{ color: 'black' }}>{t("speechGeneration")}</p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
-                      <p style={{ color: 'black' }}>Code Generation: 5 generations per code snippet</p>
+                      <p style={{ color: 'black' }}>{t("codeGeneration")}</p>
                     </li>
                   </ul>
                   <p className="career-page-top__text-1 mt-[26px]" style={{ color: 'black' }}>
-                    Users start with 20 free generations upon registration. For example, a user can generate 1 image, or generate a music piece.
+                    {t("freeGenerationsExample")}
                   </p>
-                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>3. User Conduct</h4>
+                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>{t("userConduct")}</h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    You agree not to use our services for any unlawful or
-                    prohibited activities, including but not limited to:
-                  </p>
-                  <ul className="career-page-top__points-list list-unstyled">
-                    <li className="mt-[26px]">
-                      <div className="career-page-top__points-shape"></div>
-                      <p style={{ color: 'black' }}>Violating any applicable laws or regulations</p>
-                    </li>
-                    <li>
-                      <div className="career-page-top__points-shape"></div>
-                      <p style={{ color: 'black' }}>
-                        Infringing on the intellectual property rights of others
-                      </p>
-                    </li>
-                    <li>
-                      <div className="career-page-top__points-shape"></div>
-                      <p style={{ color: 'black' }}>Distributing harmful or malicious software</p>
-                    </li>
-                    <li>
-                      <div className="career-page-top__points-shape"></div>
-                      <p style={{ color: 'black' }}>
-                        Engaging in any activity that disrupts or interferes
-                        with our services
-                      </p>
-                    </li>
-                  </ul>
-                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
-                    4. Intellectual Property
-                  </h4>
-                  <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    All content generated through our platform is the sole property of the user who creates it. GUΑRΑΝТЕЕD GRЕΑТ SЕRVIСЕ LТD does not claim any ownership rights over the generated content. You retain full rights to use, distribute, modify, and create derivative works from the content you produce. The Company merely provides the tools and platform for generation and does not require or assume any rights to your creations.
-                  </p>
-                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
-                    5. Disclaimer of Warranties
-                  </h4>
-                  <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    Our services are provided &quot;as is&quot; and &quot;as
-                    available&quot; without any warranties of any kind, either
-                    express or implied. We do not warrant that our services will
-                    be uninterrupted, error-free, or secure.
-                  </p>
-                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
-                    6. Limitation of Liability
-                  </h4>
-                  <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    To the fullest extent permitted by law, GUΑRΑΝТЕЕD GRЕΑТ SЕRVIСЕ LТD shall not be held liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, revenues, data, use, goodwill, or other intangible assets, whether incurred directly or indirectly, arising from:
+                    {t("userConductDesc")}
                   </p>
                   <ul className="career-page-top__points-list list-unstyled">
                     <li className="mt-[26px]">
                       <div className="career-page-top__points-shape"></div>
-                      <p style={{ color: 'black' }}>Your use or inability to use our services</p>
+                      <p style={{ color: 'black' }}>{t("violatingLaws")}</p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
                       <p style={{ color: 'black' }}>
-                        Any unauthorized access to or use of our servers and/or any personal information stored therein
+                        {t("infringing")}
                       </p>
                     </li>
                     <li>
                       <div className="career-page-top__points-shape"></div>
+                      <p style={{ color: 'black' }}>{t("harmfulSoftware")}</p>
+                    </li>
+                    <li>
+                      <div className="career-page-top__points-shape"></div>
                       <p style={{ color: 'black' }}>
-                        Any bugs, viruses, or other harmful code that may be transmitted to or through our services
+                        {t("disrupting")}
                       </p>
                     </li>
                   </ul>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
-                    7. Indemnification
+                    {t("intellectualProperty")}
                   </h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    You agree to indemnify and hold harmless GUΑRΑΝТЕЕD GRЕΑТ SЕRVIСЕ LТD, its affiliates, and their respective officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, or expenses (including reasonable attorneys&apos; fees) that arise out of or are in any way connected to your use of our services or your breach of these Terms.
+                    {t("intellectualPropertyDesc")}
                   </p>
                   <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
-                    8. Changes to These Terms
+                    {t("disclaimer")}
                   </h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    We may update these Terms from time to time. When we do, we
-                    will post the updated Terms on this page and update the
-                    effective date at the top. We encourage you to review these
-                    Terms periodically to stay informed about your rights and
-                    obligations.
+                    {t("disclaimerDesc")}
                   </p>
-                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>9. Governing Law</h4>
+                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
+                    {t("limitation")}
+                  </h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    These Terms shall be governed by and construed in accordance with the laws of the United Kingdom, without regard to its conflict of law principles.
+                    {t("limitationDesc")}
                   </p>
-                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>10. Contact Us</h4>
+                  <ul className="career-page-top__points-list list-unstyled">
+                    <li className="mt-[26px]">
+                      <div className="career-page-top__points-shape"></div>
+                      <p style={{ color: 'black' }}>{t("useInability")}</p>
+                    </li>
+                    <li>
+                      <div className="career-page-top__points-shape"></div>
+                      <p style={{ color: 'black' }}>
+                        {t("unauthorizedAccess")}
+                      </p>
+                    </li>
+                    <li>
+                      <div className="career-page-top__points-shape"></div>
+                      <p style={{ color: 'black' }}>
+                        {t("bugsViruses")}
+                      </p>
+                    </li>
+                  </ul>
+                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
+                    {t("indemnification")}
+                  </h4>
                   <p className="career-page-top__text-1" style={{ color: 'black' }}>
-                    If you have any questions or concerns about these Terms,
-                    please contact us at support@nerbixa.com.
+                    {t("indemnificationDesc")}
+                  </p>
+                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>
+                    {t("changes")}
+                  </h4>
+                  <p className="career-page-top__text-1" style={{ color: 'black' }}>
+                    {t("changesDesc")}
+                  </p>
+                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>{t("governingLaw")}</h4>
+                  <p className="career-page-top__text-1" style={{ color: 'black' }}>
+                    {t("governingLawDesc")}
+                  </p>
+                  <h4 className="career-page-top__title-3" style={{ color: 'black' }}>{t("contactUs")}</h4>
+                  <p className="career-page-top__text-1" style={{ color: 'black' }}>
+                    {t("contactUsDesc")}
                   </p>
                 </div>
               </div>

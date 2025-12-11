@@ -22,63 +22,12 @@ import { inputStyles, buttonStyles, contentStyles, messageStyles, loadingStyles 
 
 import { formSchema } from "./constants";
 import { MODEL_GENERATIONS_PRICE, tools } from "@/constants";
+import { useTranslations } from "next-intl";
 
 // Define ChatCompletionRequestMessage type locally
 type ChatCompletionRequestMessage = {
   role: 'user' | 'system' | 'assistant';
   content: string;
-};
-
-// Конфигурация для разных типов инструментов
-const toolConfigs = {
-  'chat-assistant': {
-    title: 'Chat Assistant',
-    description: `Our most advanced conversation model\nPrice: ${MODEL_GENERATIONS_PRICE.conversation} credits`,
-    iconName: 'MessageSquare',
-    iconColor: 'text-red-600',
-    bgColor: 'bg-red-600/10',
-    placeholder: 'Ask me anything - from complex problems to creative brainstorming...'
-  },
-  'video-script': {
-    title: 'Script Builder',
-    description: `Generate industry-ready scripts and storyboards for your videos\nPrice: ${MODEL_GENERATIONS_PRICE.conversation} credits`,
-    iconName: 'Clapperboard',
-    iconColor: 'text-black',
-    bgColor: 'bg-violet-600/10',
-    placeholder: 'Write a compelling video script about sustainable travel for millennials...'
-  },
-  'song-lyrics': {
-    title: 'Lyric Writer',
-    description: `Generate creative and inspiring lyrics for your music\nPrice: ${MODEL_GENERATIONS_PRICE.conversation} credits`,
-    iconName: 'FileAudio',
-    iconColor: 'text-blue-600',
-    bgColor: 'bg-blue-600/10',
-    placeholder: 'Craft powerful lyrics about resilience and personal growth in any genre'
-  },
-  'blog-ideas': {
-    title: 'Blog Ideas',
-    description: `Generate engaging blog topics and outlines for your audience\nPrice: ${MODEL_GENERATIONS_PRICE.conversation} credits`,
-    iconName: 'BookOpen',
-    iconColor: 'text-emerald-600',
-    bgColor: 'bg-emerald-600/10',
-    placeholder: 'Brainstorm viral blog topics for modern lifestyle and wellness trends'
-  },
-  'content-calendar': {
-    title: 'Content Planner',
-    description: `Plan and organize your content schedule for maximum engagement\nPrice: ${MODEL_GENERATIONS_PRICE.conversation} credits`,
-    iconName: 'Calendar',
-    iconColor: 'text-teal-600',
-    bgColor: 'bg-teal-600/10',
-    placeholder: 'Create a comprehensive content schedule that maximizes engagement across social media and marketing channels'
-  },
-  'caption-generator': {
-    title: 'Caption Generator',
-    description: `Write compelling captions that drive measurable engagement\nPrice: ${MODEL_GENERATIONS_PRICE.conversation} credits`,
-    iconName: 'Type',
-    iconColor: 'text-green-500',
-    bgColor: 'bg-green-500/10',
-    placeholder: 'Create captivating captions that spark engagement and boost conversions'
-  },
 };
 
 const ConversationPage = () => {
@@ -87,6 +36,59 @@ const ConversationPage = () => {
   const toolId = searchParams.get('toolId') || 'chat-assistant';
   const proModal = useProModal();
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+  const t = useTranslations();
+
+  // Конфигурация для разных типов инструментов
+  const toolConfigs = {
+    'chat-assistant': {
+      title: t("dashboardTools.chatAssistant.title"),
+      description: `${t("dashboardTools.chatAssistant.description")}\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.conversation} ${t("dashboardTools.chatAssistant.priceLabel")}`,
+      iconName: 'MessageSquare',
+      iconColor: 'text-red-600',
+      bgColor: 'bg-red-600/10',
+      placeholder: t("dashboardTools.chatAssistant.placeholder")
+    },
+    'video-script': {
+      title: t("dashboardTools.scriptBuilder.title"),
+      description: `${t("dashboardTools.scriptBuilder.description")}\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.conversation} ${t("dashboardTools.scriptBuilder.priceLabel")}`,
+      iconName: 'Clapperboard',
+      iconColor: 'text-black',
+      bgColor: 'bg-violet-600/10',
+      placeholder: t("dashboardTools.scriptBuilder.placeholder")
+    },
+    'song-lyrics': {
+      title: t("dashboardTools.songLyrics.title"),
+      description: `${t("dashboardTools.songLyrics.description")}\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.conversation} ${t("dashboardTools.songLyrics.priceLabel")}`,
+      iconName: 'FileAudio',
+      iconColor: 'text-blue-600',
+      bgColor: 'bg-blue-600/10',
+      placeholder: t("dashboardTools.songLyrics.placeholder")
+    },
+    'blog-ideas': {
+      title: t("dashboardTools.blogIdeas.title"),
+      description: `${t("dashboardTools.blogIdeas.description")}\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.conversation} ${t("dashboardTools.blogIdeas.priceLabel")}`,
+      iconName: 'BookOpen',
+      iconColor: 'text-emerald-600',
+      bgColor: 'bg-emerald-600/10',
+      placeholder: t("dashboardTools.blogIdeas.placeholder")
+    },
+    'content-calendar': {
+      title: t("dashboardTools.contentCalendar.title"),
+      description: `${t("dashboardTools.contentCalendar.description")}\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.conversation} ${t("dashboardTools.contentCalendar.priceLabel")}`,
+      iconName: 'Calendar',
+      iconColor: 'text-teal-600',
+      bgColor: 'bg-teal-600/10',
+      placeholder: t("dashboardTools.contentCalendar.placeholder")
+    },
+    'caption-generator': {
+      title: t("dashboardTools.captionGenerator.title"),
+      description: `${t("dashboardTools.captionGenerator.description")}\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.conversation} ${t("dashboardTools.captionGenerator.priceLabel")}`,
+      iconName: 'Type',
+      iconColor: 'text-green-500',
+      bgColor: 'bg-green-500/10',
+      placeholder: t("dashboardTools.captionGenerator.placeholder")
+    },
+  };
 
   // Получаем конфигурацию для текущего инструмента
   const currentTool = toolConfigs[toolId as keyof typeof toolConfigs] || toolConfigs['chat-assistant'];
@@ -123,7 +125,7 @@ const ConversationPage = () => {
       if (error?.response?.status === 403) {
         proModal.onOpen();
       } else {
-        toast.error("Something went wrong.");
+        toast.error(t("dashboardTools.error"));
       }
     } finally {
       router.refresh();
@@ -169,7 +171,7 @@ const ConversationPage = () => {
               disabled={isLoading}
               size="icon"
             >
-              Generate
+              {isLoading ? t("dashboardTools.generating") : t("dashboardTools.generate")}
             </Button>
           </form>
         </Form>
@@ -180,7 +182,7 @@ const ConversationPage = () => {
             </div>
           )}
           {messages.length === 0 && !isLoading && (
-            <Empty label="No results yet" />
+            <Empty label={t("dashboardTools.noResults")} />
           )}
           <div className="flex flex-col-reverse gap-y-4">
             {messages.map((message) => (

@@ -9,6 +9,8 @@ import { UsageProgress } from "@/components/usage-progress";
 import { AnimatedLayout, AnimatedPage } from "@/components/animated-layout";
 import Link from "next/link";
 import Image from "next/image";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { PolicyLinks } from "@/components/policy-links";
 
 export default async function DashboardLayout({
   children,
@@ -39,6 +41,9 @@ export default async function DashboardLayout({
                 initialUsedGenerations={apiUsedGenerations}
                 initialAvailableGenerations={apiAvailableGenerations}
               />
+            </div>
+            <div className="hidden sm:block">
+              <LanguageSwitcher />
             </div>
             <div className="dashboard-clerk-avatar rounded-full bg-indigo-500/10 border border-indigo-500/20 backdrop-filter backdrop-blur-sm hover:bg-indigo-500/10 hover:border-indigo-500/20 hover:shadow-none active:bg-indigo-500/10 focus:outline-none focus:ring-0">
               <UserButton afterSignOutUrl="/" />
@@ -73,66 +78,7 @@ export default async function DashboardLayout({
               Copyright © {new Date().getFullYear()}. All rights reserved.
             </p>
             <div className="flex space-x-4">
-              <Link 
-                href="/privacy-policy" 
-                className="hover:text-indigo-600"
-                style={{
-                  fontFamily: 'Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                  fontWeight: 600,
-                  fontSize: '14px',
-                  lineHeight: 1.2,
-                  letterSpacing: '0.01em',
-                  textTransform: 'none',
-                  color: '#0f172a'
-                }}
-              >
-                Privacy Policy
-              </Link>
-              <Link
-                href="/terms-and-conditions"
-                className="hover:text-indigo-600"
-                style={{
-                  fontFamily: 'Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                  fontWeight: 600,
-                  fontSize: '14px',
-                  lineHeight: 1.2,
-                  letterSpacing: '0.01em',
-                  textTransform: 'none',
-                  color: '#0f172a'
-                }}
-              >
-                Terms and Conditions
-              </Link>
-              <Link 
-                href="/return-policy" 
-                className="hover:text-indigo-600"
-                style={{
-                  fontFamily: 'Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                  fontWeight: 600,
-                  fontSize: '14px',
-                  lineHeight: 1.2,
-                  letterSpacing: '0.01em',
-                  textTransform: 'none',
-                  color: '#0f172a'
-                }}
-              >
-                Return Policy
-              </Link>
-              <Link 
-                href="/cookies-policy" 
-                className="hover:text-indigo-600"
-                style={{
-                  fontFamily: 'Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                  fontWeight: 600,
-                  fontSize: '14px',
-                  lineHeight: 1.2,
-                  letterSpacing: '0.01em',
-                  textTransform: 'none',
-                  color: '#0f172a'
-                }}
-              >
-                Cookies Policy
-              </Link>
+              <PolicyLinks />
             </div>
           </div>
           <div className="flex justify-center mt-6">

@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import db from '@/lib/db';
 
 /**
- * Networx Payment Webhook Handler
+ * Secure-processor Payment Webhook Handler
  * 
  * DATA SEPARATION POLICY:
  * ========================
@@ -20,7 +20,7 @@ import db from '@/lib/db';
  * - Only update User table for balance changes on successful payments
  */
 
-// Verify webhook signature according to Networx documentation
+// Verify webhook signature according to Secure-processor documentation
 function verifyWebhookSignature(data: Record<string, any>, signature: string, secretKey: string): boolean {
   const { signature: _, ...dataForSignature } = data;
 
@@ -49,7 +49,7 @@ function extractTokensFromDescription(description: string): number | null {
   return match ? parseInt(match[1], 10) : null;
 }
 
-// POST - Handle webhook notifications from Networx
+// POST - Handle webhook notifications from Secure-processor
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
   let transactionId: string | undefined;
@@ -60,11 +60,11 @@ export async function POST(request: NextRequest) {
     
     // LOG RAW BODY FOR DEBUGGING
     console.log('═══════════════════════════════════════════════════════');
-    console.log('📥 Networx Webhook Received - RAW BODY:');
+    console.log('📥 Secure-processor Webhook Received - RAW BODY:');
     console.log(JSON.stringify(body, null, 2));
     console.log('═══════════════════════════════════════════════════════');
     
-    // CRITICAL FIX: Networx sends data inside "transaction" object
+    // CRITICAL FIX: Secure-processor sends data inside "transaction" object
     const transaction = body.transaction;
     if (!transaction) {
       console.error('❌ Missing transaction object in webhook payload');
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     const { 
       status, 
-      uid, // Networx uses "uid", not "transaction_id"
+      uid, // Secure-processor uses "uid", not "transaction_id"
       amount, 
       currency, 
       type,
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
     userId = tracking_id;
 
     console.log('═══════════════════════════════════════════════════════');
-    console.log('📥 Networx Webhook Parsed Data:');
+    console.log('📥 Secure-processor Webhook Parsed Data:');
     console.log('Timestamp:', new Date().toISOString());
     console.log('Transaction ID (uid):', transaction_id);
     console.log('Status:', status);
@@ -107,10 +107,10 @@ export async function POST(request: NextRequest) {
     console.log('Paid At:', paid_at);
     console.log('═══════════════════════════════════════════════════════');
 
-    // Get signature from headers (Networx sends it as X-Signature header)
+    // Get signature from headers (Secure-processor sends it as X-Signature header)
     const signature = request.headers.get('x-signature') || request.headers.get('X-Signature');
     
-    // Networx might not send signature for test transactions
+    // Secure-processor might not send signature for test transactions
     const isTestTransaction = transaction.test === true;
     
     // ENHANCED TEST MODE LOGGING
@@ -133,9 +133,9 @@ export async function POST(request: NextRequest) {
     }
 
     if (signature) {
-      const secretKey = process.env.NETWORX_SECRET_KEY || 'dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950';
+      const secretKey = process.env.SECURE_PROCESSOR_SECRET_KEY || 'dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950';
       if (!secretKey) {
-        console.error('❌ NETWORX_SECRET_KEY not configured');
+        console.error('❌ SECURE_PROCESSOR_SECRET_KEY not configured');
         return NextResponse.json(
           { error: 'Server configuration error' },
           { status: 500 }
@@ -173,7 +173,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Process statuses according to Networx documentation
+    // Process statuses according to Secure-processor documentation
     switch (status) {
       case 'success':
       case 'successful':
@@ -476,7 +476,7 @@ export async function POST(request: NextRequest) {
         console.log(`❓ Unknown payment status: ${status} for transaction ${transaction_id}`);
     }
 
-    // Return successful response according to Networx requirements
+    // Return successful response according to Secure-processor requirements
     return NextResponse.json({ status: 'ok' }, { status: 200 });
 
   } catch (error) {
@@ -501,7 +501,7 @@ export async function POST(request: NextRequest) {
 // GET - For checking endpoint availability
 export async function GET() {
   return NextResponse.json({
-    message: 'Networx webhook endpoint is active',
+    message: 'Secure-processor webhook endpoint is active',
     timestamp: new Date().toISOString(),
   });
 }

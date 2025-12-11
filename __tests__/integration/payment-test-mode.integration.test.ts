@@ -72,7 +72,7 @@ describe('Payment Flow - Test Mode', () => {
         },
       };
 
-      const response = await fetch('http://localhost:3000/api/webhooks/networx', {
+      const response = await fetch('http://localhost:3000/api/webhooks/secure-processor', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ describe('Payment Flow - Test Mode', () => {
       };
 
       // First webhook call
-      const response1 = await fetch('http://localhost:3000/api/webhooks/networx', {
+      const response1 = await fetch('http://localhost:3000/api/webhooks/secure-processor', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -146,7 +146,7 @@ describe('Payment Flow - Test Mode', () => {
       const balanceAfterFirst = userResultAfterFirst.rows[0].availableGenerations;
 
       // Second webhook call (duplicate)
-      const response2 = await fetch('http://localhost:3000/api/webhooks/networx', {
+      const response2 = await fetch('http://localhost:3000/api/webhooks/secure-processor', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -198,7 +198,7 @@ describe('Payment Flow - Test Mode', () => {
         },
       };
 
-      const response = await fetch('http://localhost:3000/api/webhooks/networx', {
+      const response = await fetch('http://localhost:3000/api/webhooks/secure-processor', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -233,7 +233,7 @@ describe('Payment Flow - Test Mode', () => {
         },
       };
 
-      const response = await fetch('http://localhost:3000/api/webhooks/networx', {
+      const response = await fetch('http://localhost:3000/api/webhooks/secure-processor', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -268,7 +268,7 @@ describe('Payment Flow - Test Mode', () => {
         },
       };
 
-      const response = await fetch('http://localhost:3000/api/webhooks/networx', {
+      const response = await fetch('http://localhost:3000/api/webhooks/secure-processor', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

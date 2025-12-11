@@ -11,7 +11,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { POST as paymentAPI } from '@/app/api/payment/networx/route';
+import { POST as paymentAPI } from '@/app/api/payment/secure-processor/route';
 
 // Mock environment variables
 const mockEnv = {
@@ -48,7 +48,7 @@ describe('Payment Dashboard Redirect Integration', () => {
         userId: 'user_test123',
       };
 
-      const request = new NextRequest('http://localhost:3000/api/payment/networx', {
+      const request = new NextRequest('http://localhost:3000/api/payment/secure-processor', {
         method: 'POST',
         body: JSON.stringify(requestBody),
       });
@@ -92,7 +92,7 @@ describe('Payment Dashboard Redirect Integration', () => {
         userId: 'user_custom456',
       };
 
-      const request = new NextRequest('http://localhost:3000/api/payment/networx', {
+      const request = new NextRequest('http://localhost:3000/api/payment/secure-processor', {
         method: 'POST',
         body: JSON.stringify(requestBody),
       });
@@ -134,7 +134,7 @@ describe('Payment Dashboard Redirect Integration', () => {
         userId: 'user_order123',
       };
 
-      const request = new NextRequest('http://localhost:3000/api/payment/networx', {
+      const request = new NextRequest('http://localhost:3000/api/payment/secure-processor', {
         method: 'POST',
         body: JSON.stringify(requestBody),
       });
@@ -296,7 +296,7 @@ describe('Payment Dashboard Redirect Integration', () => {
         userId: 'user_error123',
       };
 
-      const request = new NextRequest('http://localhost:3000/api/payment/networx', {
+      const request = new NextRequest('http://localhost:3000/api/payment/secure-processor', {
         method: 'POST',
         body: JSON.stringify(requestBody),
       });

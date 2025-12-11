@@ -7,7 +7,7 @@
  */
 
 import { NextRequest } from 'next/server';
-import { POST as paymentAPI } from '@/app/api/payment/networx/route';
+import { POST as paymentAPI } from '@/app/api/payment/secure-processor/route';
 
 describe('E2E: Payment to Dashboard Redirect Flow', () => {
   const mockEnv = {
@@ -64,7 +64,7 @@ describe('E2E: Payment to Dashboard Redirect Flow', () => {
       userId,
     };
 
-    const request = new NextRequest('http://localhost:3000/api/payment/networx', {
+    const request = new NextRequest('http://localhost:3000/api/payment/secure-processor', {
       method: 'POST',
       body: JSON.stringify(requestBody),
     });
@@ -214,7 +214,7 @@ describe('E2E: Payment to Dashboard Redirect Flow', () => {
       
       process.env.NETWORX_RETURN_URL = env.NETWORX_RETURN_URL;
 
-      const request = new NextRequest('http://localhost:3000/api/payment/networx', {
+      const request = new NextRequest('http://localhost:3000/api/payment/secure-processor', {
         method: 'POST',
         body: JSON.stringify({
           amount: 10,
@@ -258,7 +258,7 @@ describe('E2E: Payment to Dashboard Redirect Flow', () => {
   it('should include all required parameters in return URL', async () => {
     const orderId = 'test_params_123';
 
-    const request = new NextRequest('http://localhost:3000/api/payment/networx', {
+    const request = new NextRequest('http://localhost:3000/api/payment/secure-processor', {
       method: 'POST',
       body: JSON.stringify({
         amount: 5,
@@ -309,7 +309,7 @@ describe('E2E: Payment to Dashboard Redirect Flow', () => {
       '',
     ];
 
-    const request = new NextRequest('http://localhost:3000/api/payment/networx', {
+    const request = new NextRequest('http://localhost:3000/api/payment/secure-processor', {
       method: 'POST',
       body: JSON.stringify({
         amount: 10,

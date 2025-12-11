@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { NetworkPaymentWidget } from '@/components/networx-payment-widget';
+import { NetworkPaymentWidget } from '@/components/secure-processor-payment-widget';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,7 +18,7 @@ const PaymentTestPage = () => {
     amount: 10.00,
     currency: 'USD',
     orderId: `order_${Date.now()}`,
-    description: 'Test payment via Networx Payment Gateway',
+    description: 'Test payment via Secure-processor Payment Gateway',
     customerEmail: 'test@example.com',
   });
 
@@ -56,7 +56,7 @@ const PaymentTestPage = () => {
       amount: 10.00,
       currency: 'USD',
       orderId: `order_${Date.now()}`,
-      description: 'Test payment via Networx Payment Gateway',
+      description: 'Test payment via Secure-processor Payment Gateway',
       customerEmail: 'test@example.com',
     });
     setShowWidget(false);
@@ -66,9 +66,9 @@ const PaymentTestPage = () => {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Networx Payment Gateway Testing</h1>
+        <h1 className="text-3xl font-bold mb-2">Secure-processor Payment Gateway Testing</h1>
         <p className="text-gray-600">
-          This page is designed for testing integration with the Networx payment system.
+          This page is designed for testing integration with the Secure-processor payment system.
         </p>
         <Badge variant="default" className="mt-2">
           Production Mode
@@ -238,16 +238,16 @@ const PaymentTestPage = () => {
             <div>
               <h4 className="font-semibold mb-2">Environment Variables:</h4>
               <div className="space-y-1 text-gray-600">
-                <p>• NETWORX_SHOP_ID: ✅ 29959</p>
-                <p>• NETWORX_SECRET_KEY: ✅ Protected</p>
-                <p>• NETWORX_TEST_MODE: ❌ Production Mode</p>
+                <p>• SECURE_PROCESSOR_SHOP_ID: ✅ 29959</p>
+                <p>• SECURE_PROCESSOR_SECRET_KEY: ✅ Protected</p>
+                <p>• SECURE_PROCESSOR_TEST_MODE: ❌ Production Mode</p>
               </div>
             </div>
             <div>
               <h4 className="font-semibold mb-2">API Endpoints:</h4>
               <div className="space-y-1 text-gray-600">
-                <p>• Payment creation: /api/payment/networx</p>
-                <p>• Webhook: /api/webhooks/networx</p>
+                <p>• Payment creation: /api/payment/secure-processor</p>
+                <p>• Webhook: /api/webhooks/secure-processor</p>
                 <p>• Success: /payment/success</p>
                 <p>• Cancel: /payment/cancel</p>
               </div>

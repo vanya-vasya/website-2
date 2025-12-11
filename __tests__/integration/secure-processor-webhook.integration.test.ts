@@ -1,5 +1,5 @@
 /**
- * Integration Tests for Networx Webhook Flow
+ * Integration Tests for Secure-processor Webhook Flow
  * 
  * These tests verify:
  * - Webhook signature verification
@@ -9,14 +9,14 @@
  * - Error handling for various payment statuses
  */
 
-import { POST } from "@/app/api/webhooks/networx/route";
+import { POST } from "@/app/api/webhooks/secure-processor/route";
 import prismadb from "@/lib/prismadb";
 import { NextRequest } from "next/server";
 import crypto from "crypto";
 
-describe("Networx Webhook Integration Tests", () => {
-  const testClerkId = `test_networx_user_${Date.now()}_${Math.random().toString(36).substring(7)}`;
-  const testEmail = `networx-test-${Date.now()}@example.com`;
+describe("Secure-processor Webhook Integration Tests", () => {
+  const testClerkId = `test_secure-processor_user_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+  const testEmail = `secure-processor-test-${Date.now()}@example.com`;
   const secretKey = process.env.NETWORX_SECRET_KEY || 'dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950';
 
   beforeAll(async () => {
@@ -26,7 +26,7 @@ describe("Networx Webhook Integration Tests", () => {
         clerkId: testClerkId,
         email: testEmail,
         photo: "https://example.com/test.jpg",
-        firstName: "Networx",
+        firstName: "Secure-processor",
         lastName: "Test",
         availableGenerations: 20,
         usedGenerations: 5,
@@ -83,7 +83,7 @@ describe("Networx Webhook Integration Tests", () => {
     const signature = createWebhookSignature(data);
     const bodyWithSignature = { ...data, signature };
 
-    return new NextRequest('http://localhost/api/webhooks/networx', {
+    return new NextRequest('http://localhost/api/webhooks/secure-processor', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -450,7 +450,7 @@ describe("Networx Webhook Integration Tests", () => {
         signature: 'invalid_signature',
       };
 
-      const request = new NextRequest('http://localhost/api/webhooks/networx', {
+      const request = new NextRequest('http://localhost/api/webhooks/secure-processor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(webhookData),
@@ -470,7 +470,7 @@ describe("Networx Webhook Integration Tests", () => {
         transaction_id: 'test_txn',
       };
 
-      const request = new NextRequest('http://localhost/api/webhooks/networx', {
+      const request = new NextRequest('http://localhost/api/webhooks/secure-processor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(webhookData),

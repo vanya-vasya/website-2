@@ -20,26 +20,7 @@ import { cn } from "@/lib/utils";
 
 import { formSchema } from "./constants";
 import { MODEL_GENERATIONS_PRICE } from "@/constants";
-
-// Конфигурация для разных типов инструментов
-const toolConfigs = {
-  'video-generation': {
-    title: 'Video Generation',
-    description: `Turn your prompt into video. Generation can take from 1 to 5 minutes\nPrice: ${MODEL_GENERATIONS_PRICE.videoGeneration} credits`,
-    iconName: 'FileVideo2',
-    iconColor: 'text-indigo-600',
-    bgColor: 'bg-indigo-600/10',
-    placeholder: 'Clown fish swimming in a coral reef'
-  },
-  'video-creation': {
-    title: 'Video Maker',
-    description: `Turn ideas and scripts into engaging video content automatically\nPrice: ${MODEL_GENERATIONS_PRICE.videoGeneration} credits`,
-    iconName: 'Video',
-    iconColor: 'text-purple-600',
-    bgColor: 'bg-purple-600/10',
-    placeholder: 'A cinematic aerial view of a futuristic city at sunset'
-  }
-};
+import { useTranslations } from "next-intl";
 
 const VideoPage = () => {
   const router = useRouter();
@@ -47,6 +28,27 @@ const VideoPage = () => {
   const toolId = searchParams.get('toolId') || 'video-generation';
   const proModal = useProModal();
   const [video, setVideo] = useState<string>();
+  const t = useTranslations();
+
+  // Конфигурация для разных типов инструментов
+  const toolConfigs = {
+    'video-generation': {
+      title: t("dashboardTools.videoGeneration.title"),
+      description: `${t("dashboardTools.videoGeneration.description")}\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.videoGeneration} ${t("dashboardTools.videoGeneration.priceLabel")}`,
+      iconName: 'FileVideo2' as const,
+      iconColor: 'text-indigo-600',
+      bgColor: 'bg-indigo-600/10',
+      placeholder: t("dashboardTools.videoGeneration.placeholder", { defaultValue: "Clown fish swimming in a coral reef" })
+    },
+    'video-creation': {
+      title: t("dashboardTools.videoMaker.title"),
+      description: `${t("dashboardTools.videoMaker.description")}\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.videoGeneration} ${t("dashboardTools.videoMaker.priceLabel")}`,
+      iconName: 'Video' as const,
+      iconColor: 'text-purple-600',
+      bgColor: 'bg-purple-600/10',
+      placeholder: t("dashboardTools.videoMaker.placeholder", { defaultValue: "A cinematic aerial view of a futuristic city at sunset" })
+    }
+  };
 
   // Получаем конфигурацию для текущего инструмента
   const currentTool = toolConfigs[toolId as keyof typeof toolConfigs] || toolConfigs['video-generation'];
@@ -75,7 +77,7 @@ const VideoPage = () => {
       if (error?.response?.status === 403) {
         proModal.onOpen();
       } else {
-        toast.error("Something went wrong.");
+        toast.error(t("dashboardTools.error"));
       }
     } finally {
       router.refresh();
@@ -122,7 +124,7 @@ const VideoPage = () => {
               disabled={isLoading}
               size="icon"
             >
-              Generate
+              {isLoading ? t("dashboardTools.generating") : t("dashboardTools.generate")}
             </Button>
           </form>
         </Form>
@@ -132,7 +134,7 @@ const VideoPage = () => {
               <Loader />
             </div>
           )}
-          {!video && !isLoading && <Empty label="No results yet" />}
+          {!video && !isLoading && <Empty label={t("dashboardTools.noResults")} />}
           {video && (
             <video
               controls

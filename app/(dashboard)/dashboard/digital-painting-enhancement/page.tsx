@@ -22,71 +22,12 @@ import { inputStyles, buttonStyles, contentStyles, messageStyles, loadingStyles 
 
 import { formSchema } from "./constants";
 import { MODEL_GENERATIONS_PRICE } from "@/constants";
+import { useTranslations } from "next-intl";
 
 // Define ChatCompletionRequestMessage type locally
 type ChatCompletionRequestMessage = {
   role: 'user' | 'system' | 'assistant';
   content: string;
-};
-
-// Configuration for different painting enhancement tools
-const paintingToolConfigs = {
-  'digital-painting': {
-    title: 'Painting Enhance',
-    description: `Enhance and refine your digital paintings with AI-powered artistic improvements\nPrice: ${MODEL_GENERATIONS_PRICE.conversation} credits`,
-    iconName: 'Paintbrush',
-    iconColor: 'text-pink-500',
-    bgColor: 'bg-pink-500/10',
-    placeholder: 'Enhance this digital painting with better colors, lighting, and details...'
-  },
-  'style-enhancement': {
-    title: 'Painting Enhance',
-    description: `Enhance and refine your digital paintings with AI-powered artistic improvements\nPrice: ${MODEL_GENERATIONS_PRICE.conversation} credits`,
-    iconName: 'Paintbrush',
-    iconColor: 'text-pink-600',
-    bgColor: 'bg-pink-600/10',
-    placeholder: 'Transform your artwork by applying dramatic lighting effects and cinematic color grading...'
-  },
-  'color-correction': {
-    title: 'Color Correction',
-    description: `Perfect color balance and harmony in your digital paintings\nPrice: ${MODEL_GENERATIONS_PRICE.conversation} credits`,
-    iconName: 'Palette',
-    iconColor: 'text-purple-600',
-    bgColor: 'bg-purple-600/10',
-    placeholder: 'Adjust the color temperature and increase saturation to make this sunset painting more dramatic...'
-  },
-  'detail-enhancement': {
-    title: 'Detail Enhancement',
-    description: `Add intricate details and improve resolution of your artwork\nPrice: ${MODEL_GENERATIONS_PRICE.conversation} credits`,
-    iconName: 'Focus',
-    iconColor: 'text-blue-600',
-    bgColor: 'bg-blue-600/10',
-    placeholder: 'Add fine details to the character face and enhance the texture of the clothing...'
-  },
-  'composition-advice': {
-    title: 'Composition Advisor',
-    description: `Get expert advice on improving your painting's composition and visual flow\nPrice: ${MODEL_GENERATIONS_PRICE.conversation} credits`,
-    iconName: 'LayoutGrid',
-    iconColor: 'text-green-600',
-    bgColor: 'bg-green-600/10',
-    placeholder: 'Analyze this landscape painting and suggest improvements to the composition and focal points...'
-  },
-  'lighting-enhancement': {
-    title: 'Lighting Enhancement',
-    description: `Improve lighting, shadows, and atmospheric effects in your paintings\nPrice: ${MODEL_GENERATIONS_PRICE.conversation} credits`,
-    iconName: 'Lightbulb',
-    iconColor: 'text-yellow-600',
-    bgColor: 'bg-yellow-600/10',
-    placeholder: 'Enhance the dramatic lighting in this portrait and add more realistic shadows...'
-  },
-  'texture-improvement': {
-    title: 'Texture Improvement',
-    description: `Add realistic textures and surface details to your digital paintings\nPrice: ${MODEL_GENERATIONS_PRICE.conversation} credits`,
-    iconName: 'Layers',
-    iconColor: 'text-indigo-600',
-    bgColor: 'bg-indigo-600/10',
-    placeholder: 'Improve the texture of the stone walls and add weathering effects to this castle painting...'
-  },
 };
 
 const PaintingEnhancePage = () => {
@@ -95,6 +36,67 @@ const PaintingEnhancePage = () => {
   const toolId = searchParams.get('toolId') || 'digital-painting';
   const proModal = useProModal();
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+  const t = useTranslations();
+
+  // Configuration for different painting enhancement tools
+  const paintingToolConfigs = {
+    'digital-painting': {
+      title: t("dashboardTools.paintingEnhance.title"),
+      description: `${t("dashboardTools.paintingEnhance.description")}\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.conversation} ${t("dashboardTools.paintingEnhance.priceLabel")}`,
+      iconName: 'Paintbrush' as const,
+      iconColor: 'text-pink-500',
+      bgColor: 'bg-pink-500/10',
+      placeholder: t("dashboardTools.paintingEnhance.placeholder", { defaultValue: "Enhance this digital painting with better colors, lighting, and details..." })
+    },
+    'style-enhancement': {
+      title: t("dashboardTools.paintingEnhance.title"),
+      description: `${t("dashboardTools.paintingEnhance.description")}\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.conversation} ${t("dashboardTools.paintingEnhance.priceLabel")}`,
+      iconName: 'Paintbrush' as const,
+      iconColor: 'text-pink-600',
+      bgColor: 'bg-pink-600/10',
+      placeholder: t("dashboardTools.paintingEnhance.placeholder", { defaultValue: "Transform your artwork by applying dramatic lighting effects and cinematic color grading..." })
+    },
+    'color-correction': {
+      title: 'Color Correction',
+      description: `Perfect color balance and harmony in your digital paintings\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.conversation} credits`,
+      iconName: 'Palette' as const,
+      iconColor: 'text-purple-600',
+      bgColor: 'bg-purple-600/10',
+      placeholder: 'Adjust the color temperature and increase saturation to make this sunset painting more dramatic...'
+    },
+    'detail-enhancement': {
+      title: 'Detail Enhancement',
+      description: `Add intricate details and improve resolution of your artwork\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.conversation} credits`,
+      iconName: 'Focus' as const,
+      iconColor: 'text-blue-600',
+      bgColor: 'bg-blue-600/10',
+      placeholder: 'Add fine details to the character face and enhance the texture of the clothing...'
+    },
+    'composition-advice': {
+      title: 'Composition Advisor',
+      description: `Get expert advice on improving your painting's composition and visual flow\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.conversation} credits`,
+      iconName: 'LayoutGrid' as const,
+      iconColor: 'text-green-600',
+      bgColor: 'bg-green-600/10',
+      placeholder: 'Analyze this landscape painting and suggest improvements to the composition and focal points...'
+    },
+    'lighting-enhancement': {
+      title: 'Lighting Enhancement',
+      description: `Improve lighting, shadows, and atmospheric effects in your paintings\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.conversation} credits`,
+      iconName: 'Lightbulb' as const,
+      iconColor: 'text-yellow-600',
+      bgColor: 'bg-yellow-600/10',
+      placeholder: 'Enhance the dramatic lighting in this portrait and add more realistic shadows...'
+    },
+    'texture-improvement': {
+      title: 'Texture Improvement',
+      description: `Add realistic textures and surface details to your digital paintings\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.conversation} credits`,
+      iconName: 'Layers' as const,
+      iconColor: 'text-indigo-600',
+      bgColor: 'bg-indigo-600/10',
+      placeholder: 'Improve the texture of the stone walls and add weathering effects to this castle painting...'
+    },
+  };
 
   // Get configuration for current tool
   const currentTool = paintingToolConfigs[toolId as keyof typeof paintingToolConfigs] || paintingToolConfigs['digital-painting'];
@@ -131,7 +133,7 @@ const PaintingEnhancePage = () => {
       if (error?.response?.status === 403) {
         proModal.onOpen();
       } else {
-        toast.error("Something went wrong.");
+        toast.error(t("dashboardTools.error"));
       }
     } finally {
       router.refresh();
@@ -179,7 +181,7 @@ const PaintingEnhancePage = () => {
               disabled={isLoading}
               size="icon"
             >
-              Generate
+              {isLoading ? t("dashboardTools.generating") : t("dashboardTools.generate")}
             </Button>
           </form>
         </Form>
@@ -191,7 +193,7 @@ const PaintingEnhancePage = () => {
             </div>
           )}
           {messages.length === 0 && !isLoading && (
-            <Empty label="No results yet" />
+            <Empty label={t("dashboardTools.noResults")} />
           )}
           <div className="flex flex-col-reverse gap-y-4">
             {messages.map((message) => (

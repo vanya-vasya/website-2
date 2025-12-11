@@ -22,23 +22,12 @@ import { inputStyles, buttonStyles, contentStyles, messageStyles, loadingStyles 
 
 import { formSchema } from "./constants";
 import { MODEL_GENERATIONS_PRICE } from "@/constants";
+import { useTranslations } from "next-intl";
 
 // Define ChatCompletionRequestMessage type locally
 type ChatCompletionRequestMessage = {
   role: 'user' | 'system' | 'assistant';
   content: string;
-};
-
-// Configuration for reference cleanup tool
-const referenceToolConfigs = {
-  'art-reference': {
-    title: 'Reference Cleanup',
-    description: `Clean up and prepare reference images for your artistic creations\nPrice: ${MODEL_GENERATIONS_PRICE.conversation} credits`,
-    iconName: 'Eraser',
-    iconColor: 'text-pink-700',
-    bgColor: 'bg-pink-700/10',
-    placeholder: 'Describe your reference image and what you need help with - remove distractions, enhance details, fix lighting, or get composition advice...'
-  }
 };
 
 const ReferenceCleanupPage = () => {
@@ -47,6 +36,19 @@ const ReferenceCleanupPage = () => {
   const toolId = searchParams.get('toolId') || 'art-reference';
   const proModal = useProModal();
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+  const t = useTranslations();
+
+  // Configuration for reference cleanup tool
+  const referenceToolConfigs = {
+    'art-reference': {
+      title: t("dashboardTools.referenceCleanup.title"),
+      description: `${t("dashboardTools.referenceCleanup.description")}\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.conversation} ${t("dashboardTools.referenceCleanup.priceLabel")}`,
+      iconName: 'Eraser' as const,
+      iconColor: 'text-pink-700',
+      bgColor: 'bg-pink-700/10',
+      placeholder: t("dashboardTools.referenceCleanup.placeholder")
+    }
+  };
 
   // Get configuration for current tool
   const currentTool = referenceToolConfigs[toolId as keyof typeof referenceToolConfigs] || referenceToolConfigs['art-reference'];
@@ -83,7 +85,7 @@ const ReferenceCleanupPage = () => {
       if (error?.response?.status === 403) {
         proModal.onOpen();
       } else {
-        toast.error("Something went wrong.");
+        toast.error(t("dashboardTools.error"));
       }
     } finally {
       router.refresh();
@@ -131,7 +133,7 @@ const ReferenceCleanupPage = () => {
               disabled={isLoading}
               size="icon"
             >
-              Generate
+              {isLoading ? t("dashboardTools.generating") : t("dashboardTools.generate")}
             </Button>
           </form>
         </Form>
@@ -143,7 +145,7 @@ const ReferenceCleanupPage = () => {
             </div>
           )}
           {messages.length === 0 && !isLoading && (
-            <Empty label="No results yet" />
+            <Empty label={t("dashboardTools.noResults")} />
           )}
           <div className="flex flex-col-reverse gap-y-4">
             {messages.map((message) => (

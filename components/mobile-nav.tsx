@@ -30,6 +30,7 @@ import {
 import { useProModal } from "@/hooks/use-pro-modal";
 import Image from "next/image";
 import { tools } from "@/constants";
+import { useTranslations } from "next-intl";
 
 // Инструменты для видео-креаторов
 const videoCreatorTools = tools.filter((tool) =>
@@ -61,6 +62,7 @@ export function MobileNav({
   initialUsedGenerations: number;
   initialAvailableGenerations: number;
 }) {
+  const t = useTranslations();
   const [isOpen, setIsOpen] = React.useState(false);
   const [videoToolsOpen, setVideoToolsOpen] = React.useState(false);
   const [artToolsOpen, setArtToolsOpen] = React.useState(false);
@@ -69,6 +71,38 @@ export function MobileNav({
   const pathname = usePathname();
 
   const proModal = useProModal();
+
+  // Helper function to convert kebab-case tool ID to camelCase translation key
+  const getToolTranslationKey = (toolId: string): string => {
+    const idMap: Record<string, string> = {
+      "video-script": "videoScript",
+      "video-creation": "videoCreation",
+      "digital-painting": "digitalPainting",
+      "canvas-expansion": "canvasExpansion",
+      "art-reference": "artReference",
+      "thumbnail-optimizer": "thumbnailOptimizer",
+      "song-lyrics": "lyricWriter",
+      "album-cover": "coverArt",
+      "music-composition": "composeAssist",
+      "sound-effects": "sfxGenerator",
+      "blog-ideas": "blogIdeas",
+      "social-graphics": "socialGraphics",
+      "content-calendar": "contentPlanner",
+      "caption-generator": "captionGenerator",
+      "chat-assistant": "chatAssistant",
+      "image-generation": "imageGeneration",
+      "image-restore": "imageRestore",
+      "image-background-removal": "imageBackgroundRemoval",
+      "image-generative-fill": "imageGenerativeFill",
+      "image-object-recolor": "imageObjectRecolor",
+      "image-object-remove": "imageObjectRemove",
+      "video-generation": "videoGeneration",
+      "music-generation": "musicGeneration",
+      "speech-generation": "speechGeneration",
+      "concept-art": "designPartner",
+    };
+    return idMap[toolId] || toolId;
+  };
 
   return (
     <div 
@@ -132,7 +166,7 @@ export function MobileNav({
               >
                 <div className="flex items-center gap-2">
                   <Video className="h-4 w-4 text-blue-600" />
-                  Co-Director
+                  {t("professions.coDirector")}
                 </div>
                 <ChevronRight
                   className={cn(
@@ -160,7 +194,7 @@ export function MobileNav({
                     <div className="h-7 w-7 rounded-md bg-blue-100 flex items-center justify-center">
                       <item.icon className="h-4 w-4 text-blue-600" />
                     </div>
-                    {item.label}
+                    {t(`tools.${getToolTranslationKey(item.id)}.label`, { defaultValue: item.label })}
                   </Link>
                 ))}
               </CollapsibleContent>
@@ -179,7 +213,7 @@ export function MobileNav({
               >
                 <div className="flex items-center gap-2">
                   <Palette className="h-4 w-4 text-blue-600" />
-                  Design Partner
+                  {t("professions.designPartner")}
                 </div>
                 <ChevronRight
                   className={cn(
@@ -207,7 +241,7 @@ export function MobileNav({
                     <div className="h-7 w-7 rounded-md bg-blue-100 flex items-center justify-center">
                       <item.icon className="h-4 w-4 text-blue-600" />
                     </div>
-                    {item.label}
+                    {t(`tools.${getToolTranslationKey(item.id)}.label`, { defaultValue: item.label })}
                   </Link>
                 ))}
               </CollapsibleContent>
@@ -226,7 +260,7 @@ export function MobileNav({
               >
                 <div className="flex items-center gap-2">
                   <Music className="h-4 w-4 text-blue-600" />
-                  Co-Composer
+                  {t("professions.coComposer")}
                 </div>
                 <ChevronRight
                   className={cn(
@@ -254,7 +288,7 @@ export function MobileNav({
                     <div className="h-7 w-7 rounded-md bg-blue-100 flex items-center justify-center">
                       <item.icon className="h-4 w-4 text-blue-600" />
                     </div>
-                    {item.label}
+                    {t(`tools.${getToolTranslationKey(item.id)}.label`, { defaultValue: item.label })}
                   </Link>
                 ))}
               </CollapsibleContent>
@@ -273,7 +307,7 @@ export function MobileNav({
               >
                 <div className="flex items-center gap-2">
                   <Lightbulb className="h-4 w-4 text-blue-600" />
-                  Creative Partner
+                  {t("professions.creativePartner")}
                 </div>
                 <ChevronRight
                   className={cn(
@@ -301,7 +335,7 @@ export function MobileNav({
                     <div className="h-7 w-7 rounded-md bg-blue-100 flex items-center justify-center">
                       <item.icon className="h-4 w-4 text-blue-600" />
                     </div>
-                    {item.label}
+                    {t(`tools.${getToolTranslationKey(item.id)}.label`, { defaultValue: item.label })}
                   </Link>
                 ))}
               </CollapsibleContent>
@@ -322,7 +356,7 @@ export function MobileNav({
               <div className="h-7 w-7 rounded-md flex items-center mr-3">
                 <Banknote className="h-4 w-4 text-blue-600" />
               </div>
-              Payments
+              {t("dashboardNav.payments")}
             </Link>
           </div>
 

@@ -275,8 +275,11 @@
       "description": "Fikirleri ve senaryoları otomatik olarak ilgi çekici video içeriğine dönüştürün"
     },
     "paintingEnhance": {
+      "title": "Resim Geliştirme",
       "label": "Resim Geliştirme",
-      "description": "Dijital resimlerinizi yapay zeka destekli sanatsal iyileştirmelerle geliştirin ve rafine edin"
+      "description": "Dijital resimlerinizi yapay zeka destekli sanatsal iyileştirmelerle geliştirin ve rafine edin",
+      "placeholder": "Bu dijital resmi daha iyi renkler, aydınlatma ve detaylarla geliştirin...",
+      "priceLabel": "kredi"
     },
     "canvasExpand": {
       "label": "Tuval Genişletme",
@@ -299,8 +302,11 @@
       "description": "Dijital resimlerinizi yapay zeka destekli sanatsal iyileştirmelerle geliştirin ve rafine edin"
     },
     "canvasExpansion": {
+      "title": "Tuval Genişletme",
       "label": "Tuval Genişletme",
-      "description": "Tuvallerinizi genişletin ve yapay zeka destekli içerik üretimi ile görselleri uzatın"
+      "description": "Tuvallerinizi genişletin ve yapay zeka destekli içerik üretimi ile görselleri uzatın",
+      "placeholder": "Bir görsel yükleyin ve tuvali nasıl genişletmek istediğinizi açıklayın - daha fazla gökyüzü ekleyin, arka planı uzatın veya ek öğeler oluşturun...",
+      "priceLabel": "kredi"
     },
     "artReference": {
       "label": "Referans Temizleme",
@@ -384,6 +390,18 @@
       "placeholder": "Vintage estetikli bir indie rock grubu için albüm kapağı",
       "priceLabel": "kredi"
     },
+    "videoGeneration": {
+      "title": "Video Üretimi",
+      "description": "İsteminizi videoya dönüştürün. Üretim 1 ila 5 dakika sürebilir",
+      "placeholder": "Mercan resifinde yüzen palyaço balığı",
+      "priceLabel": "kredi"
+    },
+    "videoMaker": {
+      "title": "Video Oluşturucu",
+      "description": "Fikirleri ve senaryoları otomatik olarak ilgi çekici video içeriğine dönüştürün",
+      "placeholder": "Gün batımında fütüristik bir şehrin sinematik havadan görünümü",
+      "priceLabel": "kredi"
+    },
     "musicGeneration": {
       "title": "Müzik Üretimi",
       "description": "İsteminizi müziğe dönüştürün. Üretim 1 ila 5 dakika sürebilir",
@@ -406,6 +424,24 @@
       "title": "Sosyal Medya Görselleri",
       "description": "Her sosyal platform için optimize edilmiş dikkat çekici grafikler oluşturun",
       "placeholder": "Parlak renkler ve modern tasarımla yaz indirimi için promosyon banner'ı",
+      "priceLabel": "kredi"
+    },
+    "thumbnailOptimizer": {
+      "title": "Küçük Resim Optimizer",
+      "description": "Tıklama oranlarını artıran dikkat çekici küçük resimler tasarlayın",
+      "placeholder": "İçeriğiniz için dikkat çeken ve etkileşimi artıran çarpıcı bir küçük resim oluşturun",
+      "priceLabel": "kredi"
+    },
+    "paintingEnhance": {
+      "title": "Resim Geliştirme",
+      "description": "Dijital resimlerinizi yapay zeka destekli sanatsal iyileştirmelerle geliştirin ve rafine edin",
+      "placeholder": "Bu dijital resmi daha iyi renkler, aydınlatma ve detaylarla geliştirin...",
+      "priceLabel": "kredi"
+    },
+    "referenceCleanup": {
+      "title": "Referans Temizleme",
+      "description": "Sanatsal yaratımlarınız için referans görsellerini temizleyin ve hazırlayın",
+      "placeholder": "Referans görselinizi açıklayın ve ne konuda yardıma ihtiyacınız olduğunu belirtin - dikkat dağıtıcıları kaldırın, detayları geliştirin, aydınlatmayı düzeltin veya kompozisyon tavsiyesi alın...",
       "priceLabel": "kredi"
     },
     "emptyState": "Henüz konuşma başlatılmadı.",

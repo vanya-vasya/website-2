@@ -37,6 +37,7 @@ import {
   ListboxOption,
   ListboxOptions,
 } from "@headlessui/react";
+import { useTranslations } from "next-intl";
 
 const formSchema = z.object({
   generations: z
@@ -54,6 +55,7 @@ export const ProModal = () => {
   const { userId } = useAuth();
   const { user } = useUser();
   const proModal = useProModal();
+  const t = useTranslations();
   const [loading, setLoading] = useState(false);
   const [generationPrice, setGenerationPrice] = useState(GENERATIONS_PRICE);
   const [generationsCount, setGenerationsCount] = useState(50);
@@ -126,7 +128,7 @@ export const ProModal = () => {
     proModal.onClose();
     setShowPaymentWidget(false);
     router.refresh();
-    toast.success("Generations added successfully!");
+    toast.success(t("dashboard.paymentSuccess"));
   };
 
   const handlePaymentError = (error: any) => {
@@ -156,7 +158,7 @@ export const ProModal = () => {
         <DialogHeader>
           <DialogTitle className="flex justify-center items-center flex-col gap-y-4 pb-2 bg-white">
             <div className="flex items-center gap-x-2 font-bold text-xl text-gray-900 bg-white">
-              {showPaymentWidget ? "Complete Payment" : "Buy More"}
+              {showPaymentWidget ? t("common.completePayment") : t("common.buyMore")}
             </div>
           </DialogTitle>
           {!showPaymentWidget && (
@@ -170,7 +172,13 @@ export const ProModal = () => {
                     <div className="p-3 w-fit rounded-lg bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 mb-3">
                       <tool.icon className="w-8 h-8 text-white" />
                     </div>
-                    <div className="font-semibold text-sm text-center">{tool.label}</div>
+                    <div className="font-semibold text-sm text-center">
+                      {tool.label === "Co-Director" ? t("professions.coDirector") :
+                       tool.label === "Design Partner" ? t("professions.designPartner") :
+                       tool.label === "Co-Composer" ? t("professions.coComposer") :
+                       tool.label === "Creative Partner" ? t("professions.creativePartner") :
+                       tool.label}
+                    </div>
                   </Card>
                 ))}
               </div>
@@ -187,10 +195,10 @@ export const ProModal = () => {
                 size="sm"
                 className="text-black border-gray-300 hover:bg-gray-50"
               >
-                ← Back to Selection
+                {t("common.backToSelection")}
               </Button>
               <div className="text-black text-sm">
-                {watch("generations")} Generations - {(watch("generations") * generationPrice).toFixed(2)} {watch("currency")}
+                {watch("generations")} {t("common.generations")} - {(watch("generations") * generationPrice).toFixed(2)} {watch("currency")}
               </div>
             </div>
             
@@ -262,13 +270,13 @@ export const ProModal = () => {
               </div>
             </div>
             <div className="grid grid-cols-2 pb-2 text-black">
-              <p className="text-sm font-medium leading-sm">Generations</p>
+              <p className="text-sm font-medium leading-sm">{t("common.generations")}</p>
               <p className="text-sm font-medium leading-sm text-end">
-                {watch("generations")} Generations
+                {watch("generations")} {t("common.generations")}
               </p>
             </div>
             <Label htmlFor="generations" className="text-black">
-              Choose generations option
+              {t("common.chooseOption")}
             </Label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full pt-2">
               {[50, 100, 500].map((value) => (
@@ -346,19 +354,19 @@ export const ProModal = () => {
               <Label
                 className={"text-sm leading-loose tracking-tight text-gray-700"}
               >
-                I agree to the{" "}
+                {t("common.iAgree")}{" "}
                 <a
                   href="/terms-and-conditions"
                   className="bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 bg-clip-text text-transparent hover:underline hover:underline-offset-4"
                 >
-                  Terms of Service
+                  {t("common.termsOfService")}
                 </a>{" "}
-                and{" "}
+                {t("common.and")}{" "}
                 <a
                   href="/privacy-policy"
                   className="bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 bg-clip-text text-transparent hover:underline hover:underline-offset-4"
                 >
-                  Privacy Policy
+                  {t("common.privacyPolicy")}
                 </a>
                 .
               </Label>
@@ -379,7 +387,7 @@ export const ProModal = () => {
                 type="submit"
                 className="w-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 hover:from-cyan-500 hover:via-blue-600 hover:to-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
               >
-                Buy Generations
+                {t("common.buyGenerations")}
                 <Zap className="w-4 h-4 ml-2 fill-white" />
               </Button>
             </motion.div>

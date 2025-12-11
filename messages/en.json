@@ -247,8 +247,11 @@
       "description": "Enhance and refine your digital paintings with AI-powered artistic improvements"
     },
     "canvasExpansion": {
+      "title": "Canvas Expand",
       "label": "Canvas Expand",
-      "description": "Expand your canvas and extend images with AI-powered content generation"
+      "description": "Expand your canvas and extend images with AI-powered content generation",
+      "placeholder": "Upload an image and describe how you want to expand the canvas - add more sky, extend the background, or create additional elements...",
+      "priceLabel": "credits"
     },
     "artReference": {
       "label": "Reference Cleanup",
@@ -303,8 +306,11 @@
       "description": "Expand your canvas and extend images with AI-powered content generation"
     },
     "referenceCleanup": {
+      "title": "Reference Cleanup",
       "label": "Reference Cleanup",
-      "description": "Clean up and prepare reference images for your artistic creations"
+      "description": "Clean up and prepare reference images for your artistic creations",
+      "placeholder": "Describe your reference image and what you need help with - remove distractions, enhance details, fix lighting, or get composition advice...",
+      "priceLabel": "credits"
     }
   },
   "payments": {
@@ -384,6 +390,18 @@
       "placeholder": "An album cover for an indie rock band with vintage aesthetic",
       "priceLabel": "credits"
     },
+    "videoGeneration": {
+      "title": "Video Generation",
+      "description": "Turn your prompt into video. Generation can take from 1 to 5 minutes",
+      "placeholder": "Clown fish swimming in a coral reef",
+      "priceLabel": "credits"
+    },
+    "videoMaker": {
+      "title": "Video Maker",
+      "description": "Turn ideas and scripts into engaging video content automatically",
+      "placeholder": "A cinematic aerial view of a futuristic city at sunset",
+      "priceLabel": "credits"
+    },
     "musicGeneration": {
       "title": "Music Generation",
       "description": "Turn your prompt into music. Generation can take from 1 to 5 minutes",
@@ -406,6 +424,24 @@
       "title": "Social Graphics",
       "description": "Create eye-catching graphics optimized for every social platform",
       "placeholder": "Promotional banner for summer sale with bright colors and modern design",
+      "priceLabel": "credits"
+    },
+    "thumbnailOptimizer": {
+      "title": "Thumbnail Optimizer",
+      "description": "Design attention-grabbing thumbnails that lift click-through rates",
+      "placeholder": "Create a stunning thumbnail that captures attention and drives engagement for your content",
+      "priceLabel": "credits"
+    },
+    "paintingEnhance": {
+      "title": "Painting Enhance",
+      "description": "Enhance and refine your digital paintings with AI-powered artistic improvements",
+      "placeholder": "Enhance this digital painting with better colors, lighting, and details...",
+      "priceLabel": "credits"
+    },
+    "referenceCleanup": {
+      "title": "Reference Cleanup",
+      "description": "Clean up and prepare reference images for your artistic creations",
+      "placeholder": "Describe your reference image and what you need help with - remove distractions, enhance details, fix lighting, or get composition advice...",
       "priceLabel": "credits"
     },
     "emptyState": "No conversation started.",

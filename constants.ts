@@ -276,7 +276,7 @@ export const tools = [
     label: "Canvas Expand",
     icon: Expand,
     description:
-      "Generate engaging blog topics and clear outlines for your audience",
+      "Expand your canvas and extend images with AI-powered content generation",
     color: "text-rose-500",
     bgColor: "bg-rose-500/10",
     href: "https://nerbixa.com/dashboard/canvas-expansion?toolId=canvas-expansion",

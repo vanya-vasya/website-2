@@ -22,6 +22,7 @@ import { inputStyles, buttonStyles, contentStyles, messageStyles, loadingStyles 
 
 import { formSchema } from "./constants";
 import { MODEL_GENERATIONS_PRICE } from "@/constants";
+import { useTranslations } from "next-intl";
 
 // Define ChatCompletionRequestMessage type locally
 type ChatCompletionRequestMessage = {
@@ -29,13 +30,11 @@ type ChatCompletionRequestMessage = {
   content: string;
 };
 
-// Placeholder for thumbnail optimization
-const placeholderText = 'Create a stunning thumbnail that captures attention and drives engagement for your content';
-
 const ThumbnailOptimizerPage = () => {
   const router = useRouter();
   const proModal = useProModal();
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+  const t = useTranslations();
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -64,7 +63,7 @@ const ThumbnailOptimizerPage = () => {
       if (error?.response?.status === 403) {
         proModal.onOpen();
       } else {
-        toast.error("Something went wrong.");
+        toast.error(t("dashboardTools.error"));
       }
     } finally {
       router.refresh();
@@ -73,10 +72,8 @@ const ThumbnailOptimizerPage = () => {
 
   return (
     <FeatureContainer
-      title="Thumbnail Optimizer"
-      description="Design attention-grabbing thumbnails that lift click-through rates
-
-Price: 1 credits"
+      title={t("dashboardTools.thumbnailOptimizer.title")}
+      description={`${t("dashboardTools.thumbnailOptimizer.description")}\n\n${t("common.price")}: 1 ${t("dashboardTools.thumbnailOptimizer.priceLabel")}`}
       iconName="Focus"
     >
       <div className={contentStyles.base}>
@@ -97,7 +94,7 @@ Price: 1 credits"
                     <Input
                       className={inputStyles.base}
                       disabled={isLoading}
-                      placeholder={placeholderText}
+                      placeholder={t("dashboardTools.thumbnailOptimizer.placeholder", { defaultValue: "Create a stunning thumbnail that captures attention and drives engagement for your content" })}
                       {...field}
                     />
                   </FormControl>
@@ -113,7 +110,7 @@ Price: 1 credits"
               disabled={isLoading}
               size="icon"
             >
-              Generate
+              {isLoading ? t("dashboardTools.generating") : t("dashboardTools.generate")}
             </Button>
           </form>
         </Form>
@@ -125,7 +122,7 @@ Price: 1 credits"
             </div>
           )}
           {messages.length === 0 && !isLoading && (
-            <Empty label="No results yet" />
+            <Empty label={t("dashboardTools.noResults")} />
           )}
           <div className="flex flex-col-reverse gap-y-4">
             {messages.map((message) => (

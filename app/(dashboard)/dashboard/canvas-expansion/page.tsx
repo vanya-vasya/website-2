@@ -22,6 +22,7 @@ import { inputStyles, buttonStyles, contentStyles, messageStyles, loadingStyles 
 
 import { formSchema } from "./constants";
 import { MODEL_GENERATIONS_PRICE } from "@/constants";
+import { useTranslations } from "next-intl";
 
 // Define ChatCompletionRequestMessage type locally
 type ChatCompletionRequestMessage = {
@@ -29,18 +30,19 @@ type ChatCompletionRequestMessage = {
   content: string;
 };
 
-// Configuration for canvas expansion tool
-const toolConfig = {
-  title: 'Canvas Expand',
-  description: `Generate engaging blog topics and clear outlines for your audience\nPrice: ${MODEL_GENERATIONS_PRICE.conversation} credits`,
-  iconName: 'Expand',
-  placeholder: 'Create a comprehensive blog post about sustainable living practices for urban millennials, including actionable tips and trending topics...'
-};
-
 const CanvasExpansionPage = () => {
   const router = useRouter();
   const proModal = useProModal();
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+  const t = useTranslations();
+
+  // Configuration for canvas expansion tool
+  const toolConfig = {
+    title: t("dashboardTools.canvasExpansion.title"),
+    description: `${t("dashboardTools.canvasExpansion.description")}\n${t("common.price")}: ${MODEL_GENERATIONS_PRICE.conversation} ${t("dashboardTools.canvasExpansion.priceLabel")}`,
+    iconName: 'Expand' as const,
+    placeholder: t("dashboardTools.canvasExpansion.placeholder", { defaultValue: "Upload an image and describe how you want to expand the canvas..." })
+  };
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -71,7 +73,7 @@ const CanvasExpansionPage = () => {
       if (error?.response?.status === 403) {
         proModal.onOpen();
       } else {
-        toast.error("Something went wrong.");
+        toast.error(t("dashboardTools.error"));
       }
     } finally {
       router.refresh();
@@ -119,7 +121,7 @@ const CanvasExpansionPage = () => {
               disabled={isLoading}
               size="icon"
             >
-              Generate
+              {isLoading ? t("dashboardTools.generating") : t("dashboardTools.generate")}
             </Button>
           </form>
         </Form>
@@ -131,7 +133,7 @@ const CanvasExpansionPage = () => {
             </div>
           )}
           {messages.length === 0 && !isLoading && (
-            <Empty label="No results yet" />
+            <Empty label={t("dashboardTools.noResults")} />
           )}
           <div className="flex flex-col-reverse gap-y-4">
             {messages.map((message) => (

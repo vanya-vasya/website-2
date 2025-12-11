@@ -4,23 +4,27 @@ import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { GuestMobileSidebar } from "@/components/guest-mobile-sidebar";
 import Image from "next/image";
 import { motion } from "framer-motion";
-
-const routes = [
-  {
-    name: "Solutions",
-    href: "/#solutions",
-  },
-  {
-    name: "Products",
-    href: "/#features",
-  },
-  {
-    name: "Why Us",
-    href: "/#testimonials",
-  },
-];
+import { useTranslations } from "next-intl";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 const Header = () => {
+  const t = useTranslations();
+
+  const routes = [
+    {
+      name: t("nav.solutions"),
+      href: "/#solutions",
+    },
+    {
+      name: t("nav.products"),
+      href: "/#features",
+    },
+    {
+      name: t("nav.whyUs"),
+      href: "/#testimonials",
+    },
+  ];
+
   return (
     <header className="bg-white">
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-3 lg:px-6 gap-1">
@@ -42,8 +46,9 @@ const Header = () => {
             ))}
           </div>
         </div>
-        <div className="flex lg:flex-1 lg:justify-end">
-          <div className="flex ">
+        <div className="flex lg:flex-1 lg:justify-end items-center gap-4">
+          <LanguageSwitcher className="hidden sm:block" />
+          <div className="flex">
             <ul className="main-header__login-sing-up">
               <li>
                 <SignedIn>
@@ -55,7 +60,7 @@ const Header = () => {
                       href="/dashboard"
                       className="nav-link"
                     >
-                      Dashboard
+                      {t("common.dashboard")}
                     </Link>
                   </motion.div>
                 </SignedIn>
@@ -68,7 +73,7 @@ const Header = () => {
                       href="/dashboard"
                       className="nav-link"
                     >
-                      Sign In / Sign Up
+                      {t("common.signInSignUp")}
                     </Link>
                   </motion.div>
                 </SignedOut>

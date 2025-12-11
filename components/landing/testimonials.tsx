@@ -3,101 +3,92 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-
-const testimonials = [
-  {
-    name: "Sofia Miller",
-    role: "YouTube Creator",
-    image: "/images/testimonials/testimonials-1.png",
-    content:
-      "Script Builder has revolutionized my content creation process. I can now produce engaging video scripts in minutes instead of hours, and my audience retention has improved by 60%",
-    color: "from-purple-600 to-pink-600",
-  },
-  {
-    name: "Marcus Rodriguez",
-    role: "Concept Artist",
-    image: "/images/testimonials/testimonials-2.png",
-    content:
-      "The Concept Generator tool is incredible for rapid prototyping. I can explore dozens of visual ideas before clients meetings, making my presentations much more compelling",
-    color: "from-blue-600 to-violet-600",
-  },
-  {
-    name: "Aria Wilson",
-    role: "Music Producer",
-    image: "/images/testimonials/testimonials-pet-1.png",
-    content:
-      "Compose Assist has opened up entirely new creative possibilities for my productions. The AI suggestions help me break out of musical patterns I didn't even know I was stuck in",
-    color: "from-green-500 to-teal-600",
-  },
-  {
-    name: "Zara Williams",
-    role: "Social Media Strategist",
-    image: "/images/testimonials/testimonials-4.png",
-    content:
-      "Content Calendar and Social Graphics tools have transformed my workflow. I manage 15 brand accounts effortlessly and our engagement rates have doubled",
-    color: "from-orange-500 to-red-600",
-  },
-  {
-    name: "Antonio Torres",
-    role: "Digital Illustrator",
-    image: "/images/testimonials/testimonials-6.png",
-    content:
-      "Painting Enhance and Canvas Expand have completely transformed my illustration workflow. I can now deliver complex artworks to clients 3x faster than before",
-    color: "from-pink-500 to-rose-600",
-  },
-  {
-    name: "Jordan Maxwell",
-    role: "Singer-Songwriter",
-    image: "/images/testimonials/testimonials-pet-2.png",
-    content:
-      "Lyric Writer has helped me write my best songs yet. It doesn't replace creativity—it amplifies it, helping me find the perfect words when I'm stuck",
-    color: "from-cyan-500 to-blue-600",
-  },
-  {
-    name: "Alex Parker",
-    role: "Brand Manager",
-    image: "/images/testimonials/testimonials-8.png",
-    content:
-      "Social Graphics tool has standardized our visual identity across all platforms. Our brand recognition increased by 45% since implementing these consistent designs",
-    color: "from-emerald-500 to-green-600",
-  },
-  {
-    name: "Maya Patel",
-    role: "Content Strategist",
-    image: "/images/testimonials/testimonials-9.png",
-    content:
-      "Blog Ideas generator has revolutionized our content planning. We've published 200% more high-quality articles and our organic traffic has tripled",
-    color: "from-violet-500 to-purple-600",
-  },
-  {
-    name: "Ryan Mitchell",
-    role: "Graphic Designer",
-    image: "/images/testimonials/testimonials-nature-1.png",
-    content:
-      "Cover Art tool has streamlined my client work tremendously. I can create multiple album concepts in the time it used to take for one, allowing me to take on more projects",
-    color: "from-yellow-500 to-orange-600",
-  },
-  {
-    name: "Emma Johnson",
-    role: "Podcast Host",
-    image: "/images/testimonials/testimonials-11.png",
-    content:
-      "SFX Generator has elevated my podcast's production value dramatically. Creating custom sound effects used to require expensive software—now it takes minutes",
-    color: "from-red-500 to-pink-600",
-  },
-  {
-    name: "Kelly Thompson",
-    role: "Game Developer",
-    image: "/images/testimonials/testimonials-nature-2.png",
-    content:
-      "As a solo indie developer, Reference Cleanup and Concept Generator tools have been invaluable. I can create professional game assets without hiring a full art team",
-    color: "from-teal-500 to-cyan-600",
-  },
-];
+import { useTranslations } from "next-intl";
 
 const Testimonials = () => {
+  const t = useTranslations();
   const [activeIndex, setActiveIndex] = useState(0);
   const [autoplay, setAutoplay] = useState(true);
+
+  const testimonials = [
+    {
+      name: t("testimonials.testimonial1.name"),
+      role: t("testimonials.testimonial1.role"),
+      image: "/images/testimonials/testimonials-1.png",
+      content: t("testimonials.testimonial1.content"),
+      color: "from-purple-600 to-pink-600",
+    },
+    {
+      name: t("testimonials.testimonial2.name"),
+      role: t("testimonials.testimonial2.role"),
+      image: "/images/testimonials/testimonials-2.png",
+      content: t("testimonials.testimonial2.content"),
+      color: "from-blue-600 to-violet-600",
+    },
+    {
+      name: t("testimonials.testimonial3.name"),
+      role: t("testimonials.testimonial3.role"),
+      image: "/images/testimonials/testimonials-pet-1.png",
+      content: t("testimonials.testimonial3.content"),
+      color: "from-green-500 to-teal-600",
+    },
+    {
+      name: t("testimonials.testimonial4.name"),
+      role: t("testimonials.testimonial4.role"),
+      image: "/images/testimonials/testimonials-4.png",
+      content: t("testimonials.testimonial4.content"),
+      color: "from-orange-500 to-red-600",
+    },
+    {
+      name: t("testimonials.testimonial5.name"),
+      role: t("testimonials.testimonial5.role"),
+      image: "/images/testimonials/testimonials-6.png",
+      content: t("testimonials.testimonial5.content"),
+      color: "from-pink-500 to-rose-600",
+    },
+    {
+      name: t("testimonials.testimonial6.name"),
+      role: t("testimonials.testimonial6.role"),
+      image: "/images/testimonials/testimonials-pet-2.png",
+      content: t("testimonials.testimonial6.content"),
+      color: "from-cyan-500 to-blue-600",
+    },
+    {
+      name: t("testimonials.testimonial7.name"),
+      role: t("testimonials.testimonial7.role"),
+      image: "/images/testimonials/testimonials-8.png",
+      content: t("testimonials.testimonial7.content"),
+      color: "from-emerald-500 to-green-600",
+    },
+    {
+      name: t("testimonials.testimonial8.name"),
+      role: t("testimonials.testimonial8.role"),
+      image: "/images/testimonials/testimonials-9.png",
+      content: t("testimonials.testimonial8.content"),
+      color: "from-violet-500 to-purple-600",
+    },
+    {
+      name: t("testimonials.testimonial9.name"),
+      role: t("testimonials.testimonial9.role"),
+      image: "/images/testimonials/testimonials-nature-1.png",
+      content: t("testimonials.testimonial9.content"),
+      color: "from-yellow-500 to-orange-600",
+    },
+    {
+      name: t("testimonials.testimonial10.name"),
+      role: t("testimonials.testimonial10.role"),
+      image: "/images/testimonials/testimonials-11.png",
+      content: t("testimonials.testimonial10.content"),
+      color: "from-red-500 to-pink-600",
+    },
+    {
+      name: t("testimonials.testimonial11.name"),
+      role: t("testimonials.testimonial11.role"),
+      image: "/images/testimonials/testimonials-nature-2.png",
+      content: t("testimonials.testimonial11.content"),
+      color: "from-teal-500 to-cyan-600",
+    },
+  ];
 
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined;
@@ -107,7 +98,7 @@ const Testimonials = () => {
       }, 5000);
     }
     return () => clearInterval(interval);
-  }, [autoplay]);
+  }, [autoplay, testimonials.length]);
 
   const handleDotClick = (index: number) => {
     setActiveIndex(index);
@@ -139,7 +130,7 @@ const Testimonials = () => {
             transition={{ duration: 0.6 }}
             className="font-bold text-4xl sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600"
           >
-            Hear from Creative Professionals
+            {t("testimonials.title")}
           </motion.h2>
 
           <motion.p
@@ -157,8 +148,7 @@ const Testimonials = () => {
               color: '#0f172a'
             }}
           >
-             Discover how creators are taking their craft to new heights
-
+            {t("testimonials.subtitle")}
           </motion.p>
         </div>
 

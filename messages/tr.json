@@ -1,0 +1,284 @@
+{
+  "common": {
+    "getStarted": "Başla",
+    "getStartedFree": "Ücretsiz Başla",
+    "explore": "Keşfet",
+    "dashboard": "Kontrol Paneli",
+    "signIn": "Giriş Yap",
+    "signUp": "Kayıt Ol",
+    "signInSignUp": "Giriş / Kayıt",
+    "buyMore": "Daha Fazla Al",
+    "backToSelection": "← Seçime Dön",
+    "completePayment": "Ödemeyi Tamamla",
+    "generations": "Üretimler",
+    "availableGenerations": "Kullanılabilir Üretimler",
+    "price": "Fiyat",
+    "chooseOption": "Üretim seçeneği seçin",
+    "buyGenerations": "Üretim Satın Al",
+    "iAgree": "Kabul ediyorum:",
+    "termsOfService": "Hizmet Şartları",
+    "and": "ve",
+    "privacyPolicy": "Gizlilik Politikası"
+  },
+  "nav": {
+    "solutions": "Çözümler",
+    "products": "Ürünler",
+    "whyUs": "Neden Biz",
+    "home": "Ana Sayfa",
+    "features": "Özellikler",
+    "faq": "SSS",
+    "testimonials": "Referanslar"
+  },
+  "hero": {
+    "title": "Vizyonerler için",
+    "titleHighlight": "Yapay Zeka Motoru",
+    "subtitle": "Cesur fikirden gerçek ürüne. Öngörüyü öncü avantajına dönüştürün. Taslaklarınızı özelliklere, konseptleri lansmanlara, beğenileri başarıya çeviren yapay zeka ortağınız"
+  },
+  "contact": {
+    "title": "Lider Şirketler Güveniyor",
+    "subtitle": "Yapay Zeka Destekli Çözümlerimize Güvenen Binlerce İşletmeye Katılın"
+  },
+  "solutions": {
+    "title": "Yapay zeka yaratıcı asistanınız",
+    "coComposer": {
+      "title": "Müzik Ortağı",
+      "description": "Projeleriniz için yapay zeka destekli kompozisyonla orijinal müzik ve melodiler oluşturun"
+    },
+    "coDirector": {
+      "title": "Yönetmen Ortağı",
+      "description": "Bir sonraki prodüksiyonunuz için profesyonel video senaryoları ve storyboardlar oluşturun"
+    },
+    "designPartner": {
+      "title": "Tasarım Ortağı",
+      "description": "Yaratıcı projeleriniz için etkileyici konsept sanatı ve illüstrasyonlar üretin"
+    },
+    "creativePartner": {
+      "title": "İçerik Ortağı",
+      "description": "Markanız için ilgi çekici sosyal medya gönderileri, açıklamalar ve içerik takvimleri oluşturun"
+    }
+  },
+  "slider": {
+    "title": "Araç Setleri",
+    "subtitle": "Her yaratıcı disiplin için tasarlanmış araç setleri. Videodan müziğe, sanattan içeriğe - yapay zeka platformumuz çalışma tarzınıza özel profesyonel araçlar sunar",
+    "scriptBuilder": "Senaryo Oluşturucu",
+    "videoMaker": "Video Yapımcısı",
+    "conceptGenerator": "Konsept Üreteci",
+    "paintingEnhance": "Resim Geliştirici",
+    "canvasExpand": "Tuval Genişletici",
+    "referenceCleanup": "Referans Temizleyici",
+    "lyricWriter": "Söz Yazarı",
+    "coverArt": "Kapak Tasarımı",
+    "composeAssist": "Kompozisyon Asistanı",
+    "sfxGenerator": "Ses Efekti Üreteci",
+    "blogIdeas": "Blog Fikirleri",
+    "socialGraphics": "Sosyal Medya Görselleri",
+    "contentCalendar": "İçerik Takvimi",
+    "thumbnailOptimizer": "Küçük Resim Optimizer",
+    "captionGenerator": "Açıklama Üreteci"
+  },
+  "testimonials": {
+    "title": "Yaratıcı Profesyonellerden Dinleyin",
+    "subtitle": "İçerik üreticilerinin işlerini nasıl zirveye taşıdığını keşfedin",
+    "testimonial1": {
+      "name": "Sofia Miller",
+      "role": "YouTube İçerik Üreticisi",
+      "content": "Senaryo Oluşturucu içerik üretim sürecimi tamamen değiştirdi. Artık saatler yerine dakikalar içinde ilgi çekici video senaryoları hazırlayabiliyorum ve izleyici tutma oranım %60 arttı"
+    },
+    "testimonial2": {
+      "name": "Marcus Rodriguez",
+      "role": "Konsept Sanatçısı",
+      "content": "Konsept Üreteci aracı hızlı prototipleme için inanılmaz. Müşteri toplantılarından önce onlarca görsel fikri keşfedebiliyorum, sunumlarım çok daha etkileyici oluyor"
+    },
+    "testimonial3": {
+      "name": "Aria Wilson",
+      "role": "Müzik Yapımcısı",
+      "content": "Kompozisyon Asistanı prodüksiyonlarım için tamamen yeni yaratıcı olasılıklar açtı. Yapay zeka önerileri, farkında bile olmadığım müzikal kalıplardan çıkmama yardımcı oluyor"
+    },
+    "testimonial4": {
+      "name": "Zara Williams",
+      "role": "Sosyal Medya Stratejisti",
+      "content": "İçerik Takvimi ve Sosyal Medya Görselleri araçları iş akışımı dönüştürdü. 15 marka hesabını zahmetsizce yönetiyorum ve etkileşim oranlarımız iki katına çıktı"
+    },
+    "testimonial5": {
+      "name": "Antonio Torres",
+      "role": "Dijital İllüstratör",
+      "content": "Resim Geliştirici ve Tuval Genişletici illüstrasyon iş akışımı tamamen değiştirdi. Artık karmaşık eserleri müşterilere eskisinden 3 kat daha hızlı teslim edebiliyorum"
+    },
+    "testimonial6": {
+      "name": "Jordan Maxwell",
+      "role": "Şarkıcı-Söz Yazarı",
+      "content": "Söz Yazarı şimdiye kadarki en iyi şarkılarımı yazmama yardımcı oldu. Yaratıcılığın yerini almıyor—onu güçlendiriyor, tıkandığımda doğru kelimeleri bulmama yardımcı oluyor"
+    },
+    "testimonial7": {
+      "name": "Alex Parker",
+      "role": "Marka Yöneticisi",
+      "content": "Sosyal Medya Görselleri aracı tüm platformlarda görsel kimliğimizi standartlaştırdı. Bu tutarlı tasarımları uygulamaya başladığımızdan beri marka bilinirliğimiz %45 arttı"
+    },
+    "testimonial8": {
+      "name": "Maya Patel",
+      "role": "İçerik Stratejisti",
+      "content": "Blog Fikirleri üreteci içerik planlamımızda devrim yarattı. %200 daha fazla kaliteli makale yayınladık ve organik trafiğimiz üç katına çıktı"
+    },
+    "testimonial9": {
+      "name": "Ryan Mitchell",
+      "role": "Grafik Tasarımcı",
+      "content": "Kapak Tasarımı aracı müşteri işlerimi inanılmaz kolaylaştırdı. Eskiden bir konsept için harcadığım sürede birden fazla albüm konsepti oluşturabiliyorum, daha fazla proje alabilirim"
+    },
+    "testimonial10": {
+      "name": "Emma Johnson",
+      "role": "Podcast Sunucusu",
+      "content": "Ses Efekti Üreteci podcast'imin prodüksiyon kalitesini dramatik şekilde yükseltti. Özel ses efektleri oluşturmak pahalı yazılımlar gerektiriyordu—şimdi dakikalar sürüyor"
+    },
+    "testimonial11": {
+      "name": "Kelly Thompson",
+      "role": "Oyun Geliştiricisi",
+      "content": "Bağımsız bir geliştirici olarak Referans Temizleyici ve Konsept Üreteci araçları paha biçilmez oldu. Tam bir sanat ekibi işe almadan profesyonel oyun varlıkları oluşturabiliyorum"
+    }
+  },
+  "footer": {
+    "description": "Kelimeler, görseller, müzik, videolar ve ötesinde sonsuz yaratıcılığın kilidini açan yeni nesil yapay zeka merkeziyle vizyonunuzu güçlendirin",
+    "menu": "Menü",
+    "links": "Bağlantılar",
+    "company": "Şirket",
+    "privacyPolicy": "Gizlilik Politikası",
+    "termsAndConditions": "Şartlar ve Koşullar",
+    "returnPolicy": "İade Politikası",
+    "cookiesPolicy": "Çerez Politikası",
+    "companyName": "Şirket: GUΑRΑΝТЕЕD GRЕΑТ SЕRVIСЕ LТD",
+    "companyNumber": "Şirket Numarası: 15982295",
+    "phoneNumber": "Telefon: +44 7537167307",
+    "email": "support@nerbixa.com",
+    "address": "Dept 6162 43 Owston Road, Carcroft, Doncaster, Birleşik Krallık, DN6 8DA",
+    "copyright": "Nerbixa, Telif Hakkı © {year}. Tüm Hakları Saklıdır."
+  },
+  "cta": {
+    "tagline": "Ücretsiz üretim jetonları",
+    "title": "Yapay Zeka geleceğinin parçası olun",
+    "titleLine2": "Birlikte Bir Şeyler Yaratalım",
+    "description": "Yapay zekanın gücünü açın ve yaratıcı sürecinizi dönüştürün. Ücretsiz üretim jetonlarıyla bugün başlayın ve AI Horizon'un işinizi nasıl yeni zirvelere taşıyabileceğini keşfedin."
+  },
+  "dashboard": {
+    "title": "Yaratıcı Stüdyo",
+    "subtitle": "İçerik üreticileri, video sanatçıları, fotoğrafçılar ve dijital sanatçılar için özel olarak tasarlanmış güçlü yapay zeka araçları",
+    "creatorTool": "Yaratıcı Aracı",
+    "paymentSuccess": "Ödeme başarılı! Kredileriniz hesabınıza eklendi."
+  },
+  "professions": {
+    "coDirector": "Yönetmen Ortağı",
+    "designPartner": "Tasarım Ortağı",
+    "coComposer": "Müzik Ortağı",
+    "creativePartner": "İçerik Ortağı"
+  },
+  "tools": {
+    "chatAssistant": {
+      "label": "Sohbet Asistanı",
+      "description": "İçerik fikirleri üreten ve yaratıcı tıkanıklığı aşmanıza yardımcı olan yapay zeka asistanı"
+    },
+    "imageGeneration": {
+      "label": "Görsel Üretimi",
+      "description": "Tek bir istemle bloglar, videolar ve sosyal medya için özel görseller üretin"
+    },
+    "imageRestore": {
+      "label": "Görsel Onarımı",
+      "description": "Düşük kaliteli görselleri iyileştirin ve eski fotoğrafları hayata döndürün"
+    },
+    "imageBackgroundRemoval": {
+      "label": "Arka Plan Kaldırma",
+      "description": "Otomatik arka plan kaldırma ile temiz, profesyonel ürün çekimleri oluşturun"
+    },
+    "imageGenerativeFill": {
+      "label": "Üretken Dolgu",
+      "description": "Yapay zeka destekli içerik dolgusuyla görselleri her platform için genişletin"
+    },
+    "imageObjectRecolor": {
+      "label": "Nesne Renklendirme",
+      "description": "Nesneleri markanızın renk paletine ve görsel kimliğine uyacak şekilde yeniden renklendirin"
+    },
+    "imageObjectRemove": {
+      "label": "Nesne Kaldırma",
+      "description": "İstenmeyen öğeleri ve dikkat dağıtıcı unsurları kaldırarak fotoğrafları temizleyin"
+    },
+    "videoGeneration": {
+      "label": "Video Üretimi",
+      "description": "Sosyal kanallarınıza özel ilgi çekici kısa videolar oluşturun"
+    },
+    "musicGeneration": {
+      "label": "Müzik Üretimi",
+      "description": "Videolar ve podcastler için dakikalar içinde özel arka plan müzikleri üretin"
+    },
+    "speechGeneration": {
+      "label": "Konuşma Üretimi",
+      "description": "Videolarınız için profesyonel seslendirmeler ve anlatımlar oluşturun"
+    },
+    "scriptBuilder": {
+      "label": "Senaryo Oluşturucu",
+      "description": "Videolarınız için sektör standardında senaryolar ve storyboardlar üretin"
+    },
+    "videoMaker": {
+      "label": "Video Yapımcısı",
+      "description": "Fikirleri ve senaryoları otomatik olarak ilgi çekici video içeriğine dönüştürün"
+    },
+    "designPartner": {
+      "label": "Tasarım Ortağı",
+      "description": "Projeleriniz için etkileyici konsept sanatı ve illüstrasyonlar oluşturun"
+    },
+    "paintingEnhance": {
+      "label": "Resim Geliştirici",
+      "description": "Yapay zeka destekli sanatsal iyileştirmelerle dijital resimlerinizi geliştirin ve rafine edin"
+    },
+    "canvasExpand": {
+      "label": "Tuval Genişletici",
+      "description": "Kitleniz için ilgi çekici blog konuları ve net taslaklar üretin"
+    },
+    "referenceCleanup": {
+      "label": "Referans Temizleyici",
+      "description": "Sanatsal yaratımlarınız için referans görsellerini temizleyin ve hazırlayın"
+    },
+    "lyricWriter": {
+      "label": "Söz Yazarı",
+      "description": "Müziğiniz için yaratıcı ve ilham verici sözler üretin"
+    },
+    "coverArt": {
+      "label": "Kapak Tasarımı",
+      "description": "Profesyonel albüm kapakları ve müzik görselleri tasarlayın"
+    },
+    "composeAssist": {
+      "label": "Kompozisyon Asistanı",
+      "description": "Melodiler, akor ilerlemeleri ve tam düzenlemeler için yapay zeka desteği alın"
+    },
+    "sfxGenerator": {
+      "label": "Ses Efekti Üreteci",
+      "description": "Müzik parçalarınız ve prodüksiyonlarınız için benzersiz ses efektleri oluşturun"
+    },
+    "blogIdeas": {
+      "label": "Blog Fikirleri",
+      "description": "Kitleniz için ilgi çekici blog konuları ve net taslaklar üretin"
+    },
+    "socialGraphics": {
+      "label": "Sosyal Medya Görselleri",
+      "description": "Her sosyal platform için optimize edilmiş dikkat çekici grafikler oluşturun"
+    },
+    "contentPlanner": {
+      "label": "İçerik Planlayıcı",
+      "description": "Etkileşimi maksimize etmek için içerik takviminizi planlayın ve düzenleyin"
+    },
+    "thumbnailOptimizer": {
+      "label": "Küçük Resim Optimizer",
+      "description": "Tıklama oranlarını artıran dikkat çekici küçük resimler tasarlayın"
+    },
+    "captionGenerator": {
+      "label": "Açıklama Üreteci",
+      "description": "Ölçülebilir etkileşim sağlayan etkileyici açıklamalar yazın"
+    }
+  },
+  "languageSwitcher": {
+    "en": "🇬🇧 EN",
+    "tr": "🇹🇷 TR"
+  },
+  "metadata": {
+    "title": "Nerbixa",
+    "description": "Herkes için yapay zeka destekli yaratıcı araçlar",
+    "ogTitle": "Nerbixa - Yapay zeka destekli yaratıcı araçlar",
+    "ogDescription": "Herkes için yapay zeka destekli yaratıcı araçlar"
+  }
+}

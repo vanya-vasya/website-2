@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages, getLocale } from "next-intl/server";
 
 import { ModalProvider } from "@/components/modal-provider";
 import { ToasterProvider } from "@/components/toaster-provider";
@@ -67,11 +69,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
     <ClerkProvider
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
@@ -80,7 +85,7 @@ export default function RootLayout({
       afterSignInUrl="/dashboard"
       afterSignUpUrl="/dashboard"
     >
-      <html lang="en" suppressHydrationWarning>
+      <html lang={locale} suppressHydrationWarning>
         <body
           className={cn(
             "min-h-screen bg-background font-sans antialiased",
@@ -88,11 +93,13 @@ export default function RootLayout({
             spaceGrotesk.variable
           )}
         >
-          <GoogleAnalytics gaId="G-DYY23NK5V1" />
-          <ModalProvider />
-          <ToasterProvider />
-          <NextTopLoader color="#3c3c77" showSpinner={false} />
-          {children}
+          <NextIntlClientProvider messages={messages}>
+            <GoogleAnalytics gaId="G-DYY23NK5V1" />
+            <ModalProvider />
+            <ToasterProvider />
+            <NextTopLoader color="#3c3c77" showSpinner={false} />
+            {children}
+          </NextIntlClientProvider>
         </body>
       </html>
     </ClerkProvider>

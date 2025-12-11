@@ -6,41 +6,43 @@ import CodeSnippet from "@/components/ui/CodeSnippet";
 import ChatInterface from "@/components/ui/ChatInterface"; 
 import Image from 'next/image';
 import Link from "next/link";
-
-const creativeTools = [
-  {
-    title: "Co-Composer",
-    description: "Create original music and melodies for your projects with AI-powered composition",
-    image: "/images/resource/music/music-production.jpg",
-    type: "image",
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-  {
-    title: "Co-Director", 
-    description: "Create professional video scripts, storyboards and scenarios for your next production",
-    image: "/images/resource/video-production.jpg",
-    type: "image",
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-  {
-    title: "Design Partner",
-    description: "Generate stunning concept art and illustrations for your creative projects",
-    image: "/images/resource/tiktok.jpg",
-    type: "image", 
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-  {
-    title: "Creative Partner",
-    description: "Generate engaging social media posts, captions, and content calendars for your brand",
-    image: "/images/resource/digital_artist.jpg",
-    type: "image",
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-];
+import { useTranslations } from "next-intl";
 
 const Solutions = () => {
+  const t = useTranslations();
   const [activeIndex, setActiveIndex] = useState(0);
   const [autoplay, setAutoplay] = useState(true);
+
+  const creativeTools = [
+    {
+      title: t("solutions.coComposer.title"),
+      description: t("solutions.coComposer.description"),
+      image: "/images/resource/music/music-production.jpg",
+      type: "image",
+      color: "from-cyan-400 via-blue-500 to-indigo-600",
+    },
+    {
+      title: t("solutions.coDirector.title"),
+      description: t("solutions.coDirector.description"),
+      image: "/images/resource/video-production.jpg",
+      type: "image",
+      color: "from-cyan-400 via-blue-500 to-indigo-600",
+    },
+    {
+      title: t("solutions.designPartner.title"),
+      description: t("solutions.designPartner.description"),
+      image: "/images/resource/tiktok.jpg",
+      type: "image", 
+      color: "from-cyan-400 via-blue-500 to-indigo-600",
+    },
+    {
+      title: t("solutions.creativePartner.title"),
+      description: t("solutions.creativePartner.description"),
+      image: "/images/resource/digital_artist.jpg",
+      type: "image",
+      color: "from-cyan-400 via-blue-500 to-indigo-600",
+    },
+  ];
 
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined;
@@ -50,7 +52,7 @@ const Solutions = () => {
       }, 5000);
     }
     return () => clearInterval(interval);
-  }, [autoplay]);
+  }, [autoplay, creativeTools.length]);
 
   const handleDotClick = (index: number) => {
     setActiveIndex(index);
@@ -90,7 +92,7 @@ const Solutions = () => {
             }}
           >
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600">
-              It is your AI creative assistant
+              {t("solutions.title")}
             </span>
           </motion.h2>
         </div>
@@ -192,7 +194,7 @@ const Solutions = () => {
                           whileTap={{ scale: 0.98 }}
                           className={`px-6 py-3 rounded-full bg-gradient-to-r ${tool.color} text-white font-semibold shadow-lg`}
                         >
-                          Explore
+                          {t("common.explore")}
                         </motion.button>
                       </Link>
                     </div>

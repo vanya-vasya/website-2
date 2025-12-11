@@ -14,6 +14,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "react-hot-toast";
+import { useTranslations } from "next-intl";
 
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -51,6 +52,7 @@ export default function HomePage() {
   const [filteredTools, setFilteredTools] = useState(tools);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const t = useTranslations();
 
   // Handle payment success and NetworkX redirect notifications
   useEffect(() => {
@@ -83,7 +85,7 @@ export default function HomePage() {
       console.log('   - UID:', uid);
       console.log('   - Showing success notification...');
       
-      toast.success('Payment successful! Your credits have been added to your account.', {
+      toast.success(t("dashboard.paymentSuccess"), {
         duration: 5000,
         icon: '🎉',
       });
@@ -105,7 +107,7 @@ export default function HomePage() {
       console.log('   - Order ID:', orderId);
       console.log('   - Showing success notification...');
       
-      toast.success('Payment successful! Your credits have been added to your account.', {
+      toast.success(t("dashboard.paymentSuccess"), {
         duration: 5000,
         icon: '🎉',
       });
@@ -137,7 +139,7 @@ export default function HomePage() {
     } else if (!paymentStatus && !status) {
       console.log('ℹ️  INFO: No payment status in URL (normal page load)');
     }
-  }, [searchParams]);
+  }, [searchParams, t]);
 
   useEffect(() => {
     if (activeFilters.length === 0) {
@@ -218,7 +220,7 @@ export default function HomePage() {
               textTransform: 'none'
             }}
           >
-            Creator Studio
+            {t("dashboard.title")}
           </span>
         </h1>
 
@@ -233,8 +235,7 @@ export default function HomePage() {
               color: '#0f172a'
             }}
           >
-            Powerful AI tools designed specifically for content creators, video
-            artists, photographers and digital artists
+            {t("dashboard.subtitle")}
           </p>
         </div>
 
@@ -371,14 +372,14 @@ export default function HomePage() {
                         <span className="flex items-center gap-1.5">
                           <Sparkles className="h-3 w-3 transition-transform duration-500 group-hover:rotate-180" />
                           {tool.professions.includes("all")
-                            ? "Creator Tool"
+                            ? t("dashboard.creatorTool")
                             : tool.professions.includes("video")
-                            ? "Co-Director"
+                            ? t("professions.coDirector")
                             : tool.professions.includes("art")
-                            ? "Design Partner"
+                            ? t("professions.designPartner")
                             : tool.professions.includes("music")
-                            ? "Co-Composer"
-                            : "Creative Partner"}
+                            ? t("professions.coComposer")
+                            : t("professions.creativePartner")}
                         </span>
                       </span>
 

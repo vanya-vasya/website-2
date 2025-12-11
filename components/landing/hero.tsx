@@ -3,8 +3,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 const Hero = () => {
+  const t = useTranslations();
+
   return (
     <section 
       id="home" 
@@ -21,9 +24,9 @@ const Hero = () => {
       <div className="relative z-10 mx-auto px-2 sm:px-4 flex items-center" style={{ minHeight: '50vh' }}>
         <div className="feature-one__inner w-full">
           <h2 className="hero-heading text-center">
-            AI Engine built for <br />
+            {t("hero.title")} <br />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600">
-              Visionaries
+              {t("hero.titleHighlight")}
             </span>
           </h2>
           <div className="flex justify-center mb-12">
@@ -37,7 +40,8 @@ const Hero = () => {
                 color: '#0f172a'
               }}
             >
-            From bold idea to built reality. Turn foresight into a first-mover advantage. Your AI co-creator that turns sketches into specs, concepts into launches, and taste into traction           </p>
+              {t("hero.subtitle")}
+            </p>
           </div>
           <div className="feature-one__btn-box">
             <Link href="/dashboard">
@@ -51,7 +55,7 @@ const Hero = () => {
                   letterSpacing: '0.01em'
                 }}
               >
-                Get Started
+                {t("common.getStarted")}
               </motion.button>
             </Link>
           </div>
@@ -85,4 +89,3 @@ const Hero = () => {
 };
 
 export default Hero;
-

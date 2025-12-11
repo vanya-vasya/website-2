@@ -1,5 +1,8 @@
+"use client";
+
 import { Zap } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,6 +18,7 @@ export const FreeCounter = ({
 }) => {
   const [mounted, setMounted] = useState(false);
   const proModal = useProModal();
+  const t = useTranslations();
 
   useEffect(() => {
     setMounted(true);
@@ -30,8 +34,7 @@ export const FreeCounter = ({
         <CardContent className="py-6">
           <div className="text-center text-sm text-white mb-4 space-y-2">
             <p>
-              {apiUsedGenerations} / {apiAvailableGenerations} Available
-              Generations
+              {apiUsedGenerations} / {apiAvailableGenerations} {t("common.availableGenerations")}
             </p>
             <Progress
               className="h-3"
@@ -44,7 +47,7 @@ export const FreeCounter = ({
             className="w-full"
             style={{fontFamily: "Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"}}
           >
-            Buy More
+            {t("common.buyMore")}
             <Zap className="w-4 h-4 ml-2 fill-white" />
           </Button>
         </CardContent>

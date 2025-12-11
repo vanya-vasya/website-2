@@ -7,31 +7,35 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Link from "next/link";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
-
-const routes = [
-  {
-    label: "Home",
-    href: "#home",
-  },
-  {
-    label: "Features",
-    href: "#features",
-  },
-  {
-    label: "FAQ",
-    href: "#faq",
-  },
-  {
-    label: "Solutions",
-    href: "#solutions",
-  },
-  {
-    label: "Testimonials",
-    href: "#testimonials",
-  },
-];
+import { useTranslations } from "next-intl";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 export const GuestMobileSidebar = () => {
+  const t = useTranslations();
+
+  const routes = [
+    {
+      label: t("nav.home"),
+      href: "#home",
+    },
+    {
+      label: t("nav.features"),
+      href: "#features",
+    },
+    {
+      label: t("nav.faq"),
+      href: "#faq",
+    },
+    {
+      label: t("nav.solutions"),
+      href: "#solutions",
+    },
+    {
+      label: t("nav.testimonials"),
+      href: "#testimonials",
+    },
+  ];
+
   return (
     <Sheet>
     <SheetTrigger asChild>
@@ -66,7 +70,7 @@ export const GuestMobileSidebar = () => {
                   href="/dashboard"
                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-[#a1aac9] hover:text-white"
                 >
-                  Dashboard
+                  {t("common.dashboard")}
                 </Link>
                 </SignedIn>
                 <SignedOut>
@@ -74,9 +78,12 @@ export const GuestMobileSidebar = () => {
                   href="/dashboard"
                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-[#a1aac9] hover:text-white"
                 >
-                  Sign In / Sign Up
+                  {t("common.signInSignUp")}
                 </Link>
                 </SignedOut>
+                <div className="mt-4 -mx-3 px-3">
+                  <LanguageSwitcher variant="minimal" />
+                </div>
               </div>
               </div>
             </div>

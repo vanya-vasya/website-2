@@ -19,90 +19,93 @@ import {
   Focus,
   Type 
 } from "lucide-react";
-
-const creatorTools = [
-  // Video Creator
-  {
-    icon: Clapperboard,
-    title: "Script Builder",
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-  {
-    icon: Video,
-    title: "Video Maker",
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-  // Digital Artist
-  {
-    icon: Palette,
-    title: "Concept Generator",
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-  {
-    icon: Paintbrush,
-    title: "Painting Enhance",
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-  {
-    icon: Expand,
-    title: "Canvas Expand",
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-  {
-    icon: Eraser,
-    title: "Reference Cleanup",
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-  // Musician
-  {
-    icon: FileAudio,
-    title: "Lyric Writer",
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-  {
-    icon: Disc,
-    title: "Cover Art",
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-  {
-    icon: Music,
-    title: "Compose Assist",
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-  {
-    icon: Volume2,
-    title: "SFX Generator",
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-  // Content Creator
-  {
-    icon: Lightbulb,
-    title: "Blog Ideas",
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-  {
-    icon: Share2,
-    title: "Social Graphics",
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-  {
-    icon: Calendar,
-    title: "Content Calendar",
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-  {
-    icon: Focus,
-    title: "Thumbnail Optimizer",
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-  {
-    icon: Type,
-    title: "Caption Generator",
-    color: "from-cyan-400 via-blue-500 to-indigo-600",
-  },
-];
+import { useTranslations } from "next-intl";
 
 const Slider = () => {
+  const t = useTranslations();
+
+  const creatorTools = [
+    // Video Creator
+    {
+      icon: Clapperboard,
+      title: t("slider.scriptBuilder"),
+      color: "from-cyan-400 via-blue-500 to-indigo-600",
+    },
+    {
+      icon: Video,
+      title: t("slider.videoMaker"),
+      color: "from-cyan-400 via-blue-500 to-indigo-600",
+    },
+    // Digital Artist
+    {
+      icon: Palette,
+      title: t("slider.conceptGenerator"),
+      color: "from-cyan-400 via-blue-500 to-indigo-600",
+    },
+    {
+      icon: Paintbrush,
+      title: t("slider.paintingEnhance"),
+      color: "from-cyan-400 via-blue-500 to-indigo-600",
+    },
+    {
+      icon: Expand,
+      title: t("slider.canvasExpand"),
+      color: "from-cyan-400 via-blue-500 to-indigo-600",
+    },
+    {
+      icon: Eraser,
+      title: t("slider.referenceCleanup"),
+      color: "from-cyan-400 via-blue-500 to-indigo-600",
+    },
+    // Musician
+    {
+      icon: FileAudio,
+      title: t("slider.lyricWriter"),
+      color: "from-cyan-400 via-blue-500 to-indigo-600",
+    },
+    {
+      icon: Disc,
+      title: t("slider.coverArt"),
+      color: "from-cyan-400 via-blue-500 to-indigo-600",
+    },
+    {
+      icon: Music,
+      title: t("slider.composeAssist"),
+      color: "from-cyan-400 via-blue-500 to-indigo-600",
+    },
+    {
+      icon: Volume2,
+      title: t("slider.sfxGenerator"),
+      color: "from-cyan-400 via-blue-500 to-indigo-600",
+    },
+    // Content Creator
+    {
+      icon: Lightbulb,
+      title: t("slider.blogIdeas"),
+      color: "from-cyan-400 via-blue-500 to-indigo-600",
+    },
+    {
+      icon: Share2,
+      title: t("slider.socialGraphics"),
+      color: "from-cyan-400 via-blue-500 to-indigo-600",
+    },
+    {
+      icon: Calendar,
+      title: t("slider.contentCalendar"),
+      color: "from-cyan-400 via-blue-500 to-indigo-600",
+    },
+    {
+      icon: Focus,
+      title: t("slider.thumbnailOptimizer"),
+      color: "from-cyan-400 via-blue-500 to-indigo-600",
+    },
+    {
+      icon: Type,
+      title: t("slider.captionGenerator"),
+      color: "from-cyan-400 via-blue-500 to-indigo-600",
+    },
+  ];
+
   // Create duplicated array for seamless infinite scrolling
   const duplicatedTools = [...creatorTools, ...creatorTools];
 
@@ -122,7 +125,7 @@ const Slider = () => {
             transition={{ duration: 0.6 }}
             className="font-bold text-4xl sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600"
           >
-            Toolkits
+            {t("slider.title")}
           </motion.h2>
 
           <motion.p
@@ -140,7 +143,7 @@ const Slider = () => {
               color: '#0f172a'
             }}
           >
-            Toolkits built for every creative discipline. From video to music to art and content, our AI platform delivers pro-grade tools tailored to how you work
+            {t("slider.subtitle")}
           </motion.p>
         </div>
 
@@ -204,7 +207,7 @@ const Slider = () => {
                           whileTap={{ scale: 0.98 }}
                           className={`px-4 py-2 rounded-full bg-gradient-to-r ${tool.color} text-white font-semibold shadow-lg text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
                         >
-                          Get Started
+                          {t("common.getStarted")}
                         </motion.button>
                       </Link>
                     </div>
@@ -220,4 +223,3 @@ const Slider = () => {
 };
 
 export default Slider;
-

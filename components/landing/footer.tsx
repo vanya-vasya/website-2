@@ -1,71 +1,76 @@
+"use client";
+
 import { Building, FileText, Mail, MapPin, Instagram, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-
-const routes = [
-  {
-    name: "Home",
-    href: "/#home",
-  },
-  {
-    name: "Solutions",
-    href: "/#solutions",
-  },
-  {
-    name: "Products",
-    href: "/#features",
-  },
-  {
-    name: "Why Us",
-    href: "/#testimonials",
-  },
-];
-
-const importantLinks = [
-  {
-    name: "Privacy Policy",
-    href: "/privacy-policy",
-  },
-  {
-    name: "Terms and Conditions",
-    href: "/terms-and-conditions",
-  },
-  {
-    name: "Return Policy",
-    href: "/return-policy",
-  },
-  {
-    name: "Cookies Policy",
-    href: "/cookies-policy",
-  },
-];
-
-const companyDetails = [
-  {
-    name: "Company: GUΑRΑΝТЕЕD GRЕΑТ SЕRVIСЕ LТD",
-    icon: Building,
-  },
-  {
-    name: "Company Number: 15982295",
-    icon: FileText,
-  },
-  {
-    name: "Phone Number: +44 7537167307",
-    icon: Phone,
-  },
-  {
-    name: "support@nerbixa.com",
-    icon: Mail,
-  },
-  {
-    name: `Dept 6162 43 Owston Road, Carcroft, Doncaster, United Kingdom, DN6 8DA`,
-    icon: MapPin,
-  },
-];
+import { useTranslations } from "next-intl";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 const Footer = () => {
+  const t = useTranslations();
   const date = new Date();
-  let year = date.getFullYear();
+  const year = date.getFullYear();
+
+  const routes = [
+    {
+      name: t("nav.home"),
+      href: "/#home",
+    },
+    {
+      name: t("nav.solutions"),
+      href: "/#solutions",
+    },
+    {
+      name: t("nav.products"),
+      href: "/#features",
+    },
+    {
+      name: t("nav.whyUs"),
+      href: "/#testimonials",
+    },
+  ];
+
+  const importantLinks = [
+    {
+      name: t("footer.privacyPolicy"),
+      href: "/privacy-policy",
+    },
+    {
+      name: t("footer.termsAndConditions"),
+      href: "/terms-and-conditions",
+    },
+    {
+      name: t("footer.returnPolicy"),
+      href: "/return-policy",
+    },
+    {
+      name: t("footer.cookiesPolicy"),
+      href: "/cookies-policy",
+    },
+  ];
+
+  const companyDetails = [
+    {
+      name: t("footer.companyName"),
+      icon: Building,
+    },
+    {
+      name: t("footer.companyNumber"),
+      icon: FileText,
+    },
+    {
+      name: t("footer.phoneNumber"),
+      icon: Phone,
+    },
+    {
+      name: t("footer.email"),
+      icon: Mail,
+    },
+    {
+      name: t("footer.address"),
+      icon: MapPin,
+    },
+  ];
 
   return (
     <footer className="main-footer w-full bg-white">
@@ -88,8 +93,11 @@ const Footer = () => {
                     color: '#0f172a'
                   }}
                 >
-                  Power your vision with a next-gen AI hub that unlocks endless creativity across words, images, music, videos and beyond
+                  {t("footer.description")}
                 </p>
+                <div className="mt-4">
+                  <LanguageSwitcher variant="minimal" />
+                </div>
               </div>
             </div>
 
@@ -105,7 +113,7 @@ const Footer = () => {
                       textTransform: 'none',
                       color: '#0f172a'
                     }}
-                  >Menu</h3>
+                  >{t("footer.menu")}</h3>
                 </div>
                 <div className="footer-widget__resources-list-box">
                   <ul className="footer-widget__resources-list">
@@ -140,7 +148,7 @@ const Footer = () => {
                       textTransform: 'none',
                       color: '#0f172a'
                     }}
-                  >Links</h3>
+                  >{t("footer.links")}</h3>
                 </div>
                 <div className="footer-widget__resources-list-box">
                   <ul className="footer-widget__resources-list">
@@ -188,7 +196,7 @@ const Footer = () => {
                       textTransform: 'none',
                       color: '#0f172a'
                     }}
-                  >Company</h3>
+                  >{t("footer.company")}</h3>
                 </div>
                 <div className="footer-widget__company-list-box">
                   <ul className="space-y-4">
@@ -230,7 +238,7 @@ const Footer = () => {
                 color: '#0f172a'
               }}
             >
-              Nerbixa, Copyright © {year}. All Rights Reserved.
+              {t("footer.copyright", { year })}
             </p>
           </div>
         </div>

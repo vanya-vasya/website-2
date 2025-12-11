@@ -1,0 +1,284 @@
+{
+  "common": {
+    "getStarted": "Get Started",
+    "getStartedFree": "Get Started Free",
+    "explore": "Explore",
+    "dashboard": "Dashboard",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signInSignUp": "Sign In / Sign Up",
+    "buyMore": "Buy More",
+    "backToSelection": "← Back to Selection",
+    "completePayment": "Complete Payment",
+    "generations": "Generations",
+    "availableGenerations": "Available Generations",
+    "price": "Price",
+    "chooseOption": "Choose generations option",
+    "buyGenerations": "Buy Generations",
+    "iAgree": "I agree to the",
+    "termsOfService": "Terms of Service",
+    "and": "and",
+    "privacyPolicy": "Privacy Policy"
+  },
+  "nav": {
+    "solutions": "Solutions",
+    "products": "Products",
+    "whyUs": "Why Us",
+    "home": "Home",
+    "features": "Features",
+    "faq": "FAQ",
+    "testimonials": "Testimonials"
+  },
+  "hero": {
+    "title": "AI Engine built for",
+    "titleHighlight": "Visionaries",
+    "subtitle": "From bold idea to built reality. Turn foresight into a first-mover advantage. Your AI co-creator that turns sketches into specs, concepts into launches, and taste into traction"
+  },
+  "contact": {
+    "title": "Trusted by Leading Companies",
+    "subtitle": "Join Thousands of Businesses That Rely on Our AI-Powered Solutions"
+  },
+  "solutions": {
+    "title": "It is your AI creative assistant",
+    "coComposer": {
+      "title": "Co-Composer",
+      "description": "Create original music and melodies for your projects with AI-powered composition"
+    },
+    "coDirector": {
+      "title": "Co-Director",
+      "description": "Create professional video scripts, storyboards and scenarios for your next production"
+    },
+    "designPartner": {
+      "title": "Design Partner",
+      "description": "Generate stunning concept art and illustrations for your creative projects"
+    },
+    "creativePartner": {
+      "title": "Creative Partner",
+      "description": "Generate engaging social media posts, captions, and content calendars for your brand"
+    }
+  },
+  "slider": {
+    "title": "Toolkits",
+    "subtitle": "Toolkits built for every creative discipline. From video to music to art and content, our AI platform delivers pro-grade tools tailored to how you work",
+    "scriptBuilder": "Script Builder",
+    "videoMaker": "Video Maker",
+    "conceptGenerator": "Concept Generator",
+    "paintingEnhance": "Painting Enhance",
+    "canvasExpand": "Canvas Expand",
+    "referenceCleanup": "Reference Cleanup",
+    "lyricWriter": "Lyric Writer",
+    "coverArt": "Cover Art",
+    "composeAssist": "Compose Assist",
+    "sfxGenerator": "SFX Generator",
+    "blogIdeas": "Blog Ideas",
+    "socialGraphics": "Social Graphics",
+    "contentCalendar": "Content Calendar",
+    "thumbnailOptimizer": "Thumbnail Optimizer",
+    "captionGenerator": "Caption Generator"
+  },
+  "testimonials": {
+    "title": "Hear from Creative Professionals",
+    "subtitle": "Discover how creators are taking their craft to new heights",
+    "testimonial1": {
+      "name": "Sofia Miller",
+      "role": "YouTube Creator",
+      "content": "Script Builder has revolutionized my content creation process. I can now produce engaging video scripts in minutes instead of hours, and my audience retention has improved by 60%"
+    },
+    "testimonial2": {
+      "name": "Marcus Rodriguez",
+      "role": "Concept Artist",
+      "content": "The Concept Generator tool is incredible for rapid prototyping. I can explore dozens of visual ideas before clients meetings, making my presentations much more compelling"
+    },
+    "testimonial3": {
+      "name": "Aria Wilson",
+      "role": "Music Producer",
+      "content": "Compose Assist has opened up entirely new creative possibilities for my productions. The AI suggestions help me break out of musical patterns I didn't even know I was stuck in"
+    },
+    "testimonial4": {
+      "name": "Zara Williams",
+      "role": "Social Media Strategist",
+      "content": "Content Calendar and Social Graphics tools have transformed my workflow. I manage 15 brand accounts effortlessly and our engagement rates have doubled"
+    },
+    "testimonial5": {
+      "name": "Antonio Torres",
+      "role": "Digital Illustrator",
+      "content": "Painting Enhance and Canvas Expand have completely transformed my illustration workflow. I can now deliver complex artworks to clients 3x faster than before"
+    },
+    "testimonial6": {
+      "name": "Jordan Maxwell",
+      "role": "Singer-Songwriter",
+      "content": "Lyric Writer has helped me write my best songs yet. It doesn't replace creativity—it amplifies it, helping me find the perfect words when I'm stuck"
+    },
+    "testimonial7": {
+      "name": "Alex Parker",
+      "role": "Brand Manager",
+      "content": "Social Graphics tool has standardized our visual identity across all platforms. Our brand recognition increased by 45% since implementing these consistent designs"
+    },
+    "testimonial8": {
+      "name": "Maya Patel",
+      "role": "Content Strategist",
+      "content": "Blog Ideas generator has revolutionized our content planning. We've published 200% more high-quality articles and our organic traffic has tripled"
+    },
+    "testimonial9": {
+      "name": "Ryan Mitchell",
+      "role": "Graphic Designer",
+      "content": "Cover Art tool has streamlined my client work tremendously. I can create multiple album concepts in the time it used to take for one, allowing me to take on more projects"
+    },
+    "testimonial10": {
+      "name": "Emma Johnson",
+      "role": "Podcast Host",
+      "content": "SFX Generator has elevated my podcast's production value dramatically. Creating custom sound effects used to require expensive software—now it takes minutes"
+    },
+    "testimonial11": {
+      "name": "Kelly Thompson",
+      "role": "Game Developer",
+      "content": "As a solo indie developer, Reference Cleanup and Concept Generator tools have been invaluable. I can create professional game assets without hiring a full art team"
+    }
+  },
+  "footer": {
+    "description": "Power your vision with a next-gen AI hub that unlocks endless creativity across words, images, music, videos and beyond",
+    "menu": "Menu",
+    "links": "Links",
+    "company": "Company",
+    "privacyPolicy": "Privacy Policy",
+    "termsAndConditions": "Terms and Conditions",
+    "returnPolicy": "Return Policy",
+    "cookiesPolicy": "Cookies Policy",
+    "companyName": "Company: GUΑRΑΝТЕЕD GRЕΑТ SЕRVIСЕ LТD",
+    "companyNumber": "Company Number: 15982295",
+    "phoneNumber": "Phone Number: +44 7537167307",
+    "email": "support@nerbixa.com",
+    "address": "Dept 6162 43 Owston Road, Carcroft, Doncaster, United Kingdom, DN6 8DA",
+    "copyright": "Nerbixa, Copyright © {year}. All Rights Reserved."
+  },
+  "cta": {
+    "tagline": "Free generation tokens",
+    "title": "Be part of the future of AI Horizon",
+    "titleLine2": "Let's Create Something",
+    "description": "Unlock the power of AI and transform your creative process. Get started today with free generation tokens and discover how AI Horizon can elevate your work to new heights."
+  },
+  "dashboard": {
+    "title": "Creator Studio",
+    "subtitle": "Powerful AI tools designed specifically for content creators, video artists, photographers and digital artists",
+    "creatorTool": "Creator Tool",
+    "paymentSuccess": "Payment successful! Your credits have been added to your account."
+  },
+  "professions": {
+    "coDirector": "Co-Director",
+    "designPartner": "Design Partner",
+    "coComposer": "Co-Composer",
+    "creativePartner": "Creative Partner"
+  },
+  "tools": {
+    "chatAssistant": {
+      "label": "Chat Assistant",
+      "description": "An AI assistant that sparks content ideas and helps you overcome creative block"
+    },
+    "imageGeneration": {
+      "label": "Image Generation",
+      "description": "Generate custom visuals for blogs, videos, and social media with a single prompt"
+    },
+    "imageRestore": {
+      "label": "Image Restore",
+      "description": "Enhance low-quality images and bring old photographs back to life"
+    },
+    "imageBackgroundRemoval": {
+      "label": "Image Background Removal",
+      "description": "Create clean, professional product shots with automatic background removal"
+    },
+    "imageGenerativeFill": {
+      "label": "Image Generative Fill",
+      "description": "Expand images for any platform with AI-powered content fill"
+    },
+    "imageObjectRecolor": {
+      "label": "Image Object Recolor",
+      "description": "Recolor objects to match your brand's palette and visual identity"
+    },
+    "imageObjectRemove": {
+      "label": "Image Object Remove",
+      "description": "Clean up photos by removing unwanted elements and distractions"
+    },
+    "videoGeneration": {
+      "label": "Video Generation",
+      "description": "Create engaging short-form videos tailored to your social channels"
+    },
+    "musicGeneration": {
+      "label": "Music Generation",
+      "description": "Produce custom background music for videos and podcasts in minutes"
+    },
+    "speechGeneration": {
+      "label": "Speech Generation",
+      "description": "Create professional voiceovers and narration for your videos"
+    },
+    "scriptBuilder": {
+      "label": "Script Builder",
+      "description": "Generate industry-ready scripts and storyboards for your videos"
+    },
+    "videoMaker": {
+      "label": "Video Maker",
+      "description": "Turn ideas and scripts into engaging video content automatically"
+    },
+    "designPartner": {
+      "label": "Design Partner",
+      "description": "Create stunning concept art and illustrations for your projects"
+    },
+    "paintingEnhance": {
+      "label": "Painting Enhance",
+      "description": "Enhance and refine your digital paintings with AI-powered artistic improvements"
+    },
+    "canvasExpand": {
+      "label": "Canvas Expand",
+      "description": "Generate engaging blog topics and clear outlines for your audience"
+    },
+    "referenceCleanup": {
+      "label": "Reference Cleanup",
+      "description": "Clean up and prepare reference images for your artistic creations"
+    },
+    "lyricWriter": {
+      "label": "Lyric Writer",
+      "description": "Generate creative and inspiring lyrics for your music"
+    },
+    "coverArt": {
+      "label": "Cover Art",
+      "description": "Design professional album covers and music artwork"
+    },
+    "composeAssist": {
+      "label": "Compose Assist",
+      "description": "Get AI assistance composing melodies, chord progressions, and full arrangements"
+    },
+    "sfxGenerator": {
+      "label": "SFX Generator",
+      "description": "Create unique sound effects for your music tracks and productions"
+    },
+    "blogIdeas": {
+      "label": "Blog Ideas",
+      "description": "Generate engaging blog topics and clear outlines for your audience"
+    },
+    "socialGraphics": {
+      "label": "Social Graphics",
+      "description": "Create eye-catching graphics optimized for every social platform"
+    },
+    "contentPlanner": {
+      "label": "Content Planner",
+      "description": "Plan and organize your content schedule to maximize engagement"
+    },
+    "thumbnailOptimizer": {
+      "label": "Thumbnail Optimizer",
+      "description": "Design attention-grabbing thumbnails that lift click-through rates"
+    },
+    "captionGenerator": {
+      "label": "Caption Generator",
+      "description": "Write compelling captions that drive measurable engagement"
+    }
+  },
+  "languageSwitcher": {
+    "en": "🇬🇧 EN",
+    "tr": "🇹🇷 TR"
+  },
+  "metadata": {
+    "title": "Nerbixa",
+    "description": "AI-powered creative tools for everyone",
+    "ogTitle": "Nerbixa - AI-powered creative tools",
+    "ogDescription": "AI-powered creative tools for everyone"
+  }
+}

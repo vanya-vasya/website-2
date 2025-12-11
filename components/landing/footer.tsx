@@ -4,7 +4,6 @@ import { Building, FileText, Mail, MapPin, Instagram, Phone } from "lucide-react
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { LanguageSwitcher } from "@/components/language-switcher";
 
 const Footer = () => {
   const t = useTranslations();
@@ -95,9 +94,6 @@ const Footer = () => {
                 >
                   {t("footer.description")}
                 </p>
-                <div className="mt-4">
-                  <LanguageSwitcher variant="minimal" />
-                </div>
               </div>
             </div>
 

@@ -228,9 +228,29 @@
     },
     "canvasExpand": {
       "label": "Canvas Expand",
-      "description": "Generate engaging blog topics and clear outlines for your audience"
+      "description": "Expand your canvas and extend images with AI-powered content generation"
     },
     "referenceCleanup": {
+      "label": "Reference Cleanup",
+      "description": "Clean up and prepare reference images for your artistic creations"
+    },
+    "videoScript": {
+      "label": "Script Builder",
+      "description": "Generate industry-ready scripts and storyboards for your videos"
+    },
+    "videoCreation": {
+      "label": "Video Maker",
+      "description": "Turn ideas and scripts into engaging video content automatically"
+    },
+    "digitalPainting": {
+      "label": "Painting Enhance",
+      "description": "Enhance and refine your digital paintings with AI-powered artistic improvements"
+    },
+    "canvasExpansion": {
+      "label": "Canvas Expand",
+      "description": "Expand your canvas and extend images with AI-powered content generation"
+    },
+    "artReference": {
       "label": "Reference Cleanup",
       "description": "Clean up and prepare reference images for your artistic creations"
     },
@@ -269,7 +289,32 @@
     "captionGenerator": {
       "label": "Caption Generator",
       "description": "Write compelling captions that drive measurable engagement"
+    },
+    "videoMaker": {
+      "label": "Video Maker",
+      "description": "Turn ideas and scripts into engaging video content automatically"
+    },
+    "paintingEnhance": {
+      "label": "Painting Enhance",
+      "description": "Enhance and refine your digital paintings with AI-powered artistic improvements"
+    },
+    "canvasExpand": {
+      "label": "Canvas Expand",
+      "description": "Expand your canvas and extend images with AI-powered content generation"
+    },
+    "referenceCleanup": {
+      "label": "Reference Cleanup",
+      "description": "Clean up and prepare reference images for your artistic creations"
     }
+  },
+  "payments": {
+    "title": "Payments",
+    "description": "Payment history made easy, all in one place",
+    "empty": "It's empty ¯\\_(ツ)_/¯",
+    "id": "ID",
+    "paymentDate": "Payment Date",
+    "paymentAmount": "Payment Amount",
+    "status": "Status"
   },
   "languageSwitcher": {
     "en": "🇬🇧 EN",

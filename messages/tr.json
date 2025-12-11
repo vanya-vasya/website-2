@@ -227,8 +227,8 @@
       "description": "Yapay zeka destekli sanatsal iyileştirmelerle dijital resimlerinizi geliştirin ve rafine edin"
     },
     "canvasExpand": {
-      "label": "Tuval Genişletici",
-      "description": "Kitleniz için ilgi çekici blog konuları ve net taslaklar üretin"
+      "label": "Tuval Genişletme",
+      "description": "Tuvallerinizi genişletin ve yapay zeka destekli içerik üretimi ile görselleri uzatın"
     },
     "referenceCleanup": {
       "label": "Referans Temizleyici",
@@ -269,7 +269,52 @@
     "captionGenerator": {
       "label": "Açıklama Üreteci",
       "description": "Ölçülebilir etkileşim sağlayan etkileyici açıklamalar yazın"
+    },
+    "videoMaker": {
+      "label": "Video Oluşturucu",
+      "description": "Fikirleri ve senaryoları otomatik olarak ilgi çekici video içeriğine dönüştürün"
+    },
+    "paintingEnhance": {
+      "label": "Resim Geliştirme",
+      "description": "Dijital resimlerinizi yapay zeka destekli sanatsal iyileştirmelerle geliştirin ve rafine edin"
+    },
+    "canvasExpand": {
+      "label": "Tuval Genişletme",
+      "description": "Tuvallerinizi genişletin ve yapay zeka destekli içerik üretimi ile görselleri uzatın"
+    },
+    "referenceCleanup": {
+      "label": "Referans Temizleme",
+      "description": "Sanatsal yaratımlarınız için referans görsellerini temizleyin ve hazırlayın"
+    },
+    "videoScript": {
+      "label": "Senaryo Oluşturucu",
+      "description": "Videolarınız için sektör standardında senaryolar ve storyboardlar üretin"
+    },
+    "videoCreation": {
+      "label": "Video Oluşturucu",
+      "description": "Fikirleri ve senaryoları otomatik olarak ilgi çekici video içeriğine dönüştürün"
+    },
+    "digitalPainting": {
+      "label": "Resim Geliştirme",
+      "description": "Dijital resimlerinizi yapay zeka destekli sanatsal iyileştirmelerle geliştirin ve rafine edin"
+    },
+    "canvasExpansion": {
+      "label": "Tuval Genişletme",
+      "description": "Tuvallerinizi genişletin ve yapay zeka destekli içerik üretimi ile görselleri uzatın"
+    },
+    "artReference": {
+      "label": "Referans Temizleme",
+      "description": "Sanatsal yaratımlarınız için referans görsellerini temizleyin ve hazırlayın"
     }
+  },
+  "payments": {
+    "title": "Ödemeler",
+    "description": "Ödeme geçmişi kolaylaştırıldı, hepsi bir arada",
+    "empty": "Boş ¯\\_(ツ)_/¯",
+    "id": "Kimlik",
+    "paymentDate": "Ödeme Tarihi",
+    "paymentAmount": "Ödeme Tutarı",
+    "status": "Durum"
   },
   "languageSwitcher": {
     "en": "🇬🇧 EN",

@@ -54,6 +54,38 @@ export default function HomePage() {
   const [canScrollRight, setCanScrollRight] = useState(true);
   const t = useTranslations();
 
+  // Helper function to convert kebab-case tool ID to camelCase translation key
+  const getToolTranslationKey = (toolId: string): string => {
+    const idMap: Record<string, string> = {
+      "video-script": "videoScript",
+      "video-creation": "videoCreation",
+      "digital-painting": "digitalPainting",
+      "canvas-expansion": "canvasExpansion",
+      "art-reference": "artReference",
+      "thumbnail-optimizer": "thumbnailOptimizer",
+      "song-lyrics": "lyricWriter",
+      "album-cover": "coverArt",
+      "music-composition": "composeAssist",
+      "sound-effects": "sfxGenerator",
+      "blog-ideas": "blogIdeas",
+      "social-graphics": "socialGraphics",
+      "content-calendar": "contentPlanner",
+      "caption-generator": "captionGenerator",
+      "chat-assistant": "chatAssistant",
+      "image-generation": "imageGeneration",
+      "image-restore": "imageRestore",
+      "image-background-removal": "imageBackgroundRemoval",
+      "image-generative-fill": "imageGenerativeFill",
+      "image-object-recolor": "imageObjectRecolor",
+      "image-object-remove": "imageObjectRemove",
+      "video-generation": "videoGeneration",
+      "music-generation": "musicGeneration",
+      "speech-generation": "speechGeneration",
+      "concept-art": "designPartner",
+    };
+    return idMap[toolId] || toolId;
+  };
+
   // Handle payment success and NetworkX redirect notifications
   useEffect(() => {
     // Check for multiple payment success parameters
@@ -359,12 +391,12 @@ export default function HomePage() {
                         </div>
                       </div>
                       <h3 className="font-heading font-semibold text-lg bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 transition-all duration-500">
-                        {tool.label}
+                        {t(`tools.${getToolTranslationKey(tool.id)}.label`, { defaultValue: tool.label })}
                       </h3>
                     </div>
 
                     <p className="text-sm text-black mb-6 line-clamp-2 flex-grow transition-colors duration-500">
-                      {tool.description}
+                      {t(`tools.${getToolTranslationKey(tool.id)}.description`, { defaultValue: tool.description })}
                     </p>
 
                     <div className="flex items-center justify-between">

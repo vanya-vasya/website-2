@@ -9,7 +9,7 @@ import enMessages from '@/messages/en.json';
 import trMessages from '@/messages/tr.json';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { formatDate, formatCurrency, formatNumber } from '@/lib/format';
-import { Locale } from '@/i18n/request';
+import { Locale } from '@/lib/i18n';
 
 // Mock next/navigation
 const mockRouter = {

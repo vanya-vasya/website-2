@@ -1,58 +1,9 @@
 import { getRequestConfig } from 'next-intl/server';
 import { cookies, headers } from 'next/headers';
+import { locales, defaultLocale, type Locale } from '@/lib/i18n';
 
-export const locales = ['en', 'tr'] as const;
-export type Locale = (typeof locales)[number];
-export const defaultLocale: Locale = 'en';
-
-// Locale-specific formatting configurations
-export const localeConfig: Record<Locale, {
-  dateTime: Intl.DateTimeFormatOptions;
-  number: Intl.NumberFormatOptions;
-  currency: Intl.NumberFormatOptions;
-  localeString: string;
-}> = {
-  en: {
-    dateTime: {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    },
-    number: {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    },
-    currency: {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    },
-    localeString: 'en-US',
-  },
-  tr: {
-    dateTime: {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    },
-    number: {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    },
-    currency: {
-      style: 'currency',
-      currency: 'TRY',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    },
-    localeString: 'tr-TR',
-  },
-};
+// Re-export for backwards compatibility
+export { locales, defaultLocale, type Locale };
 
 export default getRequestConfig(async () => {
   // Try to get locale from cookie first (highest priority)

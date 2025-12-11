@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Transaction } from "@/lib/api-limit";
 import { formatDate, formatCurrency } from "@/lib/format";
-import { Locale } from "@/i18n/request";
+import { Locale } from "@/lib/i18n";
 import { useEffect, useState } from "react";
 
 interface PaymentHistoryTableProps {

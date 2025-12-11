@@ -1,4 +1,4 @@
-import { Locale, localeConfig } from '@/i18n/request';
+import { Locale, localeConfig } from '@/lib/i18n';
 
 /**
  * Format a date according to the current locale

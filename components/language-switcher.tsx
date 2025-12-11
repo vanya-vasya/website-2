@@ -29,16 +29,24 @@ export const LanguageSwitcher = ({
     if (localeCookie && locales.includes(localeCookie)) {
       setCurrentLocale(localeCookie);
     }
-  }, []);
+  }, [pathname]); // Re-check locale when pathname changes
 
   const handleLocaleChange = (newLocale: Locale) => {
-    // Set cookie for the new locale
+    // Set cookie for the new locale with secure options
     document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
     setCurrentLocale(newLocale);
     setIsOpen(false);
 
+    // Preserve locale across navigation by refreshing the page
+    // This ensures the locale cookie is read by the server on the next request
     startTransition(() => {
+      // Update the current URL to trigger a refresh while preserving the path
       router.refresh();
+      
+      // Also update the HTML lang attribute
+      if (typeof document !== 'undefined') {
+        document.documentElement.lang = newLocale === 'tr' ? 'tr' : 'en';
+      }
     });
   };
 

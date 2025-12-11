@@ -2,6 +2,9 @@
 
 import { useTranslations } from "next-intl";
 import { Transaction } from "@/lib/api-limit";
+import { formatDate, formatCurrency } from "@/lib/format";
+import { Locale } from "@/i18n/request";
+import { useEffect, useState } from "react";
 
 interface PaymentHistoryTableProps {
   transactions: Transaction[] | null;
@@ -9,6 +12,19 @@ interface PaymentHistoryTableProps {
 
 export const PaymentHistoryTable = ({ transactions }: PaymentHistoryTableProps) => {
   const t = useTranslations("payments");
+  const [currentLocale, setCurrentLocale] = useState<Locale>("en");
+
+  useEffect(() => {
+    // Get current locale from cookie
+    const localeCookie = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("NEXT_LOCALE="))
+      ?.split("=")[1] as Locale | undefined;
+    
+    if (localeCookie && (localeCookie === "en" || localeCookie === "tr")) {
+      setCurrentLocale(localeCookie);
+    }
+  }, []);
 
   if (!transactions || transactions.length === 0) {
     return (
@@ -63,18 +79,17 @@ export const PaymentHistoryTable = ({ transactions }: PaymentHistoryTableProps) 
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-black">
                             {transaction.paid_at
-                              ? new Intl.DateTimeFormat("ru-RU", {
-                                  day: "2-digit",
-                                  month: "2-digit",
-                                  year: "numeric",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                }).format(new Date(transaction.paid_at))
+                              ? formatDate(new Date(transaction.paid_at), currentLocale)
                               : ""}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-black">
-                            {(transaction.amount ?? 0.0) / 100}{" "}
-                            {transaction.currency}
+                            {transaction.amount
+                              ? formatCurrency(
+                                  (transaction.amount ?? 0.0) / 100,
+                                  currentLocale,
+                                  transaction.currency || undefined
+                                )
+                              : `${(transaction.amount ?? 0.0) / 100} ${transaction.currency}`}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-black">
                             {transaction.status

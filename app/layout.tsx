@@ -85,7 +85,7 @@ export default async function RootLayout({
       afterSignInUrl="/dashboard"
       afterSignUpUrl="/dashboard"
     >
-      <html lang={locale} suppressHydrationWarning>
+      <html lang={locale === 'tr' ? 'tr' : 'en'} suppressHydrationWarning>
         <body
           className={cn(
             "min-h-screen bg-background font-sans antialiased",

@@ -48,25 +48,26 @@ const Footer = () => {
     },
   ];
 
+  // Company information - always in English, not translated
   const companyDetails = [
     {
-      name: t("footer.companyName"),
+      name: "Company: GUΑRΑΝТЕЕD GRЕΑТ SЕRVIСЕ LТD",
       icon: Building,
     },
     {
-      name: t("footer.companyNumber"),
+      name: "Company Number: 15982295",
       icon: FileText,
     },
     {
-      name: t("footer.phoneNumber"),
+      name: "Phone Number: +44 7537167307",
       icon: Phone,
     },
     {
-      name: t("footer.email"),
+      name: "support@nerbixa.com",
       icon: Mail,
     },
     {
-      name: t("footer.address"),
+      name: "Dept 6162 43 Owston Road, Carcroft, Doncaster, United Kingdom, DN6 8DA",
       icon: MapPin,
     },
   ];

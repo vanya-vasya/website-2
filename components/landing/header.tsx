@@ -47,7 +47,6 @@ const Header = () => {
           </div>
         </div>
         <div className="flex lg:flex-1 lg:justify-end items-center gap-4">
-          <LanguageSwitcher className="hidden sm:block" />
           <div className="flex">
             <ul className="main-header__login-sing-up">
               <li>
@@ -80,6 +79,7 @@ const Header = () => {
               </li>
             </ul>
           </div>
+          <LanguageSwitcher className="hidden sm:block" />
           <GuestMobileSidebar />
         </div>
       </nav>

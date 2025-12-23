@@ -12,7 +12,10 @@ import { Pool } from 'pg';
 import { NextRequest } from 'next/server';
 import { POST as secureProcessorWebhookPOST } from '@/app/api/webhooks/secure-processor/route';
 
-describe('Payment Flow - Test Mode', () => {
+const hasDb = !!process.env.DATABASE_URL;
+const describeDb = hasDb ? describe : describe.skip;
+
+describeDb('Payment Flow - Test Mode', () => {
   let pool: Pool;
   const testUserId = `test_user_${Date.now()}`;
   const testEmail = `test_${Date.now()}@example.com`;

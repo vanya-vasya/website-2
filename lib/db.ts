@@ -84,15 +84,17 @@ const db: Database & {
   },
 };
 
-// Test connection on startup
-pool.connect()
-  .then(client => {
-    console.log('[DB] PostgreSQL connection established');
-    client.release();
-  })
-  .catch(error => {
-    console.error('[DB] PostgreSQL connection failed:', error);
-  });
+// Test connection on startup (avoid noisy failures when DATABASE_URL is not set, or in test env)
+if (process.env.DATABASE_URL && process.env.NODE_ENV !== 'test') {
+  pool.connect()
+    .then(client => {
+      console.log('[DB] PostgreSQL connection established');
+      client.release();
+    })
+    .catch(error => {
+      console.error('[DB] PostgreSQL connection failed:', error);
+    });
+}
 
 // Handle pool errors
 pool.on('error', (err) => {

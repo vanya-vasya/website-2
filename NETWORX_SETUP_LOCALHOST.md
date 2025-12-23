@@ -22,7 +22,7 @@ Create a `.env.local` file in your project root:
 ```bash
 # Networx Pay Configuration
 NETWORX_SHOP_ID=29959
-NETWORX_SECRET_KEY=dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950
+NETWORX_SECRET_KEY=<your_networx_secret_key>
 
 # API Configuration  
 NETWORX_API_URL=https://gateway.networxpay.com

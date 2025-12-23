@@ -65,7 +65,7 @@ git push origin fix/database-insert-updatedAt-default:staging
 
 Already configured in `.env.local`:
 ```
-DATABASE_URL=postgresql://neondb_owner:****@ep-floral-hill-a2w6wrew-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require
+DATABASE_URL=postgresql://<user>:<password>@<host>/<database>?sslmode=require
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
 CLERK_SECRET_KEY=sk_test_...
 ```

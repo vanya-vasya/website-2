@@ -109,6 +109,31 @@ export default function HomePage() {
     });
     console.log('═════════════════════════════════════════════════════════');
     
+    const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    const waitForLedger = async (transactionUid: string) => {
+      // Poll our backend ledger; redirect params are NOT source of truth.
+      // This prevents false “credits added” messaging when the webhook is delayed or failed.
+      for (let attempt = 0; attempt < 10; attempt++) {
+        try {
+          const res = await fetch(`/api/payment/verify-balance?transactionId=${encodeURIComponent(transactionUid)}`, {
+            method: "GET",
+            headers: { "Accept": "application/json" },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.balanceUpdated === true) {
+              return true;
+            }
+          }
+        } catch {
+          // ignore transient client/network issues; keep polling
+        }
+        await sleep(1200);
+      }
+      return false;
+    };
+
     // Handle NetworkX direct redirect with status=successful
     if (status === 'successful' && token && uid) {
       console.log('✅ SUCCESS: NetworkX payment redirect detected!');
@@ -117,10 +142,22 @@ export default function HomePage() {
       console.log('   - UID:', uid);
       console.log('   - Showing success notification...');
       
-      toast.success(t("dashboard.paymentSuccess"), {
-        duration: 5000,
-        icon: '🎉',
-      });
+      const loadingId = toast.loading("Finalizing payment...", { duration: 8000 });
+      waitForLedger(uid)
+        .then((confirmed) => {
+          toast.dismiss(loadingId);
+          if (confirmed) {
+            toast.success(t("dashboard.paymentSuccess"), { duration: 5000, icon: "🎉" });
+            return;
+          }
+          toast("Payment received. If credits/history don’t update within a minute, contact support with your Payment ID.", {
+            duration: 8000,
+          });
+        })
+        .catch(() => {
+          toast.dismiss(loadingId);
+          toast("Payment received. Processing may take a moment.", { duration: 8000 });
+        });
       
       // Clean up URL parameters
       const url = new URL(window.location.href);
@@ -139,10 +176,7 @@ export default function HomePage() {
       console.log('   - Order ID:', orderId);
       console.log('   - Showing success notification...');
       
-      toast.success(t("dashboard.paymentSuccess"), {
-        duration: 5000,
-        icon: '🎉',
-      });
+      toast("Payment received. Finalizing...", { duration: 6000 });
       
       // Clean up URL parameters without reloading
       const url = new URL(window.location.href);

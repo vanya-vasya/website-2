@@ -84,7 +84,7 @@ Environments: ☑️ Production ☑️ Preview ☑️ Development
 **Должна быть переменная:**
 ```
 Name: DATABASE_URL
-Value: postgresql://neondb_owner:***@ep-floral-hill-a2w6wrew-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require
+Value: postgresql://<user>:<password>@<host>/<database>?sslmode=require
 Environments: ☑️ Production ☑️ Preview ☑️ Development
 ```
 

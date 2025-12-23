@@ -110,7 +110,7 @@ Required variables for test mode:
 ```bash
 # Payment provider
 SECURE_PROCESSOR_SHOP_ID=29959
-SECURE_PROCESSOR_SECRET_KEY=dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950
+SECURE_PROCESSOR_SECRET_KEY=<your_secure_processor_secret_key>
 SECURE_PROCESSOR_TEST_MODE=true  # CRITICAL for test payments
 
 # Database

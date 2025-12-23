@@ -21,12 +21,12 @@ Null constraint violation on the fields: (updatedAt)
 
 **Connection String** (from `.env.local`):
 ```
-DATABASE_URL=postgresql://neondb_owner:****@ep-floral-hill-a2w6wrew-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+DATABASE_URL=postgresql://<user>:<password>@<host>/<database>?sslmode=require
 ```
 
 **Configuration Details**:
 - **Provider**: Neon PostgreSQL (Serverless Postgres)
-- **Host**: `ep-floral-hill-a2w6wrew-pooler.eu-central-1.aws.neon.tech`
+- **Host**: `<your-neon-host>`
 - **Database**: `neondb`
 - **Schema**: `public`
 - **SSL**: Required with channel binding

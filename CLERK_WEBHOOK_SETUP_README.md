@@ -124,7 +124,7 @@ Create/edit `.env.local` in project root:
 WEBHOOK_SECRET=whsec_Evuu+3/9O3LgKvhQQ/AyJc6hIlC2pmUj
 
 # Database
-DATABASE_URL=postgresql://neondb_owner:***@ep-floral-hill-a2w6wrew-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require
+DATABASE_URL=postgresql://<user>:<password>@<host>/<database>?sslmode=require
 
 # Clerk API
 CLERK_SECRET_KEY=sk_test_...

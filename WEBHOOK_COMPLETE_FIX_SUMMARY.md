@@ -125,7 +125,7 @@ Value: whsec_[YOUR_ACTUAL_SECRET_FROM_CLERK]
 NETWORX_WEBHOOK_URL = https://www.nerbixa.com/api/webhooks/networx
 NETWORX_RETURN_URL = https://www.nerbixa.com/payment/success
 NETWORX_SHOP_ID = 29959
-NETWORX_SECRET_KEY = dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950
+NETWORX_SECRET_KEY = <your_networx_secret_key>
 NETWORX_TEST_MODE = true
 ```
 

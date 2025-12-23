@@ -269,8 +269,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const shopId = process.env.SECURE_PROCESSOR_SHOP_ID || '29959';
-    const secretKey = process.env.SECURE_PROCESSOR_SECRET_KEY || 'dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950';
+    const shopId = process.env.SECURE_PROCESSOR_SHOP_ID;
+    const secretKey = process.env.SECURE_PROCESSOR_SECRET_KEY;
+    if (!shopId || !secretKey) {
+      return NextResponse.json(
+        { error: 'Payment gateway not configured' },
+        { status: 500 }
+      );
+    }
     const apiUrl = 'https://checkout.networxpay.com'; // HPP API URL
 
     // Send request to Secure-processor HPP API for status check

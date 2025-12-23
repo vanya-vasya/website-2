@@ -165,7 +165,7 @@ DATABASE_URL=postgresql://user:password@host:port/database?sslmode=require
 
 For Neon:
 ```env
-DATABASE_URL=postgresql://neondb_owner:****@ep-floral-hill-a2w6wrew-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+DATABASE_URL=postgresql://<user>:<password>@<host>/<database>?sslmode=require
 ```
 
 ---

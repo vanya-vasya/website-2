@@ -62,7 +62,7 @@ Visit: **http://localhost:3001/payment/test**
 ### Environment Variables (`.env.local`):
 ```bash
 NETWORX_SHOP_ID=29959
-NETWORX_SECRET_KEY=dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950
+NETWORX_SECRET_KEY=<your_networx_secret_key>
 NETWORX_API_URL=https://gateway.networxpay.com
 NETWORX_TEST_MODE=true
 NETWORX_RETURN_URL=http://localhost:3001/payment/success

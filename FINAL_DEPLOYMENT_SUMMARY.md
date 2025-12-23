@@ -69,14 +69,14 @@ c501b8d - feat: implement automatic dashboard redirect after payment
 
 ```
 NETWORX_SHOP_ID = 29959
-NETWORX_SECRET_KEY = dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950
+NETWORX_SECRET_KEY = <your_networx_secret_key>
 ```
 
 ### ✅ Убедитесь, что в Vercel настроены:
 
 **Обязательные переменные:**
 1. `NETWORX_SHOP_ID` = `29959`
-2. `NETWORX_SECRET_KEY` = `dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950`
+2. `NETWORX_SECRET_KEY` = `<your_networx_secret_key>`
 
 **Опциональные переменные:**
 3. `NETWORX_TEST_MODE` = `true` (для тестирования) или `false` (для продакшена)

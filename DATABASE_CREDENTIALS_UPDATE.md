@@ -6,14 +6,14 @@
 ## Updated Neon Database Configuration
 
 ### New Connection Details
-- **Host:** `ep-floral-hill-a2w6wrew-pooler.eu-central-1.aws.neon.tech`
+- **Host:** `<your-neon-host>`
 - **Database:** `neondb`
 - **User:** `neondb_owner`
 - **Connection:** Pooled connection with SSL required
 
 ### Environment Variables Required
 ```env
-DATABASE_URL=postgresql://neondb_owner:npg_htMKUEqkQ4A0@ep-floral-hill-a2w6wrew-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+DATABASE_URL=postgresql://<user>:<password>@<host>/<database>?sslmode=require
 ```
 
 ### Verification Results

@@ -209,13 +209,13 @@ PostgreSQL Version: 17.5
 
 #### Neon Connection String Structure
 ```
-postgresql://neondb_owner:npg_htMKUEqkQ4A0@ep-floral-hill-a2w6wrew-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+postgresql://<user>:<password>@<host>/<database>?sslmode=require
 ```
 
 **Parsed Components:**
 - **User:** neondb_owner
-- **Password:** npg_htMKUEqkQ4A0 (truncated for security)
-- **Host:** ep-floral-hill-a2w6wrew-pooler.eu-central-1.aws.neon.tech
+- **Password:** <redacted>
+- **Host:** <your-neon-host>
 - **Database:** neondb
 - **Region:** eu-central-1 (AWS Frankfurt)
 - **Connection:** Pooler (recommended for serverless)

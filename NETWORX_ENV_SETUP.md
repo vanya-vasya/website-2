@@ -9,7 +9,7 @@ For production deployment on Vercel, add these environment variables to your Ver
 ### Server-side Variables (Private)
 ```
 NETWORX_SHOP_ID=29959
-NETWORX_SECRET_KEY=dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950
+NETWORX_SECRET_KEY=<your_networx_secret_key>
 NETWORX_API_URL=https://gateway.networxpay.com
 NETWORX_TEST_MODE=false
 NETWORX_RETURN_URL=https://nerbixa.com/payment/success
@@ -37,7 +37,7 @@ NEXT_PUBLIC_NETWORX_WIDGET_URL=https://checkout.networxpay.com
 The code has been updated to include fallback values for all environment variables, so the payment system will work even if environment variables are not set, using the credentials provided:
 
 - Shop ID: 29959
-- Secret Key: dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950
+- Secret Key: <your_networx_secret_key>
 
 ## Changes Made
 

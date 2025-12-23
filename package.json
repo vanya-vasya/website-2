@@ -27,7 +27,8 @@
     "user:create": "node create-vladimir-user.js",
     "payment:diagnose": "npx tsx scripts/diagnose-test-payment-flow.ts",
     "payment:webhook-sim": "npx tsx scripts/webhook-simulator-test-mode.ts",
-    "payment:reconcile": "npx tsx scripts/reconcile-missing-payments.ts"
+    "payment:reconcile": "npx tsx scripts/reconcile-missing-payments.ts",
+    "payment:reconcile:import": "node scripts/reconcile-secure-processor-export.js"
   },
   "dependencies": {
     "@bytescale/upload-widget-react": "^4.19.0",

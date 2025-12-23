@@ -68,8 +68,9 @@ export async function POST(request: NextRequest) {
     
     // Force correct API URL for hosted payment page - override any incorrect environment variable
     const apiUrl = 'https://checkout.networxpay.com';  // Correct API URL for hosted payment page
-    const returnUrl = process.env.SECURE_PROCESSOR_RETURN_URL || 'https://nerbixa.com/payment/success';
-    const notificationUrl = process.env.SECURE_PROCESSOR_WEBHOOK_URL || 'https://nerbixa.com/api/webhooks/secure-processor';
+    // CRITICAL: Use www subdomain - nerbixa.com redirects (307) to www.nerbixa.com which breaks webhook POST
+    const returnUrl = process.env.SECURE_PROCESSOR_RETURN_URL || 'https://www.nerbixa.com/payment/success';
+    const notificationUrl = process.env.SECURE_PROCESSOR_WEBHOOK_URL || 'https://www.nerbixa.com/api/webhooks/secure-processor';
     const useTestMode = process.env.SECURE_PROCESSOR_TEST_MODE === 'true'; // Enable test transactions
     
     console.log('═════════════════════════════════════════════════════════');

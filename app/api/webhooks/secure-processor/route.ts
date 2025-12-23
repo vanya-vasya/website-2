@@ -26,8 +26,8 @@ type SecureProcessorTransaction = Record<string, any>;
 const normalizeSignatureHex = (signature: string) => signature.trim().toLowerCase();
 
 const safeTimingEqualHex = (aHex: string, bHex: string) => {
-  const a = Buffer.from(normalizeSignatureHex(aHex), 'hex');
-  const b = Buffer.from(normalizeSignatureHex(bHex), 'hex');
+  const a = Uint8Array.from(Buffer.from(normalizeSignatureHex(aHex), 'hex'));
+  const b = Uint8Array.from(Buffer.from(normalizeSignatureHex(bHex), 'hex'));
   if (a.length === 0 || b.length === 0) return false;
   if (a.length !== b.length) return false;
   return crypto.timingSafeEqual(a, b);
@@ -107,6 +107,29 @@ const getWebhookSignature = (request: NextRequest, body: Record<string, any>) =>
   const bodySig = typeof body?.signature === 'string' ? body.signature : null;
   const transactionSig = typeof body?.transaction?.signature === 'string' ? body.transaction.signature : null;
   return headerSig || bodySig || transactionSig || null;
+};
+
+const insertWebhookEventIfNew = async (
+  client: any,
+  eventId: string,
+  eventType: string
+): Promise<{ inserted: boolean }> => {
+  const res = await client.query(
+    `INSERT INTO "WebhookEvent" ("id", "eventId", "eventType", "processed", "processedAt")
+     VALUES ($1, $2, $3, false, NULL)
+     ON CONFLICT ("eventId") DO NOTHING`,
+    [db.generateId(), eventId, eventType]
+  );
+  return { inserted: res.rowCount > 0 };
+};
+
+const markWebhookEventProcessed = async (client: any, eventId: string) => {
+  await client.query(
+    `UPDATE "WebhookEvent"
+     SET "processed" = true, "processedAt" = NOW()
+     WHERE "eventId" = $1`,
+    [eventId]
+  );
 };
 
 // POST - Handle webhook notifications from Secure-processor
@@ -220,24 +243,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Event-level idempotency: prevent reprocessing the exact same event (uid+status+paid_at).
-    // IMPORTANT: `uid` is the transaction ID; providers often send multiple statuses for the same uid (pending → successful),
-    // so we must not use uid-only idempotency.
+    // Event-level idempotency key:
+    // - `uid` alone is NOT safe (pending → successful share uid).
+    // - We include status and paid_at to distinguish lifecycle events.
+    // IMPORTANT: idempotency must be transactional; we only mark processed after persistence succeeds.
     const eventId = `${transaction_id}:${status || 'unknown'}:${paid_at || ''}`;
-    const eventInsert = await db.query(
-      `INSERT INTO "WebhookEvent" ("id", "eventId", "eventType", "processed", "processedAt")
-       VALUES ($1, $2, $3, true, NOW())
-       ON CONFLICT ("eventId") DO NOTHING`,
-      [db.generateId(), eventId, String(status || 'unknown')]
-    );
-
-    if (eventInsert.rowCount === 0) {
-      log.info('secure_processor.webhook_event_duplicate', { requestId, eventId, transactionId: transaction_id, status });
-      return NextResponse.json(
-        { status: 'ok', message: 'Event already processed', idempotent: true },
-        { status: 200 }
-      );
-    }
 
     // Process statuses according to Secure-processor documentation
     switch (status) {
@@ -276,6 +286,7 @@ export async function POST(request: NextRequest) {
           tokensToAdd,
           normalizedAmount,
           currency,
+          eventId,
         });
 
         // Execute operations in database transaction
@@ -283,6 +294,11 @@ export async function POST(request: NextRequest) {
         // In User table we update ONLY token balance (availableGenerations, usedGenerations)
         try {
           const result = await db.transaction(async (client) => {
+            const { inserted } = await insertWebhookEventIfNew(client, eventId, String(status || 'unknown'));
+            if (!inserted) {
+              return { credited: false, reason: 'event_duplicate' as const, idempotent: true };
+            }
+
             // Lock existing transaction row (if present) to safely handle status transitions.
             const existingTxn = await client.query(
               'SELECT "id", "status" FROM "Transaction" WHERE "webhookEventId" = $1 FOR UPDATE',
@@ -339,7 +355,8 @@ export async function POST(request: NextRequest) {
             }
 
             if (wasAlreadySuccessful) {
-              return { credited: false, reason: 'already_successful' as const };
+              await markWebhookEventProcessed(client, eventId);
+              return { credited: false, reason: 'already_successful' as const, idempotent: true };
             }
 
             // Update user balance atomically, if user exists.
@@ -350,6 +367,7 @@ export async function POST(request: NextRequest) {
 
             if (lockedUser.rows.length === 0) {
               // Keep transaction record, but skip crediting. Do not retry forever at provider.
+              await markWebhookEventProcessed(client, eventId);
               return { credited: false, reason: 'user_missing' as const };
             }
 
@@ -361,6 +379,7 @@ export async function POST(request: NextRequest) {
               [newAvailable, tracking_id]
             );
 
+            await markWebhookEventProcessed(client, eventId);
             return { credited: true, reason: 'credited' as const, newAvailable };
           });
 
@@ -370,6 +389,8 @@ export async function POST(request: NextRequest) {
             userId: tracking_id,
             credited: result.credited,
             reason: result.reason,
+            idempotent: (result as any).idempotent === true,
+            eventId,
             processingMs: Date.now() - startTime,
           });
 
@@ -389,92 +410,113 @@ export async function POST(request: NextRequest) {
         log.info('secure_processor.payment_failed', { requestId, transactionId: transaction_id, userId: tracking_id });
         
         // Write ONLY to Transaction table, DO NOT update User
-        await db.query(
-          `INSERT INTO "Transaction"
-            ("id", "tracking_id", "userId", "status", "amount", "currency", "description",
-             "type", "payment_method_type", "message", "reason", "webhookEventId")
-           VALUES ($1, $2, $3, 'failed', $4, $5, $6, $7, $8, $9, $10, $11)
-           ON CONFLICT ("webhookEventId") DO UPDATE
-             SET "status" = 'failed',
-                 "amount" = COALESCE(EXCLUDED."amount", "Transaction"."amount"),
-                 "currency" = COALESCE(EXCLUDED."currency", "Transaction"."currency"),
-                 "description" = COALESCE(EXCLUDED."description", "Transaction"."description"),
-                 "message" = COALESCE(EXCLUDED."message", "Transaction"."message"),
-                 "reason" = COALESCE(EXCLUDED."reason", "Transaction"."reason")`,
-          [
-            db.generateId(),
-            transaction_id,
-            tracking_id || null,
-            normalizeAmountToInt(amount),
-            currency || 'USD',
-            description || 'Payment failed',
-            type || 'payment',
-            payment_method_type || 'card',
-            message || 'Payment failed',
-            message || 'Payment failed',
-            transaction_id,
-          ]
-        );
+        await db.transaction(async (client) => {
+          const { inserted } = await insertWebhookEventIfNew(client, eventId, String(status || 'unknown'));
+          if (!inserted) return;
+
+          await client.query(
+            `INSERT INTO "Transaction"
+              ("id", "tracking_id", "userId", "status", "amount", "currency", "description",
+               "type", "payment_method_type", "message", "reason", "webhookEventId")
+             VALUES ($1, $2, $3, 'failed', $4, $5, $6, $7, $8, $9, $10, $11)
+             ON CONFLICT ("webhookEventId") DO UPDATE
+               SET "status" = 'failed',
+                   "amount" = COALESCE(EXCLUDED."amount", "Transaction"."amount"),
+                   "currency" = COALESCE(EXCLUDED."currency", "Transaction"."currency"),
+                   "description" = COALESCE(EXCLUDED."description", "Transaction"."description"),
+                   "message" = COALESCE(EXCLUDED."message", "Transaction"."message"),
+                   "reason" = COALESCE(EXCLUDED."reason", "Transaction"."reason")`,
+            [
+              db.generateId(),
+              transaction_id,
+              tracking_id || null,
+              normalizeAmountToInt(amount),
+              currency || 'USD',
+              description || 'Payment failed',
+              type || 'payment',
+              payment_method_type || 'card',
+              message || 'Payment failed',
+              message || 'Payment failed',
+              transaction_id,
+            ]
+          );
+
+          await markWebhookEventProcessed(client, eventId);
+        });
         break;
 
       case 'pending':
         log.info('secure_processor.payment_pending', { requestId, transactionId: transaction_id, userId: tracking_id });
         
         // Write ONLY to Transaction table, DO NOT update User
-        await db.query(
-          `INSERT INTO "Transaction"
-            ("id", "tracking_id", "userId", "status", "amount", "currency", "description",
-             "type", "payment_method_type", "message", "webhookEventId")
-           VALUES ($1, $2, $3, 'pending', $4, $5, $6, $7, $8, $9, $10)
-           ON CONFLICT ("webhookEventId") DO UPDATE
-             SET "status" = 'pending',
-                 "amount" = COALESCE(EXCLUDED."amount", "Transaction"."amount"),
-                 "currency" = COALESCE(EXCLUDED."currency", "Transaction"."currency"),
-                 "description" = COALESCE(EXCLUDED."description", "Transaction"."description"),
-                 "message" = COALESCE(EXCLUDED."message", "Transaction"."message")`,
-          [
-            db.generateId(),
-            transaction_id,
-            tracking_id || null,
-            normalizeAmountToInt(amount),
-            currency || 'USD',
-            description || 'Payment pending',
-            type || 'payment',
-            payment_method_type || 'card',
-            message || 'Payment pending',
-            transaction_id,
-          ]
-        );
+        await db.transaction(async (client) => {
+          const { inserted } = await insertWebhookEventIfNew(client, eventId, String(status || 'unknown'));
+          if (!inserted) return;
+
+          await client.query(
+            `INSERT INTO "Transaction"
+              ("id", "tracking_id", "userId", "status", "amount", "currency", "description",
+               "type", "payment_method_type", "message", "webhookEventId")
+             VALUES ($1, $2, $3, 'pending', $4, $5, $6, $7, $8, $9, $10)
+             ON CONFLICT ("webhookEventId") DO UPDATE
+               SET "status" = 'pending',
+                   "amount" = COALESCE(EXCLUDED."amount", "Transaction"."amount"),
+                   "currency" = COALESCE(EXCLUDED."currency", "Transaction"."currency"),
+                   "description" = COALESCE(EXCLUDED."description", "Transaction"."description"),
+                   "message" = COALESCE(EXCLUDED."message", "Transaction"."message")`,
+            [
+              db.generateId(),
+              transaction_id,
+              tracking_id || null,
+              normalizeAmountToInt(amount),
+              currency || 'USD',
+              description || 'Payment pending',
+              type || 'payment',
+              payment_method_type || 'card',
+              message || 'Payment pending',
+              transaction_id,
+            ]
+          );
+
+          await markWebhookEventProcessed(client, eventId);
+        });
         break;
 
       case 'canceled':
         log.info('secure_processor.payment_canceled', { requestId, transactionId: transaction_id, userId: tracking_id });
         
         // Write ONLY to Transaction table, DO NOT update User
-        await db.query(
-          `INSERT INTO "Transaction"
-            ("id", "tracking_id", "userId", "status", "amount", "currency", "description",
-             "type", "payment_method_type", "message", "webhookEventId")
-           VALUES ($1, $2, $3, 'canceled', $4, $5, $6, $7, $8, $9, $10)
-           ON CONFLICT ("webhookEventId") DO UPDATE
-             SET "status" = 'canceled',
-                 "amount" = COALESCE(EXCLUDED."amount", "Transaction"."amount"),
-                 "currency" = COALESCE(EXCLUDED."currency", "Transaction"."currency"),
-                 "description" = COALESCE(EXCLUDED."description", "Transaction"."description"),
-                 "message" = COALESCE(EXCLUDED."message", "Transaction"."message")`,
-          [
-            db.generateId(),
-            transaction_id,
-            tracking_id || null,
-            normalizeAmountToInt(amount),
-            currency || 'USD',
-            description || 'Payment canceled',
-            type || 'payment',
-            payment_method_type || 'card',
-            message || 'Payment canceled',
-            transaction_id,
-          ]
-        );
+        await db.transaction(async (client) => {
+          const { inserted } = await insertWebhookEventIfNew(client, eventId, String(status || 'unknown'));
+          if (!inserted) return;
+
+          await client.query(
+            `INSERT INTO "Transaction"
+              ("id", "tracking_id", "userId", "status", "amount", "currency", "description",
+               "type", "payment_method_type", "message", "webhookEventId")
+             VALUES ($1, $2, $3, 'canceled', $4, $5, $6, $7, $8, $9, $10)
+             ON CONFLICT ("webhookEventId") DO UPDATE
+               SET "status" = 'canceled',
+                   "amount" = COALESCE(EXCLUDED."amount", "Transaction"."amount"),
+                   "currency" = COALESCE(EXCLUDED."currency", "Transaction"."currency"),
+                   "description" = COALESCE(EXCLUDED."description", "Transaction"."description"),
+                   "message" = COALESCE(EXCLUDED."message", "Transaction"."message")`,
+            [
+              db.generateId(),
+              transaction_id,
+              tracking_id || null,
+              normalizeAmountToInt(amount),
+              currency || 'USD',
+              description || 'Payment canceled',
+              type || 'payment',
+              payment_method_type || 'card',
+              message || 'Payment canceled',
+              transaction_id,
+            ]
+          );
+
+          await markWebhookEventProcessed(client, eventId);
+        });
         break;
 
       case 'refunded':
@@ -487,6 +529,9 @@ export async function POST(request: NextRequest) {
           if (tokensToRefund) {
             // Process refund in transaction
             await db.transaction(async (client) => {
+              const { inserted } = await insertWebhookEventIfNew(client, eventId, String(status || 'unknown'));
+              if (!inserted) return;
+
               // 1. Create refund record in Transaction table
               await client.query(
                 `INSERT INTO "Transaction"
@@ -534,13 +579,20 @@ export async function POST(request: NextRequest) {
                   newBalance,
                 });
               }
+
+              await markWebhookEventProcessed(client, eventId);
             });
           }
         }
         break;
 
       default:
-        log.warn('secure_processor.payment_unknown_status', { requestId, transactionId: transaction_id, status });
+        log.warn('secure_processor.payment_unknown_status', { requestId, transactionId: transaction_id, status, eventId });
+        await db.transaction(async (client) => {
+          const { inserted } = await insertWebhookEventIfNew(client, eventId, String(status || 'unknown'));
+          if (!inserted) return;
+          await markWebhookEventProcessed(client, eventId);
+        });
     }
 
     // Return successful response according to Secure-processor requirements

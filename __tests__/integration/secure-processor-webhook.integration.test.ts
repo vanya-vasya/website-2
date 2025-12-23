@@ -206,6 +206,47 @@ describeDb('Secure-processor Webhook Integration Tests (DB)', () => {
     );
     expect(userAfterSecond.rows[0].availableGenerations).toBe(userAfterFirst.rows[0].availableGenerations);
   });
+
+  it('does not poison idempotency on validation failure (retry after 400 should process)', async () => {
+    const uid = `txn_retry_${Date.now()}`;
+    const paidAt = new Date().toISOString();
+
+    const badPayload = {
+      transaction: {
+        test: false,
+        uid,
+        status: 'successful',
+        amount: '10.00',
+        currency: 'USD',
+        type: 'payment',
+        tracking_id: testClerkId,
+        description: 'Invalid description without token info',
+        payment_method_type: 'card',
+        message: 'Payment successful',
+        paid_at: paidAt,
+        customer: { email: testEmail },
+      },
+    };
+
+    const badSig = createWebhookSignature(badPayload);
+    const res1 = await POST(createWebhookRequest(badPayload, badSig));
+    expect(res1.status).toBe(400);
+
+    const goodPayload = {
+      transaction: {
+        ...badPayload.transaction,
+        description: 'Nerbixa Generations Purchase (100 Tokens)',
+      },
+    };
+
+    const goodSig = createWebhookSignature(goodPayload);
+    const res2 = await POST(createWebhookRequest(goodPayload, goodSig));
+    expect(res2.status).toBe(200);
+
+    const txn = await pool.query('SELECT * FROM "Transaction" WHERE "webhookEventId" = $1', [uid]);
+    expect(txn.rows.length).toBe(1);
+    expect(txn.rows[0].status).toBe('successful');
+  });
 });
 
 

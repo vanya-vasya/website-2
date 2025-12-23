@@ -67,20 +67,53 @@ const db: Database & {
   },
 
   transaction: async <T>(
-    callback: (client: PoolClient) => Promise<T>
+    callback: (client: PoolClient) => Promise<T>,
+    maxRetries: number = 3
   ): Promise<T> => {
-    const client = await pool.connect();
-    try {
-      await client.query('BEGIN');
-      const result = await callback(client);
-      await client.query('COMMIT');
-      return result;
-    } catch (error) {
-      await client.query('ROLLBACK');
-      throw error;
-    } finally {
-      client.release();
+    let lastError: Error | null = null;
+    
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      let client: PoolClient | null = null;
+      try {
+        client = await pool.connect();
+        await client.query('BEGIN');
+        const result = await callback(client);
+        await client.query('COMMIT');
+        return result;
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+        
+        if (client) {
+          try {
+            await client.query('ROLLBACK');
+          } catch (rollbackError) {
+            console.error('[DB] Rollback failed:', rollbackError);
+          }
+        }
+        
+        // Check if this is a transient connection error worth retrying
+        const isConnectionError = 
+          lastError.message.includes('Connection terminated') ||
+          lastError.message.includes('connection timeout') ||
+          lastError.message.includes('ECONNRESET') ||
+          lastError.message.includes('ETIMEDOUT');
+        
+        if (isConnectionError && attempt < maxRetries) {
+          console.warn(`[DB] Connection error on attempt ${attempt}/${maxRetries}, retrying...`, lastError.message);
+          // Wait before retry with exponential backoff
+          await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 100));
+          continue;
+        }
+        
+        throw error;
+      } finally {
+        if (client) {
+          client.release();
+        }
+      }
     }
+    
+    throw lastError || new Error('Transaction failed after max retries');
   },
 };
 

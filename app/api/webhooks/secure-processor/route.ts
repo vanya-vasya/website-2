@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import db from '@/lib/db';
+import { log } from '@/lib/log';
 
 /**
  * Secure-processor Payment Webhook Handler
@@ -20,34 +21,93 @@ import db from '@/lib/db';
  * - Only update User table for balance changes on successful payments
  */
 
-// Verify webhook signature according to Secure-processor documentation
-function verifyWebhookSignature(data: Record<string, any>, signature: string, secretKey: string): boolean {
-  const { signature: _, ...dataForSignature } = data;
+type SecureProcessorTransaction = Record<string, any>;
 
-  const sortedParams = Object.keys(dataForSignature)
+const normalizeSignatureHex = (signature: string) => signature.trim().toLowerCase();
+
+const safeTimingEqualHex = (aHex: string, bHex: string) => {
+  const a = Buffer.from(normalizeSignatureHex(aHex), 'hex');
+  const b = Buffer.from(normalizeSignatureHex(bHex), 'hex');
+  if (a.length === 0 || b.length === 0) return false;
+  if (a.length !== b.length) return false;
+  return crypto.timingSafeEqual(a, b);
+};
+
+const buildSignatureParams = (payload: Record<string, any>) => {
+  // Secure-processor delivers most fields under `transaction`. Older/alternate payloads may be flat.
+  const source: Record<string, any> = payload?.transaction && typeof payload.transaction === 'object'
+    ? payload.transaction
+    : payload;
+
+  const params: Record<string, string> = {};
+
+  for (const [key, value] of Object.entries(source)) {
+    if (key === 'signature') continue;
+    if (value === undefined) continue;
+    if (value === null) continue;
+    if (typeof value === 'object') continue; // avoid `[object Object]` mismatches
+    params[key] = String(value);
+  }
+
+  // Preserve compatibility with “flat” signatures that included customer fields.
+  const customer = source.customer && typeof source.customer === 'object' ? source.customer : null;
+  if (customer?.email && typeof customer.email === 'string') params.customer_email = customer.email;
+  if (customer?.ip && typeof customer.ip === 'string') params.customer_ip = customer.ip;
+
+  return params;
+};
+
+const createWebhookSignature = (payload: Record<string, any>, secretKey: string) => {
+  const params = buildSignatureParams(payload);
+  const signString = Object.keys(params)
     .sort()
-    .reduce((obj: Record<string, any>, key) => {
-      obj[key] = dataForSignature[key];
-      return obj;
-    }, {});
-
-  const signString = Object.entries(sortedParams)
-    .map(([key, value]) => `${key}=${value}`)
+    .map((key) => `${key}=${params[key]}`)
     .join('&');
 
-  const expectedSignature = crypto
-    .createHmac('sha256', secretKey)
-    .update(signString)
-    .digest('hex');
+  return crypto.createHmac('sha256', secretKey).update(signString).digest('hex');
+};
 
-  return expectedSignature === signature;
-}
+// Verify webhook signature according to Secure-processor documentation (HMAC SHA256)
+const verifyWebhookSignature = (payload: Record<string, any>, signature: string, secretKey: string) => {
+  const expected = createWebhookSignature(payload, secretKey);
+  return safeTimingEqualHex(expected, signature);
+};
 
 // Extract token amount from payment description
 function extractTokensFromDescription(description: string): number | null {
   const match = description.match(/\((\d+)\s+Tokens?\)/i);
   return match ? parseInt(match[1], 10) : null;
 }
+
+const normalizeAmountToInt = (rawAmount: unknown): number | null => {
+  if (rawAmount === null || rawAmount === undefined) return null;
+
+  if (typeof rawAmount === 'number') {
+    if (!Number.isFinite(rawAmount)) return null;
+    return Number.isInteger(rawAmount) ? rawAmount : Math.round(rawAmount * 100);
+  }
+
+  if (typeof rawAmount === 'string') {
+    const trimmed = rawAmount.trim();
+    if (!trimmed) return null;
+    if (trimmed.includes('.')) {
+      const parsed = Number.parseFloat(trimmed);
+      if (!Number.isFinite(parsed)) return null;
+      return Math.round(parsed * 100);
+    }
+    const parsedInt = Number.parseInt(trimmed, 10);
+    return Number.isFinite(parsedInt) ? parsedInt : null;
+  }
+
+  return null;
+};
+
+const getWebhookSignature = (request: NextRequest, body: Record<string, any>) => {
+  const headerSig = request.headers.get('x-signature') || request.headers.get('X-Signature');
+  const bodySig = typeof body?.signature === 'string' ? body.signature : null;
+  const transactionSig = typeof body?.transaction?.signature === 'string' ? body.transaction.signature : null;
+  return headerSig || bodySig || transactionSig || null;
+};
 
 // POST - Handle webhook notifications from Secure-processor
 export async function POST(request: NextRequest) {
@@ -57,17 +117,18 @@ export async function POST(request: NextRequest) {
   
   try {
     const body = await request.json();
+    const requestId = crypto.randomUUID();
     
-    // LOG RAW BODY FOR DEBUGGING
-    console.log('═══════════════════════════════════════════════════════');
-    console.log('📥 Secure-processor Webhook Received - RAW BODY:');
-    console.log(JSON.stringify(body, null, 2));
-    console.log('═══════════════════════════════════════════════════════');
+    log.info('secure_processor.webhook_received', {
+      requestId,
+      hasTransactionObject: !!body?.transaction,
+      signatureHeaderPresent: !!(request.headers.get('x-signature') || request.headers.get('X-Signature')),
+    });
     
     // CRITICAL FIX: Secure-processor sends data inside "transaction" object
     const transaction = body.transaction;
     if (!transaction) {
-      console.error('❌ Missing transaction object in webhook payload');
+      log.warn('secure_processor.webhook_invalid_payload_missing_transaction', { requestId });
       return NextResponse.json(
         { error: 'Invalid webhook payload: missing transaction' },
         { status: 400 }
@@ -77,7 +138,7 @@ export async function POST(request: NextRequest) {
     const { 
       status, 
       uid, // Secure-processor uses "uid", not "transaction_id"
-      amount, 
+      amount,
       currency, 
       type,
       tracking_id,
@@ -94,38 +155,29 @@ export async function POST(request: NextRequest) {
     transactionId = transaction_id;
     userId = tracking_id;
 
-    console.log('═══════════════════════════════════════════════════════');
-    console.log('📥 Secure-processor Webhook Parsed Data:');
-    console.log('Timestamp:', new Date().toISOString());
-    console.log('Transaction ID (uid):', transaction_id);
-    console.log('Status:', status);
-    console.log('Type:', type);
-    console.log('Amount:', amount, currency);
-    console.log('Tracking ID (User ID):', tracking_id);
-    console.log('Customer Email:', customer_email);
-    console.log('Payment Method:', payment_method_type);
-    console.log('Paid At:', paid_at);
-    console.log('═══════════════════════════════════════════════════════');
+    log.info('secure_processor.webhook_parsed', {
+      requestId,
+      transactionId: transaction_id,
+      status,
+      type,
+      amount,
+      currency,
+      userId: tracking_id,
+      customerEmailPresent: !!customer_email,
+      paymentMethodType: payment_method_type,
+      paidAt: paid_at,
+    });
 
     // Get signature from headers (Secure-processor sends it as X-Signature header)
-    const signature = request.headers.get('x-signature') || request.headers.get('X-Signature');
+    const signature = getWebhookSignature(request, body);
     
     // Secure-processor might not send signature for test transactions
     const isTestTransaction = transaction.test === true;
     
-    // ENHANCED TEST MODE LOGGING
-    if (isTestTransaction) {
-      console.log('🧪 TEST MODE TRANSACTION DETECTED');
-      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      console.log('⚠️  TEST MODE ENABLED - This is a test payment');
-      console.log('   - Signature verification: SKIPPED');
-      console.log('   - Database writes: ENABLED');
-      console.log('   - Balance updates: ENABLED');
-      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    }
+    if (isTestTransaction) log.info('secure_processor.webhook_test_mode', { requestId, transactionId: transaction_id });
     
     if (!signature && !isTestTransaction) {
-      console.error('❌ Missing signature in webhook (not a test transaction)');
+      log.warn('secure_processor.webhook_missing_signature', { requestId, transactionId: transaction_id });
       return NextResponse.json(
         { error: 'Missing signature' },
         { status: 400 }
@@ -133,9 +185,9 @@ export async function POST(request: NextRequest) {
     }
 
     if (signature) {
-      const secretKey = process.env.SECURE_PROCESSOR_SECRET_KEY || 'dbfb6f4e977f49880a6ce3c939f1e7be645a5bb2596c04d9a3a7b32d52378950';
-      if (!secretKey) {
-        console.error('❌ SECURE_PROCESSOR_SECRET_KEY not configured');
+      const secretKey = process.env.SECURE_PROCESSOR_SECRET_KEY;
+      if (!secretKey || !secretKey.trim()) {
+        log.error('secure_processor.webhook_secret_missing', { requestId });
         return NextResponse.json(
           { error: 'Server configuration error' },
           { status: 500 }
@@ -144,282 +196,289 @@ export async function POST(request: NextRequest) {
 
       const isValidSignature = verifyWebhookSignature(body, signature, secretKey);
       if (!isValidSignature) {
-        console.error('❌ Invalid webhook signature');
+        log.warn('secure_processor.webhook_invalid_signature', {
+          requestId,
+          transactionId: transaction_id,
+          signaturePresent: true,
+        });
         return NextResponse.json(
           { error: 'Invalid signature' },
           { status: 403 }
         );
       }
 
-      console.log('✅ Webhook signature verified');
+      log.info('secure_processor.webhook_signature_verified', { requestId, transactionId: transaction_id });
     } else if (isTestTransaction) {
-      console.log('⚠️  Test transaction detected, skipping signature verification');
+      log.info('secure_processor.webhook_signature_skipped_test_mode', { requestId, transactionId: transaction_id });
     }
 
-    // Idempotency: Check for duplicates via webhookEventId
-    if (transaction_id) {
-      const existingTransaction = await db.query(
-        'SELECT * FROM "Transaction" WHERE "webhookEventId" = $1',
-        [transaction_id]
+    if (!transaction_id) {
+      log.warn('secure_processor.webhook_missing_transaction_id', { requestId });
+      return NextResponse.json(
+        { error: 'Invalid webhook payload: missing transaction uid' },
+        { status: 400 }
       );
+    }
 
-      if (existingTransaction.rows.length > 0) {
-        console.log('⚠️  Duplicate webhook detected - transaction already processed:', transaction_id);
-        return NextResponse.json({ 
-          status: 'ok',
-          message: 'Transaction already processed',
-          idempotent: true
-        }, { status: 200 });
-      }
+    // Event-level idempotency: prevent reprocessing the exact same event (uid+status+paid_at).
+    // IMPORTANT: `uid` is the transaction ID; providers often send multiple statuses for the same uid (pending → successful),
+    // so we must not use uid-only idempotency.
+    const eventId = `${transaction_id}:${status || 'unknown'}:${paid_at || ''}`;
+    const eventInsert = await db.query(
+      `INSERT INTO "WebhookEvent" ("id", "eventId", "eventType", "processed", "processedAt")
+       VALUES ($1, $2, $3, true, NOW())
+       ON CONFLICT ("eventId") DO NOTHING`,
+      [db.generateId(), eventId, String(status || 'unknown')]
+    );
+
+    if (eventInsert.rowCount === 0) {
+      log.info('secure_processor.webhook_event_duplicate', { requestId, eventId, transactionId: transaction_id, status });
+      return NextResponse.json(
+        { status: 'ok', message: 'Event already processed', idempotent: true },
+        { status: 200 }
+      );
     }
 
     // Process statuses according to Secure-processor documentation
     switch (status) {
       case 'success':
       case 'successful':
-        console.log(`💰 Processing successful payment for transaction ${transaction_id}`);
+        log.info('secure_processor.payment_success_processing', { requestId, transactionId: transaction_id, userId: tracking_id });
         
         if (!tracking_id) {
-          console.error('❌ Missing tracking_id (userId) in successful payment webhook');
+          log.warn('secure_processor.payment_success_missing_user_id', { requestId, transactionId: transaction_id });
           return NextResponse.json(
             { error: 'Missing tracking_id for successful payment' },
             { status: 400 }
           );
         }
 
-        // CRITICAL: Check user existence
-        // We DO NOT create users in payment webhook
-        // Users must be created only via Clerk webhook
-        const userResult = await db.query(
-          'SELECT * FROM "User" WHERE "clerkId" = $1',
-          [tracking_id]
-        );
-
-        if (userResult.rows.length === 0) {
-          console.error('❌ User not found:', tracking_id);
-          console.error('⚠️  Payment received for non-existent user. User must be created via Clerk webhook first.');
-          return NextResponse.json(
-            { 
-              error: 'User not found',
-              message: 'User must be created before processing payments' 
-            },
-            { status: 404 }
-          );
-        }
-
-        const user = userResult.rows[0];
-        console.log('✅ User found:', user.email);
-        console.log('Current balance:', user.availableGenerations);
-        console.log('Used generations:', user.usedGenerations);
-
         // Extract token amount from description
         const tokensToAdd = description ? extractTokensFromDescription(description) : null;
         
         if (!tokensToAdd) {
-          console.error('❌ Could not extract token amount from description:', description);
+          log.warn('secure_processor.payment_invalid_description', {
+            requestId,
+            transactionId: transaction_id,
+            userId: tracking_id,
+          });
           return NextResponse.json(
             { error: 'Invalid payment description format' },
             { status: 400 }
           );
         }
 
-        console.log('🎟️  Tokens to add:', tokensToAdd);
+        const normalizedAmount = normalizeAmountToInt(amount);
+        log.info('secure_processor.payment_tokens_extracted', {
+          requestId,
+          transactionId: transaction_id,
+          userId: tracking_id,
+          tokensToAdd,
+          normalizedAmount,
+          currency,
+        });
 
         // Execute operations in database transaction
         // IMPORTANT: All transaction data goes ONLY to Transaction table
         // In User table we update ONLY token balance (availableGenerations, usedGenerations)
         try {
-          // ENHANCED TEST MODE LOGGING - Before DB Transaction
-          if (transaction.test === true) {
-            console.log('\n🧪 TEST MODE: Starting Database Transaction');
-            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-            console.log('About to execute:');
-            console.log('  1. INSERT into Transaction table');
-            console.log('  2. UPDATE User balance');
-            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
-          }
-
-          await db.transaction(async (client) => {
-            // 1. Create transaction record in Transaction table
-            const newTransactionId = db.generateId();
-            
-            if (transaction.test === true) {
-              console.log('🧪 TEST MODE: Inserting Transaction record...');
-              console.log('   Record ID:', newTransactionId);
-              console.log('   Webhook Event ID:', transaction_id);
-              console.log('   User ID:', tracking_id);
-            }
-
-            await client.query(
-              `INSERT INTO "Transaction" 
-                ("id", "tracking_id", "userId", "status", "amount", "currency", "description", 
-                 "type", "payment_method_type", "message", "paid_at", "webhookEventId") 
-               VALUES ($1, $2, $3, 'successful', $4, $5, $6, $7, $8, $9, $10, $11)`,
-              [
-                newTransactionId,
-                transaction_id || tracking_id,
-                tracking_id,
-                amount ? parseInt(amount) : null,
-                currency || 'USD',
-                description || `Payment for ${tokensToAdd} tokens`,
-                type || 'payment',
-                payment_method_type || 'card',
-                message || 'Payment successful',
-                paid_at ? new Date(paid_at) : new Date(),
-                transaction_id
-              ]
+          const result = await db.transaction(async (client) => {
+            // Lock existing transaction row (if present) to safely handle status transitions.
+            const existingTxn = await client.query(
+              'SELECT "id", "status" FROM "Transaction" WHERE "webhookEventId" = $1 FOR UPDATE',
+              [transaction_id]
             );
 
-            console.log('✅ Transaction record created in Transaction table:', newTransactionId);
-            console.log('   Transaction ID:', transaction_id);
-            console.log('   Amount:', amount, currency);
-            console.log('   Tokens:', tokensToAdd);
+            const existingStatus: string | null = existingTxn.rows.length > 0 ? existingTxn.rows[0].status : null;
+            const wasAlreadySuccessful = existingStatus === 'successful';
 
-            // 2. Update ONLY user balance (DO NOT create new user)
-            // User table contains ONLY profile and balance, NOT transaction data
-            // FIXED: Simply add tokens to current balance, don't reset usedGenerations
-            const newBalance = user.availableGenerations + tokensToAdd;
-            
-            if (transaction.test === true) {
-              console.log('\n🧪 TEST MODE: Updating User balance...');
-              console.log('   Current balance:', user.availableGenerations);
-              console.log('   Tokens to add:', tokensToAdd);
-              console.log('   New balance:', newBalance);
+            // Upsert/update transaction record to successful.
+            if (existingTxn.rows.length === 0) {
+              await client.query(
+                `INSERT INTO "Transaction"
+                  ("id", "tracking_id", "userId", "status", "amount", "currency", "description",
+                   "type", "payment_method_type", "message", "paid_at", "webhookEventId")
+                 VALUES ($1, $2, $3, 'successful', $4, $5, $6, $7, $8, $9, $10, $11)`,
+                [
+                  db.generateId(),
+                  transaction_id,
+                  tracking_id,
+                  normalizedAmount,
+                  currency || 'USD',
+                  description || `Payment for ${tokensToAdd} tokens`,
+                  type || 'payment',
+                  payment_method_type || 'card',
+                  message || 'Payment successful',
+                  paid_at ? new Date(paid_at) : new Date(),
+                  transaction_id,
+                ]
+              );
+            } else {
+              await client.query(
+                `UPDATE "Transaction"
+                 SET "status" = 'successful',
+                     "amount" = COALESCE($2, "amount"),
+                     "currency" = COALESCE($3, "currency"),
+                     "description" = COALESCE($4, "description"),
+                     "type" = COALESCE($5, "type"),
+                     "payment_method_type" = COALESCE($6, "payment_method_type"),
+                     "message" = COALESCE($7, "message"),
+                     "paid_at" = COALESCE($8, "paid_at")
+                 WHERE "webhookEventId" = $1`,
+                [
+                  transaction_id,
+                  normalizedAmount,
+                  currency || null,
+                  description || null,
+                  type || null,
+                  payment_method_type || null,
+                  message || null,
+                  paid_at ? new Date(paid_at) : null,
+                ]
+              );
             }
 
-            await client.query(
-              'UPDATE "User" SET "availableGenerations" = $1 WHERE "clerkId" = $2',
-              [newBalance, tracking_id]
+            if (wasAlreadySuccessful) {
+              return { credited: false, reason: 'already_successful' as const };
+            }
+
+            // Update user balance atomically, if user exists.
+            const lockedUser = await client.query(
+              'SELECT "availableGenerations", "usedGenerations" FROM "User" WHERE "clerkId" = $1 FOR UPDATE',
+              [tracking_id]
             );
 
-            console.log('✅ User balance updated in User table');
-            console.log('   Previous balance:', user.availableGenerations);
-            console.log('   Used generations:', user.usedGenerations);
-            console.log('   New available generations:', newBalance);
-            
-            if (transaction.test === true) {
-              console.log('\n🧪 TEST MODE: Database Transaction Successful!');
-              console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-              console.log('✅ Transaction record: CREATED');
-              console.log('✅ User balance: UPDATED');
-              console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+            if (lockedUser.rows.length === 0) {
+              // Keep transaction record, but skip crediting. Do not retry forever at provider.
+              return { credited: false, reason: 'user_missing' as const };
             }
+
+            const userRow = lockedUser.rows[0];
+            const newAvailable = userRow.availableGenerations - userRow.usedGenerations + tokensToAdd;
+
+            await client.query(
+              'UPDATE "User" SET "availableGenerations" = $1, "usedGenerations" = 0 WHERE "clerkId" = $2',
+              [newAvailable, tracking_id]
+            );
+
+            return { credited: true, reason: 'credited' as const, newAvailable };
           });
 
-          const processingTime = Date.now() - startTime;
-          console.log('═══════════════════════════════════════════════════════');
-          console.log('✅ Payment processed successfully');
-          if (transaction.test === true) {
-            console.log('🧪 TEST MODE: All database changes committed');
-          }
-          console.log('Processing time:', processingTime, 'ms');
-          console.log('User ID:', tracking_id);
-          console.log('Transaction ID:', transaction_id);
-          console.log('Tokens added:', tokensToAdd);
-          console.log('═══════════════════════════════════════════════════════');
+          log.info('secure_processor.payment_success_processed', {
+            requestId,
+            transactionId: transaction_id,
+            userId: tracking_id,
+            credited: result.credited,
+            reason: result.reason,
+            processingMs: Date.now() - startTime,
+          });
 
         } catch (dbError) {
-          console.error('❌ Database transaction failed:', dbError);
-          if (transaction.test === true) {
-            console.error('\n🧪 TEST MODE: Database Transaction FAILED!');
-            console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-            console.error('Error details:', dbError);
-            console.error('Stack trace:', dbError instanceof Error ? dbError.stack : 'N/A');
-            console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
-          }
-          throw dbError;
+          log.error('secure_processor.payment_db_transaction_failed', {
+            requestId,
+            transactionId: transaction_id,
+            userId: tracking_id,
+            error: dbError instanceof Error ? dbError.message : String(dbError),
+          });
+          throw dbError; // ensures provider retries on transient DB issues
         }
 
         break;
 
       case 'failed':
-        console.log(`❌ Payment failed for transaction ${transaction_id}`);
-        console.log('Error message:', message);
+        log.info('secure_processor.payment_failed', { requestId, transactionId: transaction_id, userId: tracking_id });
         
         // Write ONLY to Transaction table, DO NOT update User
-        if (transaction_id) {
-          const failedTransactionId = db.generateId();
-          await db.query(
-            `INSERT INTO "Transaction" 
-              ("id", "tracking_id", "userId", "status", "amount", "currency", "description", 
-               "type", "payment_method_type", "message", "reason", "webhookEventId") 
-             VALUES ($1, $2, $3, 'failed', $4, $5, $6, $7, $8, $9, $10, $11)`,
-            [
-              failedTransactionId,
-              transaction_id,
-              tracking_id || null,
-              amount ? parseInt(amount) : null,
-              currency || 'USD',
-              description || 'Payment failed',
-              type || 'payment',
-              payment_method_type || 'card',
-              message || 'Payment failed',
-              message || 'Payment failed',
-              transaction_id
-            ]
-          );
-          console.log('✅ Failed transaction record created in Transaction table');
-        }
+        await db.query(
+          `INSERT INTO "Transaction"
+            ("id", "tracking_id", "userId", "status", "amount", "currency", "description",
+             "type", "payment_method_type", "message", "reason", "webhookEventId")
+           VALUES ($1, $2, $3, 'failed', $4, $5, $6, $7, $8, $9, $10, $11)
+           ON CONFLICT ("webhookEventId") DO UPDATE
+             SET "status" = 'failed',
+                 "amount" = COALESCE(EXCLUDED."amount", "Transaction"."amount"),
+                 "currency" = COALESCE(EXCLUDED."currency", "Transaction"."currency"),
+                 "description" = COALESCE(EXCLUDED."description", "Transaction"."description"),
+                 "message" = COALESCE(EXCLUDED."message", "Transaction"."message"),
+                 "reason" = COALESCE(EXCLUDED."reason", "Transaction"."reason")`,
+          [
+            db.generateId(),
+            transaction_id,
+            tracking_id || null,
+            normalizeAmountToInt(amount),
+            currency || 'USD',
+            description || 'Payment failed',
+            type || 'payment',
+            payment_method_type || 'card',
+            message || 'Payment failed',
+            message || 'Payment failed',
+            transaction_id,
+          ]
+        );
         break;
 
       case 'pending':
-        console.log(`⏳ Payment pending for transaction ${transaction_id}`);
+        log.info('secure_processor.payment_pending', { requestId, transactionId: transaction_id, userId: tracking_id });
         
         // Write ONLY to Transaction table, DO NOT update User
-        if (transaction_id) {
-          const pendingTransactionId = db.generateId();
-          await db.query(
-            `INSERT INTO "Transaction" 
-              ("id", "tracking_id", "userId", "status", "amount", "currency", "description", 
-               "type", "payment_method_type", "message", "webhookEventId") 
-             VALUES ($1, $2, $3, 'pending', $4, $5, $6, $7, $8, $9, $10)`,
-            [
-              pendingTransactionId,
-              transaction_id,
-              tracking_id || null,
-              amount ? parseInt(amount) : null,
-              currency || 'USD',
-              description || 'Payment pending',
-              type || 'payment',
-              payment_method_type || 'card',
-              message || 'Payment pending',
-              transaction_id
-            ]
-          );
-          console.log('✅ Pending transaction record created in Transaction table');
-        }
+        await db.query(
+          `INSERT INTO "Transaction"
+            ("id", "tracking_id", "userId", "status", "amount", "currency", "description",
+             "type", "payment_method_type", "message", "webhookEventId")
+           VALUES ($1, $2, $3, 'pending', $4, $5, $6, $7, $8, $9, $10)
+           ON CONFLICT ("webhookEventId") DO UPDATE
+             SET "status" = 'pending',
+                 "amount" = COALESCE(EXCLUDED."amount", "Transaction"."amount"),
+                 "currency" = COALESCE(EXCLUDED."currency", "Transaction"."currency"),
+                 "description" = COALESCE(EXCLUDED."description", "Transaction"."description"),
+                 "message" = COALESCE(EXCLUDED."message", "Transaction"."message")`,
+          [
+            db.generateId(),
+            transaction_id,
+            tracking_id || null,
+            normalizeAmountToInt(amount),
+            currency || 'USD',
+            description || 'Payment pending',
+            type || 'payment',
+            payment_method_type || 'card',
+            message || 'Payment pending',
+            transaction_id,
+          ]
+        );
         break;
 
       case 'canceled':
-        console.log(`🚫 Payment canceled for transaction ${transaction_id}`);
+        log.info('secure_processor.payment_canceled', { requestId, transactionId: transaction_id, userId: tracking_id });
         
         // Write ONLY to Transaction table, DO NOT update User
-        if (transaction_id) {
-          const canceledTransactionId = db.generateId();
-          await db.query(
-            `INSERT INTO "Transaction" 
-              ("id", "tracking_id", "userId", "status", "amount", "currency", "description", 
-               "type", "payment_method_type", "message", "webhookEventId") 
-             VALUES ($1, $2, $3, 'canceled', $4, $5, $6, $7, $8, $9, $10)`,
-            [
-              canceledTransactionId,
-              transaction_id,
-              tracking_id || null,
-              amount ? parseInt(amount) : null,
-              currency || 'USD',
-              description || 'Payment canceled',
-              type || 'payment',
-              payment_method_type || 'card',
-              message || 'Payment canceled',
-              transaction_id
-            ]
-          );
-          console.log('✅ Canceled transaction record created in Transaction table');
-        }
+        await db.query(
+          `INSERT INTO "Transaction"
+            ("id", "tracking_id", "userId", "status", "amount", "currency", "description",
+             "type", "payment_method_type", "message", "webhookEventId")
+           VALUES ($1, $2, $3, 'canceled', $4, $5, $6, $7, $8, $9, $10)
+           ON CONFLICT ("webhookEventId") DO UPDATE
+             SET "status" = 'canceled',
+                 "amount" = COALESCE(EXCLUDED."amount", "Transaction"."amount"),
+                 "currency" = COALESCE(EXCLUDED."currency", "Transaction"."currency"),
+                 "description" = COALESCE(EXCLUDED."description", "Transaction"."description"),
+                 "message" = COALESCE(EXCLUDED."message", "Transaction"."message")`,
+          [
+            db.generateId(),
+            transaction_id,
+            tracking_id || null,
+            normalizeAmountToInt(amount),
+            currency || 'USD',
+            description || 'Payment canceled',
+            type || 'payment',
+            payment_method_type || 'card',
+            message || 'Payment canceled',
+            transaction_id,
+          ]
+        );
         break;
 
       case 'refunded':
-        console.log(`💰 Payment refunded for transaction ${transaction_id}`);
+        log.info('secure_processor.payment_refunded', { requestId, transactionId: transaction_id, userId: tracking_id });
         
         if (transaction_id && tracking_id) {
           // Extract tokens for refund
@@ -429,25 +488,29 @@ export async function POST(request: NextRequest) {
             // Process refund in transaction
             await db.transaction(async (client) => {
               // 1. Create refund record in Transaction table
-              const refundTransactionId = db.generateId();
               await client.query(
-                `INSERT INTO "Transaction" 
-                  ("id", "tracking_id", "userId", "status", "amount", "currency", "description", 
-                   "type", "payment_method_type", "message", "webhookEventId") 
-                 VALUES ($1, $2, $3, 'refunded', $4, $5, $6, 'refund', $7, $8, $9)`,
+                `INSERT INTO "Transaction"
+                  ("id", "tracking_id", "userId", "status", "amount", "currency", "description",
+                   "type", "payment_method_type", "message", "webhookEventId")
+                 VALUES ($1, $2, $3, 'refunded', $4, $5, $6, 'refund', $7, $8, $9)
+                 ON CONFLICT ("webhookEventId") DO UPDATE
+                   SET "status" = 'refunded',
+                       "amount" = COALESCE(EXCLUDED."amount", "Transaction"."amount"),
+                       "currency" = COALESCE(EXCLUDED."currency", "Transaction"."currency"),
+                       "description" = COALESCE(EXCLUDED."description", "Transaction"."description"),
+                       "message" = COALESCE(EXCLUDED."message", "Transaction"."message")`,
                 [
-                  refundTransactionId,
+                  db.generateId(),
                   transaction_id,
                   tracking_id,
-                  amount ? parseInt(amount) : null,
+                  normalizeAmountToInt(amount),
                   currency || 'USD',
                   description || 'Payment refunded',
                   payment_method_type || 'card',
                   message || 'Payment refunded',
-                  transaction_id
+                  transaction_id,
                 ]
               );
-              console.log('✅ Refund transaction record created in Transaction table');
 
               // 2. Subtract tokens from user balance (ONLY balance update)
               const userResult = await client.query(
@@ -463,9 +526,13 @@ export async function POST(request: NextRequest) {
                   'UPDATE "User" SET "availableGenerations" = $1 WHERE "clerkId" = $2',
                   [newBalance, tracking_id]
                 );
-                console.log('✅ User balance adjusted for refund in User table');
-                console.log('   Tokens refunded:', tokensToRefund);
-                console.log('   New balance:', newBalance);
+                log.info('secure_processor.refund_balance_updated', {
+                  requestId,
+                  transactionId: transaction_id,
+                  userId: tracking_id,
+                  tokensToRefund,
+                  newBalance,
+                });
               }
             });
           }
@@ -473,7 +540,7 @@ export async function POST(request: NextRequest) {
         break;
 
       default:
-        console.log(`❓ Unknown payment status: ${status} for transaction ${transaction_id}`);
+        log.warn('secure_processor.payment_unknown_status', { requestId, transactionId: transaction_id, status });
     }
 
     // Return successful response according to Secure-processor requirements
@@ -481,15 +548,13 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     const processingTime = Date.now() - startTime;
-    console.error('═══════════════════════════════════════════════════════');
-    console.error('❌ Webhook Processing Error');
-    console.error('Timestamp:', new Date().toISOString());
-    console.error('Processing time:', processingTime, 'ms');
-    console.error('Transaction ID:', transactionId);
-    console.error('User ID:', userId);
-    console.error('Error:', error);
-    console.error('Stack:', error instanceof Error ? error.stack : 'No stack trace');
-    console.error('═══════════════════════════════════════════════════════');
+    log.error('secure_processor.webhook_processing_error', {
+      processingMs: processingTime,
+      transactionId,
+      userId,
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     
     return NextResponse.json(
       { error: 'Webhook processing failed' },

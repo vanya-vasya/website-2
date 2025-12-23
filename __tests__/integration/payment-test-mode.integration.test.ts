@@ -9,7 +9,8 @@
  */
 
 import { Pool } from 'pg';
-import fetch from 'node-fetch';
+import { NextRequest } from 'next/server';
+import { POST as secureProcessorWebhookPOST } from '@/app/api/webhooks/secure-processor/route';
 
 describe('Payment Flow - Test Mode', () => {
   let pool: Pool;
@@ -72,13 +73,13 @@ describe('Payment Flow - Test Mode', () => {
         },
       };
 
-      const response = await fetch('http://localhost:3000/api/webhooks/secure-processor', {
+      const request = new NextRequest('http://localhost/api/webhooks/secure-processor', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(webhookPayload),
       });
+
+      const response = await secureProcessorWebhookPOST(request);
 
       expect(response.ok).toBe(true);
       const result = await response.json();
@@ -107,6 +108,7 @@ describe('Payment Flow - Test Mode', () => {
     it('should handle duplicate webhooks (idempotency)', async () => {
       const transactionId = `test_txn_dup_${Date.now()}`;
       const tokenAmount = 50;
+      const paidAt = new Date().toISOString();
 
       const webhookPayload = {
         transaction: {
@@ -120,7 +122,7 @@ describe('Payment Flow - Test Mode', () => {
           description: `Token Top-up (${tokenAmount} Tokens)`,
           payment_method_type: 'card',
           message: 'Payment successful',
-          paid_at: new Date().toISOString(),
+          paid_at: paidAt,
           customer: {
             email: testEmail,
           },
@@ -128,13 +130,12 @@ describe('Payment Flow - Test Mode', () => {
       };
 
       // First webhook call
-      const response1 = await fetch('http://localhost:3000/api/webhooks/secure-processor', {
+      const request1 = new NextRequest('http://localhost/api/webhooks/secure-processor', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(webhookPayload),
       });
+      const response1 = await secureProcessorWebhookPOST(request1);
 
       expect(response1.ok).toBe(true);
 
@@ -146,13 +147,12 @@ describe('Payment Flow - Test Mode', () => {
       const balanceAfterFirst = userResultAfterFirst.rows[0].availableGenerations;
 
       // Second webhook call (duplicate)
-      const response2 = await fetch('http://localhost:3000/api/webhooks/secure-processor', {
+      const request2 = new NextRequest('http://localhost/api/webhooks/secure-processor', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(webhookPayload),
       });
+      const response2 = await secureProcessorWebhookPOST(request2);
 
       expect(response2.ok).toBe(true);
       const result2 = await response2.json();
@@ -178,6 +178,7 @@ describe('Payment Flow - Test Mode', () => {
 
     it('should reject webhook for non-existent user', async () => {
       const transactionId = `test_txn_nouser_${Date.now()}`;
+      const paidAt = new Date().toISOString();
 
       const webhookPayload = {
         transaction: {
@@ -191,24 +192,25 @@ describe('Payment Flow - Test Mode', () => {
           description: 'Token Top-up (100 Tokens)',
           payment_method_type: 'card',
           message: 'Payment successful',
-          paid_at: new Date().toISOString(),
+          paid_at: paidAt,
           customer: {
             email: 'nonexistent@example.com',
           },
         },
       };
 
-      const response = await fetch('http://localhost:3000/api/webhooks/secure-processor', {
+      const request = new NextRequest('http://localhost/api/webhooks/secure-processor', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(webhookPayload),
       });
 
-      expect(response.status).toBe(404);
+      const response = await secureProcessorWebhookPOST(request);
+
+      // We persist the transaction and return 200 to prevent endless provider retries.
+      expect(response.status).toBe(200);
       const result = await response.json();
-      expect(result.error).toBe('User not found');
+      expect(result.status).toBe('ok');
     });
 
     it('should reject webhook with invalid description format', async () => {
@@ -233,13 +235,13 @@ describe('Payment Flow - Test Mode', () => {
         },
       };
 
-      const response = await fetch('http://localhost:3000/api/webhooks/secure-processor', {
+      const request = new NextRequest('http://localhost/api/webhooks/secure-processor', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(webhookPayload),
       });
+
+      const response = await secureProcessorWebhookPOST(request);
 
       expect(response.status).toBe(400);
       const result = await response.json();
@@ -268,13 +270,13 @@ describe('Payment Flow - Test Mode', () => {
         },
       };
 
-      const response = await fetch('http://localhost:3000/api/webhooks/secure-processor', {
+      const request = new NextRequest('http://localhost/api/webhooks/secure-processor', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(webhookPayload),
       });
+
+      const response = await secureProcessorWebhookPOST(request);
 
       expect(response.ok).toBe(true);
 

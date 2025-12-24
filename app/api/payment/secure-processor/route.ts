@@ -30,7 +30,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     console.log('Request body:', body);
     
-    const { amount, currency = 'USD', orderId, description, customerEmail, userId } = body;
+    // Currency routing: USD stays USD, all other currencies default to EUR
+    const { amount, currency = 'EUR', orderId, description, customerEmail, userId } = body;
     
     if (!amount || !orderId) {
       console.log('Missing required fields:', { amount, orderId });

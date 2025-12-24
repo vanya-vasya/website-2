@@ -50,6 +50,39 @@ const formSchema = z.object({
   }),
 });
 
+/**
+ * Currency routing logic:
+ * - USD → payment processed in USD
+ * - All other currencies → payment processed in EUR
+ */
+const getPaymentCurrency = (selectedCurrency: Currency): "USD" | "EUR" => {
+  return selectedCurrency === "USD" ? "USD" : "EUR";
+};
+
+/**
+ * Get the payment amount in the routed currency
+ * - USD: convert display amount to USD
+ * - Others: convert display amount to EUR
+ */
+const getPaymentAmount = (displayAmount: number, selectedCurrency: Currency): number => {
+  const paymentCurrency = getPaymentCurrency(selectedCurrency);
+  
+  if (selectedCurrency === paymentCurrency) {
+    // No conversion needed (USD → USD or EUR → EUR)
+    return displayAmount;
+  }
+  
+  // Convert from selected currency to EUR (base) then to payment currency
+  const amountInEUR = displayAmount / currenciesRate[selectedCurrency];
+  
+  if (paymentCurrency === "EUR") {
+    return amountInEUR;
+  }
+  
+  // Convert EUR to USD
+  return amountInEUR * currenciesRate["USD"];
+};
+
 export const ProModal = () => {
   const router = useRouter();
   const { userId } = useAuth();
@@ -80,7 +113,7 @@ export const ProModal = () => {
   const onSubmit = async () => {
     try {
       setLoading(true);
-      // Показываем платежный виджет вместо закрытия модала
+      // Show payment widget
       setShowPaymentWidget(true);
     } catch (error) {
       toast.error("Something went wrong");
@@ -96,15 +129,15 @@ export const ProModal = () => {
 
   const handleButtonClick = (value: number) => {
     setActiveButton(value);
-    setValue("generations", value); // Обновляем значение в форме
+    setValue("generations", value);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
     if (!isNaN(value) && value > 0) {
-      setValue("generations", value); // Обновляем значение в форме
+      setValue("generations", value);
     } else {
-      setValue("generations", 1); // Установите значение по умолчанию, если значение некорректно
+      setValue("generations", 1);
     }
   };
 
@@ -113,16 +146,16 @@ export const ProModal = () => {
     if ((e.target as HTMLInputElement).value) {
       const value = Number((e.target as HTMLInputElement).value);
       if (!isNaN(value)) {
-        setValue("generations", value); // Обновляем значение в форме
+        setValue("generations", value);
       }
     }
   };
 
   const handleCheckboxChange = (checked: boolean) => {
-    setValue("policies", checked); // Обновляем значение в форме
+    setValue("policies", checked);
   };
 
-  // Обработчики для платежного виджета
+  // Payment widget handlers
   const handlePaymentSuccess = (transactionData: any) => {
     console.log('Payment successful:', transactionData);
     proModal.onClose();
@@ -151,6 +184,12 @@ export const ProModal = () => {
     setShowPaymentWidget(false);
     proModal.onClose();
   };
+
+  // Calculate payment values
+  const selectedCurrency = watch("currency");
+  const displayAmount = watch("generations") * generationPrice;
+  const paymentCurrency = getPaymentCurrency(selectedCurrency);
+  const paymentAmount = getPaymentAmount(displayAmount, selectedCurrency);
 
   return (
     <Dialog open={proModal.isOpen} onOpenChange={handleModalClose}>
@@ -198,13 +237,13 @@ export const ProModal = () => {
                 {t("common.backToSelection")}
               </Button>
               <div className="text-black text-sm">
-                {watch("generations")} {t("common.generations")} - {(watch("generations") * generationPrice).toFixed(2)} {watch("currency")}
+                {watch("generations")} {t("common.generations")} - {paymentAmount.toFixed(2)} {paymentCurrency}
               </div>
             </div>
             
             <NetworkPaymentWidget
-              amount={watch("generations") * generationPrice}
-              currency={watch("currency")}
+              amount={paymentAmount}
+              currency={paymentCurrency}
               orderId={`gen_${userId}_${Date.now()}`}
               description={`Nerbixa Generations Purchase (${watch("generations")} Tokens)`}
               customerEmail={user?.emailAddresses[0].emailAddress || ""}
@@ -221,7 +260,7 @@ export const ProModal = () => {
               <p className="text-sm font-medium leading-sm text-black">Price</p>
               <div className="flex gap-2 justify-end">
                 <p className="text-sm font-medium leading-sm text-end text-black">
-                  {(watch("generations") * generationPrice).toFixed(2)}
+                  {displayAmount.toFixed(2)}
                 </p>
                 <Listbox
                   {...register("currency")}

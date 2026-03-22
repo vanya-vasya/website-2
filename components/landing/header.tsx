@@ -20,6 +20,10 @@ const Header = () => {
       href: "/#features",
     },
     {
+      name: t("nav.story"),
+      href: "/story",
+    },
+    {
       name: t("nav.whyUs"),
       href: "/#testimonials",
     },
@@ -28,16 +32,12 @@ const Header = () => {
       href: "/faq",
     },
     {
-      name: t("nav.contact"),
-      href: "/contact",
-    },
-    {
-      name: t("nav.story"),
-      href: "/story",
-    },
-    {
       name: t("nav.pricing"),
       href: "/dashboard",
+    },
+    {
+      name: t("nav.contact"),
+      href: "/contact",
     },
   ];
 

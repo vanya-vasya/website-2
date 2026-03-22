@@ -33,27 +33,27 @@ const Footer = () => {
       href: "/#features",
     },
     {
-      name: t("nav.whyUs"),
-      href: "/#testimonials",
+      name: t("nav.story"),
+      href: "/story",
     },
   ];
 
   const routesCol2 = [
     {
+      name: t("nav.whyUs"),
+      href: "/#testimonials",
+    },
+    {
       name: t("nav.faq"),
       href: "/faq",
     },
     {
-      name: t("nav.contact"),
-      href: "/contact",
-    },
-    {
-      name: t("nav.story"),
-      href: "/story",
-    },
-    {
       name: t("nav.pricing"),
       href: "/dashboard",
+    },
+    {
+      name: t("nav.contact"),
+      href: "/contact",
     },
   ];
 

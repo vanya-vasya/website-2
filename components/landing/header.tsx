@@ -31,6 +31,10 @@ const Header = () => {
       name: t("nav.contact"),
       href: "/contact",
     },
+    {
+      name: t("nav.story"),
+      href: "/story",
+    },
   ];
 
   return (

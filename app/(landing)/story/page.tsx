@@ -34,10 +34,7 @@ const StoryPage = () => (
 
         {/* Problem */}
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm px-6 sm:px-10 py-10">
-          <h2
-            className="text-xl font-bold text-gray-900 mb-6"
-            style={{ letterSpacing: "-0.01em" }}
-          >
+          <h2 className="text-sm font-semibold uppercase tracking-widest text-blue-500 mb-6">
             The Problem We&apos;re Solving
           </h2>
           <ul className="flex flex-col gap-4">
@@ -52,10 +49,7 @@ const StoryPage = () => (
 
         {/* Solution */}
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm px-6 sm:px-10 py-10">
-          <h2
-            className="text-xl font-bold text-gray-900 mb-4"
-            style={{ letterSpacing: "-0.01em" }}
-          >
+          <h2 className="text-sm font-semibold uppercase tracking-widest text-blue-500 mb-4">
             Our Solution
           </h2>
           <p className="text-gray-600 text-base leading-relaxed">
@@ -71,10 +65,7 @@ const StoryPage = () => (
 
         {/* Vision */}
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm px-6 sm:px-10 py-10">
-          <h2
-            className="text-xl font-bold text-gray-900 mb-4"
-            style={{ letterSpacing: "-0.01em" }}
-          >
+          <h2 className="text-sm font-semibold uppercase tracking-widest text-blue-500 mb-4">
             Our Vision for the Future
           </h2>
           <p className="text-gray-600 text-base leading-relaxed">

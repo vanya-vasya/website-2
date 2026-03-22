@@ -23,6 +23,10 @@ const Header = () => {
       name: t("nav.whyUs"),
       href: "/#testimonials",
     },
+    {
+      name: t("nav.faq"),
+      href: "/faq",
+    },
   ];
 
   return (

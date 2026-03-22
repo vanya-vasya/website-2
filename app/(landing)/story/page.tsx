@@ -9,7 +9,7 @@ const problemItems = [
 
 const StoryPage = () => (
   <div
-    className="min-h-screen bg-white"
+    className="min-h-screen bg-white overflow-y-auto"
     style={{
       fontFamily:
         'Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
@@ -21,14 +21,11 @@ const StoryPage = () => (
         <p className="text-sm font-semibold uppercase tracking-widest text-blue-500 mb-4">
           Our Mission
         </p>
-        <h1
-          className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900"
-          style={{ lineHeight: 1.15, letterSpacing: "-0.02em" }}
-        >
+        <p className="text-gray-600 text-base leading-relaxed font-normal">
           Unleash every creator&apos;s potential by fusing AI-powered toolkits
           for music, video, art, and content into a single co-creative engine
           that turns raw ideas into polished, production-ready work
-        </h1>
+        </p>
       </div>
     </section>
 

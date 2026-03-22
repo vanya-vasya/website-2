@@ -37,7 +37,7 @@ const faqItems: FaqItem[] = [
   {
     question: "How much do different generations cost?",
     answer:
-      "Generations range from 1 to 5 credits depending on the content type. Full pricing details are available on our website.",
+      "Generations range from 1 to 20 credits depending on the content type. Full pricing details are available on our website.",
   },
 ];
 

@@ -19,14 +19,10 @@ const Footer = () => {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const optionRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
-  const routes = [
+  const routesCol1 = [
     {
       name: t("nav.home"),
       href: "/#home",
-    },
-    {
-      name: t("nav.faq"),
-      href: "/faq",
     },
     {
       name: t("nav.solutions"),
@@ -39,6 +35,13 @@ const Footer = () => {
     {
       name: t("nav.whyUs"),
       href: "/#testimonials",
+    },
+  ];
+
+  const routesCol2 = [
+    {
+      name: t("nav.faq"),
+      href: "/faq",
     },
   ];
 
@@ -209,23 +212,42 @@ const Footer = () => {
                   >{t("footer.menu")}</h3>
                 </div>
                 <div className="footer-widget__resources-list-box">
-                  <ul className="footer-widget__resources-list">
-                    {routes.map((route) => (
-                      <li key={route.name}>
-                        <Link 
-                          href={route.href}
-                          style={{
-                            fontFamily: 'Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                            fontWeight: 600,
-                            lineHeight: 1.2,
-                            letterSpacing: '0.01em',
-                            textTransform: 'none',
-                            color: '#0f172a'
-                          }}
-                        >{route.name}</Link>
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="flex gap-8">
+                    <ul className="footer-widget__resources-list">
+                      {routesCol1.map((route) => (
+                        <li key={route.name}>
+                          <Link
+                            href={route.href}
+                            style={{
+                              fontFamily: 'Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                              fontWeight: 600,
+                              lineHeight: 1.2,
+                              letterSpacing: '0.01em',
+                              textTransform: 'none',
+                              color: '#0f172a'
+                            }}
+                          >{route.name}</Link>
+                        </li>
+                      ))}
+                    </ul>
+                    <ul className="footer-widget__resources-list">
+                      {routesCol2.map((route) => (
+                        <li key={route.name}>
+                          <Link
+                            href={route.href}
+                            style={{
+                              fontFamily: 'Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                              fontWeight: 600,
+                              lineHeight: 1.2,
+                              letterSpacing: '0.01em',
+                              textTransform: 'none',
+                              color: '#0f172a'
+                            }}
+                          >{route.name}</Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>

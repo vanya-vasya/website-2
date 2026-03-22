@@ -31,7 +31,8 @@
     "home": "Home",
     "features": "Features",
     "faq": "FAQ",
-    "testimonials": "Testimonials"
+    "testimonials": "Testimonials",
+    "contact": "Contact"
   },
   "hero": {
     "title": "AI Engine built for",
@@ -235,8 +236,11 @@
       "description": "Expand your canvas and extend images with AI-powered content generation"
     },
     "referenceCleanup": {
+      "title": "Reference Cleanup",
       "label": "Reference Cleanup",
-      "description": "Clean up and prepare reference images for your artistic creations"
+      "description": "Clean up and prepare reference images for your artistic creations",
+      "placeholder": "Describe your reference image and what you need help with - remove distractions, enhance details, fix lighting, or get composition advice...",
+      "priceLabel": "credits"
     },
     "videoScript": {
       "label": "Script Builder",
@@ -296,25 +300,6 @@
     "captionGenerator": {
       "label": "Caption Generator",
       "description": "Write compelling captions that drive measurable engagement"
-    },
-    "videoMaker": {
-      "label": "Video Maker",
-      "description": "Turn ideas and scripts into engaging video content automatically"
-    },
-    "paintingEnhance": {
-      "label": "Painting Enhance",
-      "description": "Enhance and refine your digital paintings with AI-powered artistic improvements"
-    },
-    "canvasExpand": {
-      "label": "Canvas Expand",
-      "description": "Expand your canvas and extend images with AI-powered content generation"
-    },
-    "referenceCleanup": {
-      "title": "Reference Cleanup",
-      "label": "Reference Cleanup",
-      "description": "Clean up and prepare reference images for your artistic creations",
-      "placeholder": "Describe your reference image and what you need help with - remove distractions, enhance details, fix lighting, or get composition advice...",
-      "priceLabel": "credits"
     }
   },
   "payments": {

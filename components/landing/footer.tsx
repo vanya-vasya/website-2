@@ -43,6 +43,10 @@ const Footer = () => {
       name: t("nav.faq"),
       href: "/faq",
     },
+    {
+      name: t("nav.contact"),
+      href: "/contact",
+    },
   ];
 
   const importantLinks = [

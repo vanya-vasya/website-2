@@ -31,7 +31,8 @@
     "home": "Ana Sayfa",
     "features": "Özellikler",
     "faq": "SSS",
-    "testimonials": "Referanslar"
+    "testimonials": "Referanslar",
+    "contact": "İletişim"
   },
   "hero": {
     "title": "Vizyonerler için",
@@ -219,7 +220,7 @@
       "description": "Videolarınız için sektör standardında senaryolar ve storyboardlar üretin"
     },
     "videoMaker": {
-      "label": "Video Yapımcısı",
+      "label": "Video Oluşturucu",
       "description": "Fikirleri ve senaryoları otomatik olarak ilgi çekici video içeriğine dönüştürün"
     },
     "designPartner": {
@@ -227,15 +228,18 @@
       "description": "Projeleriniz için etkileyici konsept sanatı ve illüstrasyonlar oluşturun"
     },
     "paintingEnhance": {
-      "label": "Resim Geliştirici",
-      "description": "Yapay zeka destekli sanatsal iyileştirmelerle dijital resimlerinizi geliştirin ve rafine edin"
+      "title": "Resim Geliştirme",
+      "label": "Resim Geliştirme",
+      "description": "Dijital resimlerinizi yapay zeka destekli sanatsal iyileştirmelerle geliştirin ve rafine edin",
+      "placeholder": "Bu dijital resmi daha iyi renkler, aydınlatma ve detaylarla geliştirin...",
+      "priceLabel": "kredi"
     },
     "canvasExpand": {
       "label": "Tuval Genişletme",
       "description": "Tuvallerinizi genişletin ve yapay zeka destekli içerik üretimi ile görselleri uzatın"
     },
     "referenceCleanup": {
-      "label": "Referans Temizleyici",
+      "label": "Referans Temizleme",
       "description": "Sanatsal yaratımlarınız için referans görsellerini temizleyin ve hazırlayın"
     },
     "lyricWriter": {
@@ -273,25 +277,6 @@
     "captionGenerator": {
       "label": "Açıklama Üreteci",
       "description": "Ölçülebilir etkileşim sağlayan etkileyici açıklamalar yazın"
-    },
-    "videoMaker": {
-      "label": "Video Oluşturucu",
-      "description": "Fikirleri ve senaryoları otomatik olarak ilgi çekici video içeriğine dönüştürün"
-    },
-    "paintingEnhance": {
-      "title": "Resim Geliştirme",
-      "label": "Resim Geliştirme",
-      "description": "Dijital resimlerinizi yapay zeka destekli sanatsal iyileştirmelerle geliştirin ve rafine edin",
-      "placeholder": "Bu dijital resmi daha iyi renkler, aydınlatma ve detaylarla geliştirin...",
-      "priceLabel": "kredi"
-    },
-    "canvasExpand": {
-      "label": "Tuval Genişletme",
-      "description": "Tuvallerinizi genişletin ve yapay zeka destekli içerik üretimi ile görselleri uzatın"
-    },
-    "referenceCleanup": {
-      "label": "Referans Temizleme",
-      "description": "Sanatsal yaratımlarınız için referans görsellerini temizleyin ve hazırlayın"
     },
     "videoScript": {
       "label": "Senaryo Oluşturucu",

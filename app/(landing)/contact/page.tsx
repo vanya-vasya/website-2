@@ -14,7 +14,7 @@ const contactCards: ContactCard[] = [
     icon: Mail,
     title: "Email Support",
     subtitle: "For general questions and support",
-    detail: "info@nerbixa.com",
+    detail: "support@nerbixa.com",
   },
   {
     icon: Clock,

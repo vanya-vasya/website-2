@@ -407,17 +407,35 @@ export async function POST(request: NextRequest) {
             processingMs: Date.now() - startTime,
           });
 
-          if (result.credited && customer_email && normalizedAmount !== null) {
+          if (result.credited && normalizedAmount !== null) {
             try {
-              await sendReceiptEmail({
-                receiptId: transaction_id.substring(0, 12),
-                email: customer_email,
-                date: paid_at || new Date().toISOString(),
-                tokens: tokensToAdd,
-                description: description || `Payment for ${tokensToAdd} generations`,
-                amount: normalizedAmount,
-                currency: currency || 'EUR',
-              });
+              let emailTo = customer_email;
+
+              if (!emailTo) {
+                const userRow = await db.query<{ email: string }>(
+                  'SELECT "email" FROM "User" WHERE "clerkId" = $1',
+                  [tracking_id]
+                );
+                emailTo = userRow.rows[0]?.email ?? null;
+              }
+
+              if (emailTo) {
+                await sendReceiptEmail({
+                  receiptId: transaction_id.substring(0, 12),
+                  email: emailTo,
+                  date: paid_at || new Date().toISOString(),
+                  tokens: tokensToAdd,
+                  description: description || `Payment for ${tokensToAdd} generations`,
+                  amount: normalizedAmount,
+                  currency: currency || 'EUR',
+                });
+              } else {
+                log.warn('secure_processor.receipt_email_skipped_no_email', {
+                  requestId,
+                  transactionId: transaction_id,
+                  userId: tracking_id,
+                });
+              }
             } catch (emailError) {
               log.error('secure_processor.receipt_email_failed', {
                 requestId,
@@ -426,12 +444,6 @@ export async function POST(request: NextRequest) {
                 error: emailError instanceof Error ? emailError.message : String(emailError),
               });
             }
-          } else if (result.credited && !customer_email) {
-            log.warn('secure_processor.receipt_email_skipped_no_email', {
-              requestId,
-              transactionId: transaction_id,
-              userId: tracking_id,
-            });
           }
 
         } catch (dbError) {

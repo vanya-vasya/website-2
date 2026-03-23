@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import db from '@/lib/db';
 import { log } from '@/lib/log';
+import { sendReceiptEmail } from '@/lib/receipt-mailer';
 
 /**
  * Secure-processor Payment Webhook Handler
@@ -405,6 +406,33 @@ export async function POST(request: NextRequest) {
             eventId,
             processingMs: Date.now() - startTime,
           });
+
+          if (result.credited && customer_email && normalizedAmount !== null) {
+            try {
+              await sendReceiptEmail({
+                receiptId: transaction_id.substring(0, 12),
+                email: customer_email,
+                date: paid_at || new Date().toISOString(),
+                tokens: tokensToAdd,
+                description: description || `Payment for ${tokensToAdd} generations`,
+                amount: normalizedAmount,
+                currency: currency || 'EUR',
+              });
+            } catch (emailError) {
+              log.error('secure_processor.receipt_email_failed', {
+                requestId,
+                transactionId: transaction_id,
+                userId: tracking_id,
+                error: emailError instanceof Error ? emailError.message : String(emailError),
+              });
+            }
+          } else if (result.credited && !customer_email) {
+            log.warn('secure_processor.receipt_email_skipped_no_email', {
+              requestId,
+              transactionId: transaction_id,
+              userId: tracking_id,
+            });
+          }
 
         } catch (dbError) {
           log.error('secure_processor.payment_db_transaction_failed', {

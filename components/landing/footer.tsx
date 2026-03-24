@@ -87,7 +87,7 @@ const Footer = () => {
       icon: FileText,
     },
     {
-      name: "Phone Number: +44 7537167307",
+      name: "Phone Number: +44 7520643172",
       icon: Phone,
     },
     {

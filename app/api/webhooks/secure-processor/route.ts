@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import db from '@/lib/db';
 import { log } from '@/lib/log';
+import { sendReceiptEmail } from '@/lib/receipt-mailer';
 
 /**
  * Secure-processor Payment Webhook Handler
@@ -405,6 +406,45 @@ export async function POST(request: NextRequest) {
             eventId,
             processingMs: Date.now() - startTime,
           });
+
+          if (result.credited && normalizedAmount !== null) {
+            try {
+              let emailTo = customer_email;
+
+              if (!emailTo) {
+                const userRow = await db.query<{ email: string }>(
+                  'SELECT "email" FROM "User" WHERE "clerkId" = $1',
+                  [tracking_id]
+                );
+                emailTo = userRow.rows[0]?.email ?? null;
+              }
+
+              if (emailTo) {
+                await sendReceiptEmail({
+                  receiptId: transaction_id.substring(0, 12),
+                  email: emailTo,
+                  date: paid_at || new Date().toISOString(),
+                  tokens: tokensToAdd,
+                  description: description || `Payment for ${tokensToAdd} generations`,
+                  amount: normalizedAmount,
+                  currency: currency || 'EUR',
+                });
+              } else {
+                log.warn('secure_processor.receipt_email_skipped_no_email', {
+                  requestId,
+                  transactionId: transaction_id,
+                  userId: tracking_id,
+                });
+              }
+            } catch (emailError) {
+              log.error('secure_processor.receipt_email_failed', {
+                requestId,
+                transactionId: transaction_id,
+                userId: tracking_id,
+                error: emailError instanceof Error ? emailError.message : String(emailError),
+              });
+            }
+          }
 
         } catch (dbError) {
           log.error('secure_processor.payment_db_transaction_failed', {

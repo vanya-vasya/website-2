@@ -1,4 +1,5 @@
 import React from "react";
+import path from "path";
 import {
   Document,
   Page,
@@ -20,7 +21,7 @@ const colors = {
 
 Font.register({
   family: "Nunito",
-  src: `./public/assets/fonts/Nunito-Regular.ttf`,
+  src: path.join(process.cwd(), "public", "assets", "fonts", "Nunito-Regular.ttf"),
 });
 
 const styles = StyleSheet.create({
@@ -136,11 +137,11 @@ const styles = StyleSheet.create({
 
 const company = {
   name: "Nerbixa",
-  company: "GUΑRΑΝТЕЕD GRЕΑТ SЕRVIСЕ LТD",
+  company: "GUARANTEED GREAT SERVICE LTD",
   address: "Dept 6162 43 Owston Road, Carcroft, Doncaster, United Kingdom, DN6 8DA",
   website: "nerbixa.com",
   email: "support@nerbixa.com",
-  logo: "./public/logos/nerbixa-logo.png", // Official SVG logo
+  logo: path.join(process.cwd(), "public", "logos", "nerbixa-logo.png"),
   companyNumber: "15982295",
 };
 

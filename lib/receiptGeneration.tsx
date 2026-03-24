@@ -1,4 +1,5 @@
 "use server";
+// Note: Receipt component uses absolute paths internally (process.cwd()), so this works in serverless.
 
 import { renderToBuffer } from "@react-pdf/renderer";
 import Receipt from "@/components/pdf/receipt";

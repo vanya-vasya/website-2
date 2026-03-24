@@ -19,6 +19,12 @@ export async function POST(req: Request) {
     const resolvedTokens = tokens ?? 0;
     const resolvedDescription = description || "Nerbixa Generations Purchase";
 
+    // Normalize amount to cents: if user sends 0.05 (EUR decimal) → 5 (cents)
+    // If user sends 500 (already cents) → 500 (untouched)
+    const amountInCents = Number.isInteger(amount)
+      ? amount
+      : Math.round(amount * 100);
+
     const pdfBuffer = await renderToBuffer(
       <Receipt
         receiptId={resolvedReceiptId}
@@ -26,7 +32,7 @@ export async function POST(req: Request) {
         date={resolvedDate}
         tokens={resolvedTokens}
         description={resolvedDescription}
-        amount={amount}
+        amount={amountInCents}
         currency={currency}
       />
     );

@@ -1,16 +1,15 @@
 import Receipt from "@/components/pdf/receipt";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { NextResponse } from "next/server";
-import { sendReceiptEmail } from "@/lib/receipt-mailer";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { receiptId, email, date, tokens, description, amount, currency } = body;
 
-    if (!email || !amount || !currency) {
+    if (!amount || !currency) {
       return NextResponse.json(
-        { error: "Missing required fields: email, amount, currency" },
+        { error: "Missing required fields: amount, currency" },
         { status: 400 }
       );
     }
@@ -18,12 +17,12 @@ export async function POST(req: Request) {
     const resolvedReceiptId = receiptId || `rcpt_${Date.now().toString(36)}`;
     const resolvedDate = date || new Date().toISOString();
     const resolvedTokens = tokens ?? 0;
-    const resolvedDescription = description || `Nerbixa Generations Purchase`;
+    const resolvedDescription = description || "Nerbixa Generations Purchase";
 
     const pdfBuffer = await renderToBuffer(
       <Receipt
         receiptId={resolvedReceiptId}
-        email={email}
+        email={email || ""}
         date={resolvedDate}
         tokens={resolvedTokens}
         description={resolvedDescription}
@@ -32,21 +31,13 @@ export async function POST(req: Request) {
       />
     );
 
-    await sendReceiptEmail({
-      receiptId: resolvedReceiptId,
-      email,
-      date: resolvedDate,
-      tokens: resolvedTokens,
-      description: resolvedDescription,
-      amount,
-      currency,
-      pdfBuffer: Buffer.from(pdfBuffer),
-    });
-
-    return NextResponse.json({
-      success: true,
-      receiptId: resolvedReceiptId,
-      message: `Receipt sent to ${email}`,
+    return new NextResponse(Buffer.from(pdfBuffer), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": `attachment; filename="receipt-${resolvedReceiptId}.pdf"`,
+        "Content-Length": String(pdfBuffer.byteLength),
+      },
     });
   } catch (error) {
     console.error("[generate-receipt] Error:", error);

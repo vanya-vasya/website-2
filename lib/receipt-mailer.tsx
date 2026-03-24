@@ -249,11 +249,11 @@ export const sendReceiptEmail = async (data: ReceiptEmailData): Promise<void> =>
       hasPdfAttachment: !!pdfBuffer,
     });
   } catch (error) {
+    // Log but never throw — email failure must not break the payment webhook
     log.error('receipt_mailer.send_failed', {
       receiptId: data.receiptId,
       to: data.email,
       error: error instanceof Error ? error.message : String(error),
     });
-    throw error;
   }
 };

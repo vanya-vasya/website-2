@@ -9,6 +9,8 @@ export interface ReceiptEmailData {
   description: string;
   amount: number;
   currency: string;
+  /** Pre-rendered PDF buffer — if provided, skips PDF generation */
+  pdfBuffer?: Buffer;
 }
 
 const createReceiptTransporter = () =>
@@ -48,7 +50,7 @@ Your receipt from Nerbixa #${data.receiptId} &mdash; ${formattedAmount}
 <tr><td align="center" style="padding:48px 20px 40px;">
 <table width="480" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;width:100%;">
 
-<!-- ======== Company Header ======== -->
+<!-- ======== Header ======== -->
 <tr><td style="padding-bottom:32px;">
   <table cellpadding="0" cellspacing="0" border="0"><tr>
     <td valign="middle" style="width:32px;height:32px;">
@@ -62,20 +64,16 @@ Your receipt from Nerbixa #${data.receiptId} &mdash; ${formattedAmount}
   </tr></table>
 </td></tr>
 
-<!-- ======== Card 1 — Receipt Summary ======== -->
+<!-- ======== Card 1 — Summary ======== -->
 <tr><td>
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-radius:12px;background-color:#e3e8ee;padding:1px;">
 <tr><td>
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#fff;border-radius:12px;">
 <tr><td style="padding:32px;">
+  <p style="margin:0 0 2px;font-family:${f};color:#7a7a7a;font-size:14px;line-height:20px;font-weight:500;">Receipt from Nerbixa</p>
+  <p style="margin:0 0 2px;font-family:${f};color:#1a1a1a;font-size:36px;line-height:40px;font-weight:600;">${formattedAmount}</p>
+  <p style="margin:0;font-family:${f};color:#7a7a7a;font-size:14px;line-height:24px;font-weight:500;">Paid ${formattedDate}</p>
 
-  <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td>
-    <p style="margin:0 0 2px;font-family:${f};color:#7a7a7a;font-size:14px;line-height:20px;font-weight:500;">Receipt from Nerbixa</p>
-    <p style="margin:0 0 2px;font-family:${f};color:#1a1a1a;font-size:36px;line-height:40px;font-weight:600;">${formattedAmount}</p>
-    <p style="margin:0;font-family:${f};color:#7a7a7a;font-size:14px;line-height:24px;font-weight:500;">Paid ${formattedDate}</p>
-  </td></tr></table>
-
-  <!-- divider -->
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr><td height="16" style="font-size:1px;line-height:1px;">&nbsp;</td></tr>
     <tr><td height="1" style="background-color:#ebebeb;font-size:1px;line-height:1px;">&nbsp;</td></tr>
@@ -93,14 +91,12 @@ Your receipt from Nerbixa #${data.receiptId} &mdash; ${formattedAmount}
       <td align="right" style="font-family:${f};color:#1a1a1a;font-size:14px;line-height:16px;">Card</td>
     </tr>
   </table>
-
 </td></tr>
 </table>
 </td></tr>
 </table>
 </td></tr>
 
-<!-- spacer -->
 <tr><td height="20" style="font-size:1px;line-height:1px;">&nbsp;</td></tr>
 
 <!-- ======== Card 2 — Line Items ======== -->
@@ -112,12 +108,11 @@ Your receipt from Nerbixa #${data.receiptId} &mdash; ${formattedAmount}
 
   <p style="margin:0 0 24px;font-family:${f};color:#1a1a1a;font-size:16px;line-height:20px;font-weight:500;">Receipt #${data.receiptId}</p>
 
-  <!-- item row -->
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr>
     <td style="vertical-align:top;">
       <p style="margin:0;font-family:${f};color:#1a1a1a;font-size:14px;line-height:16px;font-weight:500;">${data.description}</p>
-      <p style="margin:3px 0 0;font-family:${f};color:#999;font-size:12px;line-height:14px;">${data.tokens} Generations</p>
+      ${data.tokens > 0 ? `<p style="margin:3px 0 0;font-family:${f};color:#999;font-size:12px;line-height:14px;">Qty: ${data.tokens.toLocaleString()} Generations</p>` : ''}
     </td>
     <td align="right" style="vertical-align:top;white-space:nowrap;">
       <span style="font-family:${f};color:#1a1a1a;font-size:14px;line-height:16px;font-weight:500;">${formattedAmount}</span>
@@ -125,46 +120,38 @@ Your receipt from Nerbixa #${data.receiptId} &mdash; ${formattedAmount}
   </tr>
   </table>
 
-  <!-- divider -->
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr><td height="16" style="font-size:1px;line-height:1px;">&nbsp;</td></tr>
     <tr><td height="1" style="background-color:#ebebeb;font-size:1px;line-height:1px;">&nbsp;</td></tr>
     <tr><td height="16" style="font-size:1px;line-height:1px;">&nbsp;</td></tr>
   </table>
 
-  <!-- total -->
   <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
     <td style="font-family:${f};color:#1a1a1a;font-size:14px;line-height:16px;font-weight:500;">Total</td>
     <td align="right" style="font-family:${f};color:#1a1a1a;font-size:14px;line-height:16px;font-weight:500;white-space:nowrap;">${formattedAmount}</td>
   </tr></table>
 
-  <!-- divider -->
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr><td height="16" style="font-size:1px;line-height:1px;">&nbsp;</td></tr>
     <tr><td height="1" style="background-color:#ebebeb;font-size:1px;line-height:1px;">&nbsp;</td></tr>
     <tr><td height="16" style="font-size:1px;line-height:1px;">&nbsp;</td></tr>
   </table>
 
-  <!-- amount paid -->
   <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
     <td style="font-family:${f};color:#1a1a1a;font-size:14px;line-height:16px;font-weight:500;">Amount paid</td>
     <td align="right" style="font-family:${f};color:#1a1a1a;font-size:14px;line-height:16px;font-weight:500;white-space:nowrap;">${formattedAmount}</td>
   </tr></table>
 
-  <!-- divider -->
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr><td height="16" style="font-size:1px;line-height:1px;">&nbsp;</td></tr>
     <tr><td height="1" style="background-color:#ebebeb;font-size:1px;line-height:1px;">&nbsp;</td></tr>
     <tr><td height="20" style="font-size:1px;line-height:1px;">&nbsp;</td></tr>
   </table>
 
-  <!-- support -->
   <p style="margin:0 0 12px;font-family:${f};color:#999;font-size:14px;line-height:16px;">
-    If you have any questions, contact us at
-    <a href="mailto:support@nerbixa.com" style="color:#625afa;font-weight:bold;text-decoration:none;">support@nerbixa.com</a>
+    Questions? Contact us at <a href="mailto:support@nerbixa.com" style="color:#625afa;font-weight:bold;text-decoration:none;">support@nerbixa.com</a>
   </p>
   <p style="margin:0;font-family:${f};color:#999;font-size:14px;line-height:16px;">
-    Visit our website:
     <a href="https://www.nerbixa.com" style="color:#625afa;font-weight:bold;text-decoration:none;">nerbixa.com</a>
   </p>
 
@@ -191,11 +178,10 @@ Your receipt from Nerbixa #${data.receiptId} &mdash; ${formattedAmount}
 </html>`;
 };
 
-async function generateReceiptPdfBuffer(data: ReceiptEmailData): Promise<Buffer | null> {
+const renderPdfBuffer = async (data: ReceiptEmailData): Promise<Buffer | null> => {
   try {
     const { renderToBuffer } = await import('@react-pdf/renderer');
     const { default: Receipt } = await import('@/components/pdf/receipt');
-
     const result = await renderToBuffer(
       <Receipt
         receiptId={data.receiptId}
@@ -207,7 +193,6 @@ async function generateReceiptPdfBuffer(data: ReceiptEmailData): Promise<Buffer 
         currency={data.currency}
       />
     );
-
     return Buffer.from(result);
   } catch (error) {
     log.warn('receipt_mailer.pdf_generation_failed', {
@@ -216,7 +201,7 @@ async function generateReceiptPdfBuffer(data: ReceiptEmailData): Promise<Buffer 
     });
     return null;
   }
-}
+};
 
 export const sendReceiptEmail = async (data: ReceiptEmailData): Promise<void> => {
   const password = process.env.RECEIPT_EMAIL_PASSWORD;
@@ -233,15 +218,9 @@ export const sendReceiptEmail = async (data: ReceiptEmailData): Promise<void> =>
   try {
     const html = generateReceiptHtml(data);
 
-    let pdfBuffer: Buffer | null = null;
-    try {
-      pdfBuffer = await generateReceiptPdfBuffer(data);
-    } catch (pdfErr) {
-      log.warn('receipt_mailer.pdf_skipped', {
-        receiptId: data.receiptId,
-        error: pdfErr instanceof Error ? pdfErr.message : String(pdfErr),
-      });
-    }
+    // Use pre-rendered buffer if provided (e.g. from /api/generate-receipt),
+    // otherwise render fresh
+    const pdfBuffer = data.pdfBuffer ?? (await renderPdfBuffer(data));
 
     const transporter = createReceiptTransporter();
     const fromEmail = process.env.RECEIPT_EMAIL || 'no-reply@nerbixa.com';
@@ -251,17 +230,16 @@ export const sendReceiptEmail = async (data: ReceiptEmailData): Promise<void> =>
       to: data.email,
       subject: `Your receipt from Nerbixa #${data.receiptId}`,
       html,
+      attachments: pdfBuffer
+        ? [
+            {
+              filename: `receipt-${data.receiptId}.pdf`,
+              content: pdfBuffer,
+              contentType: 'application/pdf',
+            },
+          ]
+        : [],
     };
-
-    if (pdfBuffer) {
-      mailOptions.attachments = [
-        {
-          filename: `receipt-${data.receiptId}.pdf`,
-          content: pdfBuffer,
-          contentType: 'application/pdf',
-        },
-      ];
-    }
 
     await transporter.sendMail(mailOptions);
 
@@ -276,5 +254,6 @@ export const sendReceiptEmail = async (data: ReceiptEmailData): Promise<void> =>
       to: data.email,
       error: error instanceof Error ? error.message : String(error),
     });
+    throw error;
   }
 };

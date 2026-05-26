@@ -264,7 +264,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    marginBottom: -56,
     backgroundColor: C.gray100,
     paddingHorizontal: 40,
     paddingVertical: 18,
@@ -439,7 +438,7 @@ const Receipt = ({
         </View>
 
         {/* ── Footer ── */}
-        <View style={styles.footer}>
+        <View fixed style={styles.footer}>
           <View style={styles.footerLeft}>
             <Text style={styles.footerCompany}>
               {company.name} · {company.legal} · {company.number}

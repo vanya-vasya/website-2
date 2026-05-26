@@ -65,7 +65,7 @@ interface ActivityRow {
 const rand = (min: number, max: number): number =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
-const pickRandom = <T>(arr: T[]): T => arr[rand(0, arr.length - 1)];
+const pickRandom = <T,>(arr: T[]): T => arr[rand(0, arr.length - 1)];
 
 const parseDate = (dateStr: string): Date | null => {
   const parts = dateStr.split(".");

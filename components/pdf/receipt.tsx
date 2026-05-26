@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: C.gray900,
     flexDirection: "column",
+    paddingBottom: 56,
   },
 
   // ── Header ──────────────────────────────────────
@@ -125,7 +126,6 @@ const styles = StyleSheet.create({
 
   // ── Body ─────────────────────────────────────────
   body: {
-    flexGrow: 1,
     paddingHorizontal: 40,
     paddingTop: 28,
     paddingBottom: 28,
@@ -260,6 +260,11 @@ const styles = StyleSheet.create({
 
   // ── Footer ────────────────────────────────────────
   footer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    marginBottom: -56,
     backgroundColor: C.gray100,
     paddingHorizontal: 40,
     paddingVertical: 18,

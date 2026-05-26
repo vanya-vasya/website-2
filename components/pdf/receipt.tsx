@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
     fontFamily: "Inter",
     fontSize: 10,
     color: C.gray900,
+    flexDirection: "column",
   },
 
   // ── Header ──────────────────────────────────────
@@ -124,9 +125,10 @@ const styles = StyleSheet.create({
 
   // ── Body ─────────────────────────────────────────
   body: {
+    flexGrow: 1,
     paddingHorizontal: 40,
     paddingTop: 28,
-    paddingBottom: 80,
+    paddingBottom: 28,
   },
 
   // ── Info grid ────────────────────────────────────
@@ -258,10 +260,6 @@ const styles = StyleSheet.create({
 
   // ── Footer ────────────────────────────────────────
   footer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
     backgroundColor: C.gray100,
     paddingHorizontal: 40,
     paddingVertical: 18,

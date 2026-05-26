@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   body: {
     paddingHorizontal: 40,
     paddingTop: 28,
-    paddingBottom: 20,
+    paddingBottom: 80,
   },
 
   // ── Info grid ────────────────────────────────────
@@ -258,6 +258,10 @@ const styles = StyleSheet.create({
 
   // ── Footer ────────────────────────────────────────
   footer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
     backgroundColor: C.gray100,
     paddingHorizontal: 40,
     paddingVertical: 18,

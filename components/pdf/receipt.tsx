@@ -43,6 +43,8 @@ const styles = StyleSheet.create({
     fontFamily: "Inter",
     fontSize: 10,
     color: C.gray900,
+    flexDirection: "column",
+    paddingBottom: 56,
   },
 
   // ── Header ──────────────────────────────────────
@@ -126,7 +128,7 @@ const styles = StyleSheet.create({
   body: {
     paddingHorizontal: 40,
     paddingTop: 28,
-    paddingBottom: 20,
+    paddingBottom: 28,
   },
 
   // ── Info grid ────────────────────────────────────
@@ -258,6 +260,10 @@ const styles = StyleSheet.create({
 
   // ── Footer ────────────────────────────────────────
   footer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
     backgroundColor: C.gray100,
     paddingHorizontal: 40,
     paddingVertical: 18,
@@ -432,7 +438,7 @@ const Receipt = ({
         </View>
 
         {/* ── Footer ── */}
-        <View style={styles.footer}>
+        <View fixed style={styles.footer}>
           <View style={styles.footerLeft}>
             <Text style={styles.footerCompany}>
               {company.name} · {company.legal} · {company.number}

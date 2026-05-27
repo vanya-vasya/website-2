@@ -111,9 +111,20 @@ const generateActivity = (
     23, 59, 59
   ).getTime();
 
-  if (startMs > endMs) return [];
+  // Total range in ms; guarantee at least 24 h so gaps scale reasonably
+  const rangeMs = Math.max(endMs - startMs, 24 * 3_600_000);
 
-  let cursorMs = startMs + rand(0, 3) * 3_600_000;
+  // Estimate how many sessions we'll need (avg ~50 tokens/session)
+  const estimatedSessions = Math.max(3, Math.ceil(tokensTarget / 50));
+
+  // Inter-session gap: split the range evenly, cap at 48 h, floor at 30 min
+  const baseGapMs  = rangeMs / (estimatedSessions + 1);
+  const minGapMs   = Math.max(30 * 60_000,    baseGapMs * 0.4);
+  const maxGapMs   = Math.min(48 * 3_600_000, baseGapMs * 1.6);
+
+  // Start a short way into the range (up to 10 % of one base-gap unit)
+  const maxStartOffsetMin = Math.max(1, Math.floor(baseGapMs * 0.1 / 60_000));
+  let cursorMs = startMs + rand(0, maxStartOffsetMin) * 60_000;
 
   while (remainingTokens > 0 && cursorMs <= endMs) {
     const group = pickRandom(ALL_GROUPS);
@@ -143,13 +154,17 @@ const generateActivity = (
 
         totalSpent += cost;
         remainingTokens -= cost;
+        // Gap between individual uses within a session: 2–25 min
         cursorMs += rand(2, 25) * 60_000;
       }
-
+      // Gap between different models in the same session: 5–40 min
       cursorMs += rand(5, 40) * 60_000;
     }
 
-    cursorMs += rand(4, 72) * 3_600_000;
+    // Inter-session gap: proportional to the date range
+    const gapMin = Math.ceil(minGapMs / 60_000);
+    const gapMax = Math.ceil(maxGapMs / 60_000);
+    cursorMs += rand(gapMin, gapMax) * 60_000;
   }
 
   return rows;
@@ -170,11 +185,14 @@ export default function AdminDashboardPage() {
 
   const isEmailValid = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
-  const canGenerate =
-    isEmailValid(email) &&
-    Number(tokensSpend) > 0 &&
-    parseDate(firstDate) !== null &&
-    parseDate(lastDate) !== null;
+  const canGenerate = (() => {
+    if (!isEmailValid(email)) return false;
+    if (!tokensSpend || Number(tokensSpend) <= 0) return false;
+    const start = parseDate(firstDate);
+    const end = parseDate(lastDate);
+    if (!start || !end) return false;
+    return end >= start;
+  })();
 
   const handleGenerateActivity = () => {
     setError("");
@@ -188,8 +206,8 @@ export default function AdminDashboardPage() {
       setError("Invalid date format. Use DD.MM.YYYY");
       return;
     }
-    if (start > end) {
-      setError("First date must be before last date.");
+    if (end < start) {
+      setError("Last date must be equal to or later than first date.");
       return;
     }
     if (tokens <= 0) {

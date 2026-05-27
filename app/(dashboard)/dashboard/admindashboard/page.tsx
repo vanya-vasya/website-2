@@ -14,41 +14,49 @@ const PAGE_SIZE = 20;
 // ─── Model definitions ───────────────────────────────────────────────────────
 
 type ModelKey =
-  | "conversation"
-  | "codeGeneration"
-  | "imageGeneration"
-  | "imageRestore"
-  | "imageBackgroundRemoval"
-  | "imageGenerativeFill"
-  | "imageObjectRecolor"
-  | "imageObjectRemove"
-  | "videoGeneration"
-  | "musicGeneration"
-  | "speechGeneration";
+  | "scriptBuilder"
+  | "videoMaker"
+  | "designPartner"
+  | "paintingEnhance"
+  | "referenceCleanup"
+  | "lyricWriter"
+  | "coverArt"
+  | "composeAssist"
+  | "sfxGenerator"
+  | "blogIdeas"
+  | "socialGraphics"
+  | "contentPlanner"
+  | "thumbnailOptimizer"
+  | "captionGenerator"
+  | "canvasExpand";
 
 type ModelGroup = "text" | "image" | "video" | "audio";
 
 interface ModelDef { name: string; tokens: number; group: ModelGroup; }
 
 const MODELS: Record<ModelKey, ModelDef> = {
-  conversation:           { name: "Chat Assistant",           tokens: 1,  group: "text"  },
-  codeGeneration:         { name: "Code Generation",          tokens: 5,  group: "text"  },
-  imageGeneration:        { name: "Image Generation",         tokens: 14, group: "image" },
-  imageRestore:           { name: "Image Restore",            tokens: 11, group: "image" },
-  imageBackgroundRemoval: { name: "Image Background Removal", tokens: 17, group: "image" },
-  imageGenerativeFill:    { name: "Image Generative Fill",    tokens: 20, group: "image" },
-  imageObjectRecolor:     { name: "Image Object Recolor",     tokens: 16, group: "image" },
-  imageObjectRemove:      { name: "Image Object Remove",      tokens: 28, group: "image" },
-  videoGeneration:        { name: "Video Generation",         tokens: 20, group: "video" },
-  musicGeneration:        { name: "Music Generation",         tokens: 11, group: "audio" },
-  speechGeneration:       { name: "Speech Generation",        tokens: 13, group: "audio" },
+  scriptBuilder:      { name: "Script Builder",       tokens: 1,  group: "text"  },
+  blogIdeas:          { name: "Blog Ideas",            tokens: 1,  group: "text"  },
+  contentPlanner:     { name: "Content Planner",       tokens: 1,  group: "text"  },
+  captionGenerator:   { name: "Caption Generator",     tokens: 1,  group: "text"  },
+  lyricWriter:        { name: "Lyric Writer",          tokens: 1,  group: "text"  },
+  videoMaker:         { name: "Video Maker",           tokens: 20, group: "video" },
+  designPartner:      { name: "Design Partner",        tokens: 14, group: "image" },
+  paintingEnhance:    { name: "Painting Enhance",      tokens: 1,  group: "image" },
+  referenceCleanup:   { name: "Reference Cleanup",     tokens: 1,  group: "image" },
+  coverArt:           { name: "Cover Art",             tokens: 14, group: "image" },
+  socialGraphics:     { name: "Social Graphics",       tokens: 14, group: "image" },
+  thumbnailOptimizer: { name: "Thumbnail Optimizer",   tokens: 1,  group: "image" },
+  canvasExpand:       { name: "Canvas Expand",         tokens: 1,  group: "image" },
+  composeAssist:      { name: "Compose Assist",        tokens: 11, group: "audio" },
+  sfxGenerator:       { name: "SFX Generator",         tokens: 11, group: "audio" },
 };
 
 const MODEL_GROUPS: Record<ModelGroup, ModelKey[]> = {
-  text:  ["conversation", "codeGeneration"],
-  image: ["imageGeneration", "imageRestore", "imageBackgroundRemoval", "imageGenerativeFill", "imageObjectRecolor", "imageObjectRemove"],
-  video: ["videoGeneration"],
-  audio: ["musicGeneration", "speechGeneration"],
+  text:  ["scriptBuilder", "blogIdeas", "contentPlanner", "captionGenerator", "lyricWriter"],
+  image: ["designPartner", "paintingEnhance", "referenceCleanup", "coverArt", "socialGraphics", "thumbnailOptimizer", "canvasExpand"],
+  video: ["videoMaker"],
+  audio: ["composeAssist", "sfxGenerator"],
 };
 
 const ALL_GROUPS: ModelGroup[] = ["text", "image", "video", "audio"];
@@ -509,7 +517,7 @@ export default function AdminDashboardPage() {
       )}
 
       {/* ── Editable payment rows ── */}
-      {paymentRows.length > 0 && !paymentLocked && (
+      {configVisible && paymentRows.length > 0 && !paymentLocked && (
         <div className={contentStyles.base}>
           <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden" style={cardStyle}>
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">

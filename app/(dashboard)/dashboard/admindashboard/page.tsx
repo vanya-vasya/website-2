@@ -88,7 +88,7 @@ const parseDate = (dateStr: string): Date | null => {
   if (parts.length !== 3) return null;
   const [day, month, year] = parts.map(Number);
   if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
-  if (day < 1 || day > 31 || month < 1 || month > 12 || year < 2000) return null;
+  if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900) return null;
   return new Date(year, month - 1, day);
 };
 

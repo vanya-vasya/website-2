@@ -118,52 +118,62 @@ const generateId = (): string =>
 // ─── Activity generator ───────────────────────────────────────────────────────
 
 const generateActivity = (tokensTarget: number, startDate: Date, endDate: Date): ActivityRow[] => {
-  const rows: ActivityRow[] = [];
-  let remainingTokens = tokensTarget;
-  let totalSpent = 0;
-
   const startMs = startDate.getTime();
   const endMs   = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), 23, 59, 59).getTime();
+  const rangeMs = Math.max(endMs - startMs, 60_000); // at least 1 min
 
-  const rangeMs          = Math.max(endMs - startMs, 24 * 3_600_000);
-  const estimatedSessions = Math.max(3, Math.ceil(tokensTarget / 50));
-  const baseGapMs        = rangeMs / (estimatedSessions + 1);
-  const minGapMs         = Math.max(30 * 60_000,    baseGapMs * 0.4);
-  const maxGapMs         = Math.min(48 * 3_600_000, baseGapMs * 1.6);
+  // ── Phase 1: generate sessions until ALL tokens are exhausted ──────────────
+  // Time is NOT checked here — tokens drive the loop completely.
+  type RawEntry = { tool: string; tokens: number };
+  const sessions: RawEntry[][] = [];
+  let remaining = tokensTarget;
 
-  const maxStartOffsetMin = Math.max(1, Math.floor(baseGapMs * 0.1 / 60_000));
-  let cursorMs = startMs + rand(0, maxStartOffsetMin) * 60_000 + rand(0, 59) * 1000;
+  while (remaining > 0) {
+    const session: RawEntry[] = [];
+    const group       = pickRandom(ALL_GROUPS);
+    const groupModels = MODEL_GROUPS[group];
+    const modelCount  = Math.min(rand(1, 3), groupModels.length);
+    const picked      = [...groupModels].sort(() => Math.random() - 0.5).slice(0, modelCount);
 
-  while (remainingTokens > 0 && cursorMs <= endMs) {
-    const group        = pickRandom(ALL_GROUPS);
-    const groupModels  = MODEL_GROUPS[group];
-    const modelCount   = Math.min(rand(1, 3), groupModels.length);
-    const sessionModels = [...groupModels].sort(() => Math.random() - 0.5).slice(0, modelCount);
-
-    for (const modelKey of sessionModels) {
-      if (remainingTokens <= 0 || cursorMs > endMs) break;
+    for (const modelKey of picked) {
+      if (remaining <= 0) break;
       const uses = rand(1, 4);
-      for (let i = 0; i < uses; i++) {
-        if (remainingTokens <= 0 || cursorMs > endMs) break;
+      for (let u = 0; u < uses; u++) {
+        if (remaining <= 0) break;
         const model = MODELS[modelKey];
-        const cost  = Math.min(model.tokens, remainingTokens);
-        // Add random seconds offset for display only (keeps date stable)
-        const displayMs = cursorMs + rand(0, 59) * 1000;
-        rows.push({
-          date:        formatDate(new Date(displayMs)),
-          time:        formatTime(new Date(displayMs)),
-          tool:        model.name,
-          tokensUsed:  cost,
-          tokensTotal: totalSpent + cost,
-        });
-        totalSpent      += cost;
-        remainingTokens -= cost;
-        cursorMs        += rand(2, 25) * 60_000;
+        const cost  = Math.min(model.tokens, remaining);
+        session.push({ tool: model.name, tokens: cost });
+        remaining -= cost;
       }
-      cursorMs += rand(5, 40) * 60_000;
     }
 
-    cursorMs += rand(Math.ceil(minGapMs / 60_000), Math.ceil(maxGapMs / 60_000)) * 60_000;
+    if (session.length > 0) sessions.push(session);
+  }
+
+  // ── Phase 2: distribute sessions evenly across the date range ─────────────
+  const numSessions = sessions.length;
+  const slotMs      = rangeMs / numSessions;
+  const rows: ActivityRow[] = [];
+  let totalSpent = 0;
+
+  for (let s = 0; s < numSessions; s++) {
+    // Cursor starts at a random point in the first quarter of each slot
+    const slotStart = startMs + s * slotMs;
+    let cursorMs    = slotStart + rand(0, Math.max(1, Math.floor(slotMs * 0.25 / 60_000))) * 60_000
+                    + rand(0, 59) * 1000;
+
+    for (const entry of sessions[s]) {
+      const displayMs = cursorMs + rand(0, 59) * 1000;
+      rows.push({
+        date:        formatDate(new Date(displayMs)),
+        time:        formatTime(new Date(displayMs)),
+        tool:        entry.tool,
+        tokensUsed:  entry.tokens,
+        tokensTotal: totalSpent + entry.tokens,
+      });
+      totalSpent += entry.tokens;
+      cursorMs   += rand(2, 25) * 60_000; // intra-session gap
+    }
   }
 
   return rows;
@@ -390,24 +400,23 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* ── Activity configuration ── */}
-      <div className={contentStyles.base}>
-        <div className="rounded-xl border border-gray-200 bg-white shadow-sm" style={cardStyle}>
-          {/* Card header — always visible */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-            <h2 className="text-base font-semibold text-black" style={{ fontFamily: '"Space Grotesk", Inter, sans-serif' }}>
-              Activity configuration
-            </h2>
-            <button
-              onClick={() => setConfigVisible((v) => !v)}
-              aria-label={configVisible ? "Hide configuration" : "Show configuration"}
-              className="text-sm font-medium text-indigo-500 hover:text-indigo-700 transition-colors"
-            >
-              {configVisible ? "Hide" : "Show"}
-            </button>
-          </div>
+      {configVisible ? (
+        <div className={contentStyles.base}>
+          <div className="rounded-xl border border-gray-200 bg-white shadow-sm" style={cardStyle}>
+            {/* Card header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <h2 className="text-base font-semibold text-black" style={{ fontFamily: '"Space Grotesk", Inter, sans-serif' }}>
+                Activity configuration
+              </h2>
+              <button
+                onClick={() => setConfigVisible(false)}
+                aria-label="Hide configuration"
+                className="text-sm font-medium text-indigo-500 hover:text-indigo-700 transition-colors"
+              >
+                Hide
+              </button>
+            </div>
 
-          {/* Collapsible content */}
-          {configVisible && (
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
@@ -476,9 +485,19 @@ export default function AdminDashboardPage() {
                 </button>
               </div>
             </div>
-          )}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className={contentStyles.base}>
+          <button
+            onClick={() => setConfigVisible(true)}
+            aria-label="Show configuration"
+            className="text-sm font-medium text-indigo-500 hover:text-indigo-700 transition-colors"
+          >
+            Show configuration
+          </button>
+        </div>
+      )}
 
       {/* ── Payment configuration ── */}
       {configVisible && (
@@ -657,7 +676,7 @@ export default function AdminDashboardPage() {
           <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden" style={cardStyle}>
             <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
               <h2 className="text-base font-semibold text-black" style={{ fontFamily: '"Space Grotesk", Inter, sans-serif' }}>
-                Generated activity
+                User activity
               </h2>
               <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100">
                 {activityRows.length} rows · {email}

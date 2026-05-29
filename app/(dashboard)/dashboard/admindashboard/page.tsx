@@ -399,11 +399,23 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* ── Activity configuration ── */}
-      {configVisible ? (
+      {/* ── Show configuration button (visible only when hidden) ── */}
+      {!configVisible && (
+        <div className={contentStyles.base}>
+          <button
+            onClick={() => setConfigVisible(true)}
+            aria-label="Show configuration"
+            className="text-sm font-medium text-indigo-500 hover:text-indigo-700 transition-colors"
+          >
+            Show configuration
+          </button>
+        </div>
+      )}
+
+      {/* ── Activity configuration (hidden when configVisible=false) ── */}
+      {configVisible && (
         <div className={contentStyles.base}>
           <div className="rounded-xl border border-gray-200 bg-white shadow-sm" style={cardStyle}>
-            {/* Card header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
               <h2 className="text-base font-semibold text-black" style={{ fontFamily: '"Space Grotesk", Inter, sans-serif' }}>
                 Activity configuration
@@ -475,7 +487,6 @@ export default function AdminDashboardPage() {
                 >
                   Generate activity
                 </button>
-
                 <button
                   onClick={handleResetActivity}
                   aria-label="Reset activity form"
@@ -486,16 +497,6 @@ export default function AdminDashboardPage() {
               </div>
             </div>
           </div>
-        </div>
-      ) : (
-        <div className={contentStyles.base}>
-          <button
-            onClick={() => setConfigVisible(true)}
-            aria-label="Show configuration"
-            className="text-sm font-medium text-indigo-500 hover:text-indigo-700 transition-colors"
-          >
-            Show configuration
-          </button>
         </div>
       )}
 
@@ -658,13 +659,6 @@ export default function AdminDashboardPage() {
 
             <div className="border-t border-gray-100">
               <Pagination page={paymentPage} total={paymentTotalPages} onChange={setPaymentPage} />
-              <div className="px-4 pb-3 flex justify-end">
-                <button onClick={() => setPaymentLocked(false)}
-                  className="text-xs text-indigo-500 hover:text-indigo-700 transition-colors font-medium"
-                  aria-label="Edit payment rows">
-                  Edit rows
-                </button>
-              </div>
             </div>
           </div>
         </div>

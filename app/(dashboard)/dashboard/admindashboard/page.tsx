@@ -399,19 +399,6 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* ── Show configuration button (visible only when hidden) ── */}
-      {!configVisible && (
-        <div className={contentStyles.base}>
-          <button
-            onClick={() => setConfigVisible(true)}
-            aria-label="Show configuration"
-            className="text-sm font-medium text-indigo-500 hover:text-indigo-700 transition-colors"
-          >
-            Show configuration
-          </button>
-        </div>
-      )}
-
       {/* ── Activity configuration (hidden when configVisible=false) ── */}
       {configVisible && (
         <div className={contentStyles.base}>
